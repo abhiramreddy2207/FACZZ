@@ -1,8 +1,8 @@
-# Faczz
+# FACZZ — F1 news app
 
-Faczz is a responsive F1 news and data app built with TanStack Start, React, TypeScript, and Tailwind CSS. It includes Home, Explore, Saved, Data, Profile and Settings, Race Center, source profiles, onboarding, notifications, light/dark themes, and an installable PWA layout for phones and desktop.
+Faczz is a responsive Formula 1 news and data app built with TanStack Start, React, TypeScript, and Tailwind CSS. It includes Home, Explore, Saved, Data, Profile and Settings, Race Center, source profiles, onboarding, notifications, light/dark themes, and an installable PWA layout for phones and desktop.
 
-The current app is a prototype: feeds, timing and statistics are clearly identified demo data. Live provider integrations and account syncing are not connected. Following multiple teams, drivers, topics, publishers and creator accounts, plus bookmarks, collections and preferences, are stored on the device.
+Explore loads current BBC Sport F1 and Autosport RSS updates. Publisher follows, team and driver follows, bookmarks, collections, and preferences are stored on the device. Social timelines require account connections; public video and post URLs can use platform embeds when available. Some timing and statistics remain prototype data.
 
 ## Run locally
 
