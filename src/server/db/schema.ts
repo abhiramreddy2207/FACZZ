@@ -80,6 +80,25 @@ export const sessions = pgTable(
 );
 
 // =========================================================
+// 3B. VERIFICATION & PASSWORD RESET TOKENS
+// =========================================================
+export const verificationTokens = pgTable(
+  "verification_tokens",
+  {
+    id: varchar("id", { length: 128 }).primaryKey(),
+    identifier: varchar("identifier", { length: 255 }).notNull(),
+    token: varchar("token", { length: 255 }).notNull().unique(),
+    type: varchar("type", { length: 50 }).notNull().default("password_reset"),
+    expiresAt: timestamp("expires_at", { withTimezone: true }).notNull(),
+    createdAt: timestamp("created_at", { withTimezone: true }).defaultNow().notNull(),
+  },
+  (table) => [
+    uniqueIndex("verification_tokens_token_idx").on(table.token),
+    index("verification_tokens_identifier_idx").on(table.identifier),
+  ]
+);
+
+// =========================================================
 // 4. COMMUNITY POSTS
 // =========================================================
 export const posts = pgTable(

@@ -74,3 +74,46 @@ export const UpdateProfileSchema = z.object({
   favDriver: z.string().max(50).optional(),
   location: z.string().max(100).optional(),
 });
+
+// =========================================================
+// AUTH SCHEMAS
+// =========================================================
+export const EmailSchema = z
+  .string()
+  .trim()
+  .min(3, "Email is too short")
+  .regex(/^[^\s@]+@[^\s@]+\.[^\s@]+$/, "Please provide a valid email address")
+  .toLowerCase();
+
+export const RegisterSchema = z.object({
+  name: z.string().trim().min(2, "Name must be at least 2 characters").max(100, "Name too long"),
+  handle: z
+    .string()
+    .trim()
+    .min(3, "Handle must be at least 3 characters")
+    .max(30, "Handle too long")
+    .regex(/^@?[a-zA-Z0-9_]+$/, "Handle may only contain letters, numbers, and underscores"),
+  email: EmailSchema,
+  password: z.string().min(8, "Password must be at least 8 characters"),
+  favTeam: z.string().max(50).optional(),
+  favDriver: z.string().max(50).optional(),
+});
+
+export const LoginSchema = z.object({
+  email: EmailSchema,
+  password: z.string().min(1, "Password is required"),
+});
+
+export const PasswordRecoveryRequestSchema = z.object({
+  email: EmailSchema,
+});
+
+export const PasswordResetSchema = z.object({
+  token: z.string().min(1, "Reset token is required"),
+  password: z.string().min(8, "Password must be at least 8 characters"),
+});
+
+export const PasswordChangeSchema = z.object({
+  currentPassword: z.string().min(1, "Current password is required"),
+  newPassword: z.string().min(8, "New password must be at least 8 characters"),
+});

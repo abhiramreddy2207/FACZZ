@@ -1,6 +1,7 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { PaddockService } from "@/server/db/service";
 import { jsonResponse, errorResponse } from "@/server/api/types";
+import { getSessionTokenFromRequest } from "@/server/auth/session";
 
 export const Route = createFileRoute("/api/posts/$id")({
   server: {
@@ -19,10 +20,25 @@ export const Route = createFileRoute("/api/posts/$id")({
 
       DELETE: async ({ request, params }) => {
         try {
-          const url = new URL(request.url);
-          const requesterId = url.searchParams.get("userId");
+          let requesterId: string | undefined;
+
+          // 1. Check session cookie
+          const token = getSessionTokenFromRequest(request);
+          if (token) {
+            const auth = await PaddockService.findSessionByToken(token);
+            if (auth) {
+              requesterId = auth.user.id;
+            }
+          }
+
+          // 2. Fallback to userId param
           if (!requesterId) {
-            return errorResponse("userId is required for authorization", "UNAUTHORIZED", 401);
+            const url = new URL(request.url);
+            requesterId = url.searchParams.get("userId") || undefined;
+          }
+
+          if (!requesterId) {
+            return errorResponse("Authentication required to delete post", "UNAUTHORIZED", 401);
           }
 
           const result = await PaddockService.deletePost(params.id, requesterId);

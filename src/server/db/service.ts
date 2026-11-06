@@ -11,6 +11,9 @@ const inMemory = {
   users: new Map<string, any>([
     [DEFAULT_DEMO_USER.id, { ...DEFAULT_DEMO_USER, avatarUrl: DEFAULT_DEMO_USER.avatar }],
   ]),
+  accounts: new Map<string, any>(),
+  sessions: new Map<string, any>(),
+  verificationTokens: new Map<string, any>(),
   posts: new Map<string, any>(
     INITIAL_COMMUNITY_POSTS.map((p) => [
       p.id,
@@ -290,6 +293,29 @@ export const PaddockService = {
     return newComment;
   },
 
+  async deleteComment(postId: string, commentId: string, requesterUserId: string) {
+    const db = getDb();
+    if (db) {
+      const comm = await db.query.comments.findFirst({
+        where: and(eq(schema.comments.id, commentId), eq(schema.comments.postId, postId)),
+      });
+      if (!comm) return { success: false, reason: "NOT_FOUND" };
+      if (comm.authorId !== requesterUserId) return { success: false, reason: "FORBIDDEN" };
+
+      await db.delete(schema.comments).where(eq(schema.comments.id, commentId));
+      return { success: true };
+    }
+
+    const comms = inMemory.comments.get(postId) ?? [];
+    const index = comms.findIndex((c) => c.id === commentId);
+    if (index === -1) return { success: false, reason: "NOT_FOUND" };
+    if (comms[index].authorId !== requesterUserId) return { success: false, reason: "FORBIDDEN" };
+
+    comms.splice(index, 1);
+    inMemory.comments.set(postId, comms);
+    return { success: true };
+  },
+
   // 3. LIKES (PREVENT DUPLICATES)
   async toggleLike(postId: string, userId: string) {
     const db = getDb();
@@ -375,7 +401,7 @@ export const PaddockService = {
     return { success: true };
   },
 
-  // 5. USER PROFILES
+  // 5. USER PROFILES & AUTHENTICATION
   async getUserProfile(userId: string) {
     const db = getDb();
     if (db) {
@@ -385,6 +411,429 @@ export const PaddockService = {
     }
 
     return inMemory.users.get(userId) ?? null;
+  },
+
+  async findUserByEmail(email: string) {
+    const normalized = email.trim().toLowerCase();
+    const db = getDb();
+    if (db) {
+      return await db.query.users.findFirst({
+        where: eq(schema.users.email, normalized),
+      });
+    }
+
+    for (const user of inMemory.users.values()) {
+      if (user.email && user.email.toLowerCase() === normalized) {
+        return user;
+      }
+    }
+    return null;
+  },
+
+  async findUserByHandle(handle: string) {
+    const normalized = handle.trim().toLowerCase().replace(/^@/, "");
+    const db = getDb();
+    if (db) {
+      return await db.query.users.findFirst({
+        where: eq(schema.users.handle, `@${normalized}`),
+      });
+    }
+
+    for (const user of inMemory.users.values()) {
+      if (user.handle && user.handle.toLowerCase().replace(/^@/, "") === normalized) {
+        return user;
+      }
+    }
+    return null;
+  },
+
+  async findAccountByUserId(userId: string, provider = "credentials") {
+    const db = getDb();
+    if (db) {
+      return await db.query.accounts.findFirst({
+        where: and(eq(schema.accounts.userId, userId), eq(schema.accounts.provider, provider)),
+      });
+    }
+
+    for (const acc of inMemory.accounts.values()) {
+      if (acc.userId === userId && acc.provider === provider) {
+        return acc;
+      }
+    }
+    return null;
+  },
+
+  async createUserWithCredentials(data: {
+    name: string;
+    handle: string;
+    email: string;
+    passwordHash: string;
+    favTeam?: string | undefined;
+    favDriver?: string | undefined;
+    avatarUrl?: string | undefined;
+  }) {
+    const userId = `usr-${Date.now()}-${Math.random().toString(36).slice(2, 7)}`;
+    const accountId = `acc-${Date.now()}-${Math.random().toString(36).slice(2, 7)}`;
+    const normalizedHandle = data.handle.startsWith("@") ? data.handle : `@${data.handle}`;
+    const normalizedEmail = data.email.trim().toLowerCase();
+
+    const db = getDb();
+    if (db) {
+      return await db.transaction(async (tx) => {
+        const [newUser] = await tx
+          .insert(schema.users)
+          .values({
+            id: userId,
+            email: normalizedEmail,
+            name: data.name,
+            handle: normalizedHandle,
+            avatarUrl: data.avatarUrl || "https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=150&auto=format&fit=crop&q=80",
+            favTeam: data.favTeam || "Scuderia Ferrari",
+            favDriver: data.favDriver || "Charles Leclerc",
+            badge: "Paddock Member",
+          })
+          .returning();
+
+        await tx.insert(schema.accounts).values({
+          id: accountId,
+          userId,
+          provider: "credentials",
+          providerAccountId: normalizedEmail,
+          passwordHash: data.passwordHash,
+        });
+
+        return newUser;
+      });
+    }
+
+    const newUser = {
+      id: userId,
+      email: normalizedEmail,
+      name: data.name,
+      handle: normalizedHandle,
+      avatarUrl: data.avatarUrl || "https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=150&auto=format&fit=crop&q=80",
+      favTeam: data.favTeam || "Scuderia Ferrari",
+      favDriver: data.favDriver || "Charles Leclerc",
+      badge: "Paddock Member",
+      followersCount: 0,
+      followingCount: 0,
+      createdAt: new Date(),
+      updatedAt: new Date(),
+    };
+
+    inMemory.users.set(userId, newUser);
+    inMemory.accounts.set(accountId, {
+      id: accountId,
+      userId,
+      provider: "credentials",
+      providerAccountId: normalizedEmail,
+      passwordHash: data.passwordHash,
+      createdAt: new Date(),
+    });
+
+    return newUser;
+  },
+
+  async createOrLinkOAuthUser(data: {
+    provider: string;
+    providerAccountId: string;
+    email: string;
+    name: string;
+    avatarUrl?: string | undefined;
+  }) {
+    const normalizedEmail = data.email.trim().toLowerCase();
+    const db = getDb();
+
+    if (db) {
+      // 1. Look for existing OAuth account
+      const existingAccount = await db.query.accounts.findFirst({
+        where: and(
+          eq(schema.accounts.provider, data.provider),
+          eq(schema.accounts.providerAccountId, data.providerAccountId)
+        ),
+      });
+
+      if (existingAccount) {
+        const user = await db.query.users.findFirst({
+          where: eq(schema.users.id, existingAccount.userId),
+        });
+        if (user) return user;
+      }
+
+      // 2. Check if user already exists by email (Safe Account Linking)
+      const existingUser = await db.query.users.findFirst({
+        where: eq(schema.users.email, normalizedEmail),
+      });
+
+      if (existingUser) {
+        // Link this provider account to the existing user
+        await db.insert(schema.accounts).values({
+          id: `acc-${Date.now()}-${Math.random().toString(36).slice(2, 7)}`,
+          userId: existingUser.id,
+          provider: data.provider,
+          providerAccountId: data.providerAccountId,
+        });
+        return existingUser;
+      }
+
+      // 3. Create fresh user + OAuth account
+      return await db.transaction(async (tx) => {
+        const userId = `usr-${Date.now()}-${Math.random().toString(36).slice(2, 7)}`;
+        const emailPrefix = data.email.split("@")[0] || "paddock_fan";
+        const handle = `@${emailPrefix.replace(/[^a-zA-Z0-9_]/g, "_")}_${Math.random().toString(36).slice(2, 5)}`;
+
+        const [newUser] = await tx
+          .insert(schema.users)
+          .values({
+            id: userId,
+            email: normalizedEmail,
+            name: data.name,
+            handle,
+            avatarUrl: data.avatarUrl || "https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=150&auto=format&fit=crop&q=80",
+            badge: "Verified Fan",
+          })
+          .returning();
+
+        await tx.insert(schema.accounts).values({
+          id: `acc-${Date.now()}-${Math.random().toString(36).slice(2, 7)}`,
+          userId,
+          provider: data.provider,
+          providerAccountId: data.providerAccountId,
+        });
+
+        return newUser;
+      });
+    }
+
+    // In-memory fallback
+    for (const acc of inMemory.accounts.values()) {
+      if (acc.provider === data.provider && acc.providerAccountId === data.providerAccountId) {
+        const user = inMemory.users.get(acc.userId);
+        if (user) return user;
+      }
+    }
+
+    for (const user of inMemory.users.values()) {
+      if (user.email && user.email.toLowerCase() === normalizedEmail) {
+        const accId = `acc-${Date.now()}-${Math.random().toString(36).slice(2, 7)}`;
+        inMemory.accounts.set(accId, {
+          id: accId,
+          userId: user.id,
+          provider: data.provider,
+          providerAccountId: data.providerAccountId,
+          createdAt: new Date(),
+        });
+        return user;
+      }
+    }
+
+    const userId = `usr-${Date.now()}-${Math.random().toString(36).slice(2, 7)}`;
+    const emailPrefix = data.email.split("@")[0] || "paddock_fan";
+    const handle = `@${emailPrefix.replace(/[^a-zA-Z0-9_]/g, "_")}_${Math.random().toString(36).slice(2, 5)}`;
+    const newUser = {
+      id: userId,
+      email: normalizedEmail,
+      name: data.name,
+      handle,
+      avatarUrl: data.avatarUrl || "https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=150&auto=format&fit=crop&q=80",
+      badge: "Verified Fan",
+      followersCount: 0,
+      followingCount: 0,
+      createdAt: new Date(),
+      updatedAt: new Date(),
+    };
+    inMemory.users.set(userId, newUser);
+
+    const accId = `acc-${Date.now()}-${Math.random().toString(36).slice(2, 7)}`;
+    inMemory.accounts.set(accId, {
+      id: accId,
+      userId,
+      provider: data.provider,
+      providerAccountId: data.providerAccountId,
+      createdAt: new Date(),
+    });
+
+    return newUser;
+  },
+
+  // 6. SESSIONS
+  async createSession(userId: string, token: string, expiresAt: Date) {
+    const sessionId = `ses-${Date.now()}-${Math.random().toString(36).slice(2, 7)}`;
+    const db = getDb();
+    if (db) {
+      const [session] = await db
+        .insert(schema.sessions)
+        .values({
+          id: sessionId,
+          userId,
+          token,
+          expiresAt,
+        })
+        .returning();
+      return session;
+    }
+
+    const session = {
+      id: sessionId,
+      userId,
+      token,
+      expiresAt,
+      createdAt: new Date(),
+    };
+    inMemory.sessions.set(token, session);
+    return session;
+  },
+
+  async findSessionByToken(token: string) {
+    const db = getDb();
+    if (db) {
+      const session = await db.query.sessions.findFirst({
+        where: eq(schema.sessions.token, token),
+      });
+
+      if (!session) return null;
+      if (new Date(session.expiresAt) <= new Date()) {
+        // Expired - clean up
+        await db.delete(schema.sessions).where(eq(schema.sessions.token, token));
+        return null;
+      }
+
+      const user = await db.query.users.findFirst({
+        where: eq(schema.users.id, session.userId),
+      });
+      if (!user) return null;
+
+      return { session, user };
+    }
+
+    const session = inMemory.sessions.get(token);
+    if (!session) return null;
+    if (new Date(session.expiresAt) <= new Date()) {
+      inMemory.sessions.delete(token);
+      return null;
+    }
+
+    const user = inMemory.users.get(session.userId);
+    if (!user) return null;
+
+    return { session, user };
+  },
+
+  async deleteSession(token: string) {
+    const db = getDb();
+    if (db) {
+      await db.delete(schema.sessions).where(eq(schema.sessions.token, token));
+      return;
+    }
+    inMemory.sessions.delete(token);
+  },
+
+  async deleteAllUserSessions(userId: string) {
+    const db = getDb();
+    if (db) {
+      await db.delete(schema.sessions).where(eq(schema.sessions.userId, userId));
+      return;
+    }
+    for (const [t, s] of inMemory.sessions.entries()) {
+      if (s.userId === userId) {
+        inMemory.sessions.delete(t);
+      }
+    }
+  },
+
+  // 7. VERIFICATION & PASSWORD RESET TOKENS
+  async createVerificationToken(data: {
+    identifier: string;
+    token: string;
+    type: string;
+    expiresAt: Date;
+  }) {
+    const tokenId = `vt-${Date.now()}-${Math.random().toString(36).slice(2, 7)}`;
+    const db = getDb();
+    if (db) {
+      const [record] = await db
+        .insert(schema.verificationTokens)
+        .values({
+          id: tokenId,
+          identifier: data.identifier.toLowerCase(),
+          token: data.token,
+          type: data.type,
+          expiresAt: data.expiresAt,
+        })
+        .returning();
+      return record;
+    }
+
+    const record = {
+      id: tokenId,
+      identifier: data.identifier.toLowerCase(),
+      token: data.token,
+      type: data.type,
+      expiresAt: data.expiresAt,
+      createdAt: new Date(),
+    };
+    inMemory.verificationTokens.set(data.token, record);
+    return record;
+  },
+
+  async consumeVerificationToken(token: string, type: string) {
+    const db = getDb();
+    if (db) {
+      const record = await db.query.verificationTokens.findFirst({
+        where: and(
+          eq(schema.verificationTokens.token, token),
+          eq(schema.verificationTokens.type, type)
+        ),
+      });
+
+      if (!record) return null;
+      if (new Date(record.expiresAt) <= new Date()) {
+        await db.delete(schema.verificationTokens).where(eq(schema.verificationTokens.id, record.id));
+        return null;
+      }
+
+      await db.delete(schema.verificationTokens).where(eq(schema.verificationTokens.id, record.id));
+      return record.identifier;
+    }
+
+    const record = inMemory.verificationTokens.get(token);
+    if (!record || record.type !== type) return null;
+    if (new Date(record.expiresAt) <= new Date()) {
+      inMemory.verificationTokens.delete(token);
+      return null;
+    }
+
+    inMemory.verificationTokens.delete(token);
+    return record.identifier;
+  },
+
+  async changeUserPassword(userId: string, newPasswordHash: string) {
+    const db = getDb();
+    if (db) {
+      await db
+        .update(schema.accounts)
+        .set({ passwordHash: newPasswordHash })
+        .where(and(eq(schema.accounts.userId, userId), eq(schema.accounts.provider, "credentials")));
+
+      // Invalidate all active sessions for security
+      await db.delete(schema.sessions).where(eq(schema.sessions.userId, userId));
+      return true;
+    }
+
+    for (const [id, acc] of inMemory.accounts.entries()) {
+      if (acc.userId === userId && acc.provider === "credentials") {
+        acc.passwordHash = newPasswordHash;
+        inMemory.accounts.set(id, acc);
+      }
+    }
+
+    // Invalidate all sessions
+    for (const [t, s] of inMemory.sessions.entries()) {
+      if (s.userId === userId) {
+        inMemory.sessions.delete(t);
+      }
+    }
+    return true;
   },
 
   async updateUserProfile(userId: string, input: z.infer<typeof UpdateProfileSchema>) {

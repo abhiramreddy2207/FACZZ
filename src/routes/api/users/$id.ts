@@ -1,6 +1,7 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { PaddockService } from "@/server/db/service";
 import { UpdateProfileSchema, jsonResponse, errorResponse } from "@/server/api/types";
+import { getSessionTokenFromRequest } from "@/server/auth/session";
 
 export const Route = createFileRoute("/api/users/$id")({
   server: {
@@ -19,6 +20,15 @@ export const Route = createFileRoute("/api/users/$id")({
 
       PATCH: async ({ request, params }) => {
         try {
+          // Verify session if provided
+          const token = getSessionTokenFromRequest(request);
+          if (token) {
+            const auth = await PaddockService.findSessionByToken(token);
+            if (!auth || auth.user.id !== params.id) {
+              return errorResponse("You are not authorized to update this profile", "FORBIDDEN", 403);
+            }
+          }
+
           let body: any;
           try {
             body = await request.json();

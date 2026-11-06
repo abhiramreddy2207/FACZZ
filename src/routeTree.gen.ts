@@ -24,6 +24,15 @@ import { Route as DriverIdRouteImport } from './routes/driver.$id'
 import { Route as SourceIdRouteImport } from './routes/source.$id'
 import { Route as StoryIdRouteImport } from './routes/story.$id'
 import { Route as TeamIdRouteImport } from './routes/team.$id'
+import { Route as ApiAuthGoogleRouteImport } from './routes/api/auth/google'
+import { Route as ApiAuthGoogleCallbackRouteImport } from './routes/api/auth/google-callback'
+import { Route as ApiAuthLoginRouteImport } from './routes/api/auth/login'
+import { Route as ApiAuthLogoutRouteImport } from './routes/api/auth/logout'
+import { Route as ApiAuthMeRouteImport } from './routes/api/auth/me'
+import { Route as ApiAuthPasswordChangeRouteImport } from './routes/api/auth/password-change'
+import { Route as ApiAuthPasswordRecoveryRouteImport } from './routes/api/auth/password-recovery'
+import { Route as ApiAuthPasswordResetRouteImport } from './routes/api/auth/password-reset'
+import { Route as ApiAuthRegisterRouteImport } from './routes/api/auth/register'
 import { Route as ApiPostsIndexRouteImport } from './routes/api/posts/index'
 import { Route as ApiPostsIdRouteImport } from './routes/api/posts/$id'
 import { Route as ApiUsersIdRouteImport } from './routes/api/users/$id'
@@ -106,6 +115,51 @@ const TeamIdRoute = TeamIdRouteImport.update({
   path: '/team/$id',
   getParentRoute: () => rootRouteImport,
 } as any)
+const ApiAuthGoogleRoute = ApiAuthGoogleRouteImport.update({
+  id: '/api/auth/google',
+  path: '/api/auth/google',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ApiAuthGoogleCallbackRoute = ApiAuthGoogleCallbackRouteImport.update({
+  id: '/api/auth/google-callback',
+  path: '/api/auth/google-callback',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ApiAuthLoginRoute = ApiAuthLoginRouteImport.update({
+  id: '/api/auth/login',
+  path: '/api/auth/login',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ApiAuthLogoutRoute = ApiAuthLogoutRouteImport.update({
+  id: '/api/auth/logout',
+  path: '/api/auth/logout',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ApiAuthMeRoute = ApiAuthMeRouteImport.update({
+  id: '/api/auth/me',
+  path: '/api/auth/me',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ApiAuthPasswordChangeRoute = ApiAuthPasswordChangeRouteImport.update({
+  id: '/api/auth/password-change',
+  path: '/api/auth/password-change',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ApiAuthPasswordRecoveryRoute = ApiAuthPasswordRecoveryRouteImport.update({
+  id: '/api/auth/password-recovery',
+  path: '/api/auth/password-recovery',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ApiAuthPasswordResetRoute = ApiAuthPasswordResetRouteImport.update({
+  id: '/api/auth/password-reset',
+  path: '/api/auth/password-reset',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ApiAuthRegisterRoute = ApiAuthRegisterRouteImport.update({
+  id: '/api/auth/register',
+  path: '/api/auth/register',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const ApiPostsIndexRoute = ApiPostsIndexRouteImport.update({
   id: '/api/posts/',
   path: '/api/posts/',
@@ -153,6 +207,15 @@ export interface FileRoutesByFullPath {
   '/story/$id': typeof StoryIdRoute
   '/team/$id': typeof TeamIdRoute
   '/data/': typeof DataIndexRoute
+  '/api/auth/google': typeof ApiAuthGoogleRoute
+  '/api/auth/google-callback': typeof ApiAuthGoogleCallbackRoute
+  '/api/auth/login': typeof ApiAuthLoginRoute
+  '/api/auth/logout': typeof ApiAuthLogoutRoute
+  '/api/auth/me': typeof ApiAuthMeRoute
+  '/api/auth/password-change': typeof ApiAuthPasswordChangeRoute
+  '/api/auth/password-recovery': typeof ApiAuthPasswordRecoveryRoute
+  '/api/auth/password-reset': typeof ApiAuthPasswordResetRoute
+  '/api/auth/register': typeof ApiAuthRegisterRoute
   '/api/posts/$id': typeof ApiPostsIdRouteWithChildren
   '/api/users/$id': typeof ApiUsersIdRoute
   '/api/posts/': typeof ApiPostsIndexRoute
@@ -176,6 +239,15 @@ export interface FileRoutesByTo {
   '/story/$id': typeof StoryIdRoute
   '/team/$id': typeof TeamIdRoute
   '/data': typeof DataIndexRoute
+  '/api/auth/google': typeof ApiAuthGoogleRoute
+  '/api/auth/google-callback': typeof ApiAuthGoogleCallbackRoute
+  '/api/auth/login': typeof ApiAuthLoginRoute
+  '/api/auth/logout': typeof ApiAuthLogoutRoute
+  '/api/auth/me': typeof ApiAuthMeRoute
+  '/api/auth/password-change': typeof ApiAuthPasswordChangeRoute
+  '/api/auth/password-recovery': typeof ApiAuthPasswordRecoveryRoute
+  '/api/auth/password-reset': typeof ApiAuthPasswordResetRoute
+  '/api/auth/register': typeof ApiAuthRegisterRoute
   '/api/posts/$id': typeof ApiPostsIdRouteWithChildren
   '/api/users/$id': typeof ApiUsersIdRoute
   '/api/posts': typeof ApiPostsIndexRoute
@@ -200,6 +272,15 @@ export interface FileRoutesById {
   '/story/$id': typeof StoryIdRoute
   '/team/$id': typeof TeamIdRoute
   '/data/': typeof DataIndexRoute
+  '/api/auth/google': typeof ApiAuthGoogleRoute
+  '/api/auth/google-callback': typeof ApiAuthGoogleCallbackRoute
+  '/api/auth/login': typeof ApiAuthLoginRoute
+  '/api/auth/logout': typeof ApiAuthLogoutRoute
+  '/api/auth/me': typeof ApiAuthMeRoute
+  '/api/auth/password-change': typeof ApiAuthPasswordChangeRoute
+  '/api/auth/password-recovery': typeof ApiAuthPasswordRecoveryRoute
+  '/api/auth/password-reset': typeof ApiAuthPasswordResetRoute
+  '/api/auth/register': typeof ApiAuthRegisterRoute
   '/api/posts/$id': typeof ApiPostsIdRouteWithChildren
   '/api/users/$id': typeof ApiUsersIdRoute
   '/api/posts/': typeof ApiPostsIndexRoute
@@ -225,6 +306,15 @@ export interface FileRouteTypes {
     | '/story/$id'
     | '/team/$id'
     | '/data/'
+    | '/api/auth/google'
+    | '/api/auth/google-callback'
+    | '/api/auth/login'
+    | '/api/auth/logout'
+    | '/api/auth/me'
+    | '/api/auth/password-change'
+    | '/api/auth/password-recovery'
+    | '/api/auth/password-reset'
+    | '/api/auth/register'
     | '/api/posts/$id'
     | '/api/users/$id'
     | '/api/posts/'
@@ -248,6 +338,15 @@ export interface FileRouteTypes {
     | '/story/$id'
     | '/team/$id'
     | '/data'
+    | '/api/auth/google'
+    | '/api/auth/google-callback'
+    | '/api/auth/login'
+    | '/api/auth/logout'
+    | '/api/auth/me'
+    | '/api/auth/password-change'
+    | '/api/auth/password-recovery'
+    | '/api/auth/password-reset'
+    | '/api/auth/register'
     | '/api/posts/$id'
     | '/api/users/$id'
     | '/api/posts'
@@ -271,6 +370,15 @@ export interface FileRouteTypes {
     | '/story/$id'
     | '/team/$id'
     | '/data/'
+    | '/api/auth/google'
+    | '/api/auth/google-callback'
+    | '/api/auth/login'
+    | '/api/auth/logout'
+    | '/api/auth/me'
+    | '/api/auth/password-change'
+    | '/api/auth/password-recovery'
+    | '/api/auth/password-reset'
+    | '/api/auth/register'
     | '/api/posts/$id'
     | '/api/users/$id'
     | '/api/posts/'
@@ -295,6 +403,15 @@ export interface RootRouteChildren {
   StoryIdRoute: typeof StoryIdRoute
   TeamIdRoute: typeof TeamIdRoute
   DataIndexRoute: typeof DataIndexRoute
+  ApiAuthGoogleRoute: typeof ApiAuthGoogleRoute
+  ApiAuthGoogleCallbackRoute: typeof ApiAuthGoogleCallbackRoute
+  ApiAuthLoginRoute: typeof ApiAuthLoginRoute
+  ApiAuthLogoutRoute: typeof ApiAuthLogoutRoute
+  ApiAuthMeRoute: typeof ApiAuthMeRoute
+  ApiAuthPasswordChangeRoute: typeof ApiAuthPasswordChangeRoute
+  ApiAuthPasswordRecoveryRoute: typeof ApiAuthPasswordRecoveryRoute
+  ApiAuthPasswordResetRoute: typeof ApiAuthPasswordResetRoute
+  ApiAuthRegisterRoute: typeof ApiAuthRegisterRoute
   ApiPostsIdRoute: typeof ApiPostsIdRouteWithChildren
   ApiUsersIdRoute: typeof ApiUsersIdRoute
   ApiPostsIndexRoute: typeof ApiPostsIndexRoute
@@ -407,6 +524,69 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof TeamIdRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/api/auth/google': {
+      id: '/api/auth/google'
+      path: '/api/auth/google'
+      fullPath: '/api/auth/google'
+      preLoaderRoute: typeof ApiAuthGoogleRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/api/auth/google-callback': {
+      id: '/api/auth/google-callback'
+      path: '/api/auth/google-callback'
+      fullPath: '/api/auth/google-callback'
+      preLoaderRoute: typeof ApiAuthGoogleCallbackRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/api/auth/login': {
+      id: '/api/auth/login'
+      path: '/api/auth/login'
+      fullPath: '/api/auth/login'
+      preLoaderRoute: typeof ApiAuthLoginRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/api/auth/logout': {
+      id: '/api/auth/logout'
+      path: '/api/auth/logout'
+      fullPath: '/api/auth/logout'
+      preLoaderRoute: typeof ApiAuthLogoutRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/api/auth/me': {
+      id: '/api/auth/me'
+      path: '/api/auth/me'
+      fullPath: '/api/auth/me'
+      preLoaderRoute: typeof ApiAuthMeRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/api/auth/password-change': {
+      id: '/api/auth/password-change'
+      path: '/api/auth/password-change'
+      fullPath: '/api/auth/password-change'
+      preLoaderRoute: typeof ApiAuthPasswordChangeRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/api/auth/password-recovery': {
+      id: '/api/auth/password-recovery'
+      path: '/api/auth/password-recovery'
+      fullPath: '/api/auth/password-recovery'
+      preLoaderRoute: typeof ApiAuthPasswordRecoveryRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/api/auth/password-reset': {
+      id: '/api/auth/password-reset'
+      path: '/api/auth/password-reset'
+      fullPath: '/api/auth/password-reset'
+      preLoaderRoute: typeof ApiAuthPasswordResetRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/api/auth/register': {
+      id: '/api/auth/register'
+      path: '/api/auth/register'
+      fullPath: '/api/auth/register'
+      preLoaderRoute: typeof ApiAuthRegisterRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/api/posts/': {
       id: '/api/posts/'
       path: '/api/posts'
@@ -484,6 +664,15 @@ const rootRouteChildren: RootRouteChildren = {
   StoryIdRoute: StoryIdRoute,
   TeamIdRoute: TeamIdRoute,
   DataIndexRoute: DataIndexRoute,
+  ApiAuthGoogleRoute: ApiAuthGoogleRoute,
+  ApiAuthGoogleCallbackRoute: ApiAuthGoogleCallbackRoute,
+  ApiAuthLoginRoute: ApiAuthLoginRoute,
+  ApiAuthLogoutRoute: ApiAuthLogoutRoute,
+  ApiAuthMeRoute: ApiAuthMeRoute,
+  ApiAuthPasswordChangeRoute: ApiAuthPasswordChangeRoute,
+  ApiAuthPasswordRecoveryRoute: ApiAuthPasswordRecoveryRoute,
+  ApiAuthPasswordResetRoute: ApiAuthPasswordResetRoute,
+  ApiAuthRegisterRoute: ApiAuthRegisterRoute,
   ApiPostsIdRoute: ApiPostsIdRouteWithChildren,
   ApiUsersIdRoute: ApiUsersIdRoute,
   ApiPostsIndexRoute: ApiPostsIndexRoute,

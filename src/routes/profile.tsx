@@ -34,6 +34,16 @@ import {
   importUserMemory,
   DEFAULT_DEMO_USER,
 } from "@/lib/store";
+import {
+  syncSessionUser,
+  apiLogin,
+  apiRegister,
+  apiLogout,
+  apiRecoverPassword,
+  apiResetPassword,
+  apiChangePassword,
+  apiUpdateProfile,
+} from "@/lib/auth-client";
 import { getTeam, getDriver, getTopic, getSource, teams, drivers } from "@/lib/demo-data";
 import { PageHeader, Chip, FollowButton } from "@/components/bits";
 import { toast } from "sonner";
@@ -182,7 +192,28 @@ function Profile() {
   const [authEmail, setAuthEmail] = useState("");
   const [authPassword, setAuthPassword] = useState("");
   const [authName, setAuthName] = useState("");
+  const [authHandle, setAuthHandle] = useState("");
   const [authTeam, setAuthTeam] = useState("mclaren");
+  const [authDriver, setAuthDriver] = useState("norris");
+  const [authLoading, setAuthLoading] = useState(false);
+  const [authError, setAuthError] = useState<string | null>(null);
+
+  // Recovery & Password Change state
+  const [showRecovery, setShowRecovery] = useState(false);
+  const [recoveryEmail, setRecoveryEmail] = useState("");
+  const [recoveryToken, setRecoveryToken] = useState("");
+  const [recoveryPassword, setRecoveryPassword] = useState("");
+  const [recoveryStep, setRecoveryStep] = useState<"request" | "reset">("request");
+  const [recoveryLoading, setRecoveryLoading] = useState(false);
+
+  const [currentPassword, setCurrentPassword] = useState("");
+  const [newPassword, setNewPassword] = useState("");
+  const [changePasswordLoading, setChangePasswordLoading] = useState(false);
+
+  // Sync active server session on mount
+  useEffect(() => {
+    syncSessionUser().catch(() => {});
+  }, []);
 
   // Notifications permission state
   const [perm, setPerm] = useState<string | null>(null);
@@ -244,9 +275,9 @@ function Profile() {
     }
   };
 
-  const handleSaveProfile = (e: React.FormEvent) => {
+  const handleSaveProfile = async (e: React.FormEvent) => {
     e.preventDefault();
-    updateUserProfile({
+    const patch = {
       name: editName.trim() || "Paddock Member",
       handle: editHandle.startsWith("@") ? editHandle.trim() : `@${editHandle.trim()}`,
       bio: editBio.trim(),
@@ -254,37 +285,119 @@ function Profile() {
       favDriver: editDriver,
       location: editLocation.trim(),
       avatar: editAvatar.trim() || undefined,
-    });
+    };
+    await apiUpdateProfile(patch);
     setEditingProfile(false);
     toast.success("Profile updated successfully!");
   };
 
-  const handleAuthSubmit = (e: React.FormEvent) => {
+  const handleAuthSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!authEmail.trim()) return;
+    setAuthError(null);
+    if (!authEmail.trim() || !authPassword.trim()) {
+      setAuthError("Email and password are required");
+      return;
+    }
 
-    const username = authName.trim() || authEmail.split("@")[0] || "PaddockFan";
-    const account: UserAccount = {
-      id: `u-${Date.now()}`,
-      name: username,
-      handle: `@${username.toLowerCase().replace(/[^a-z0-9_]/g, "")}`,
-      email: authEmail.trim(),
-      avatar: `https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?w=200&auto=format&fit=crop&q=80`,
-      bio: "F1 racing enthusiast, data scout, and community contributor.",
-      favTeam: authTeam,
-      favDriver: "norris",
-      location: "Global Paddock",
-      joinedDate: new Date().toLocaleDateString("en-US", { month: "long", year: "numeric" }),
-      followersCount: 1,
-      followingCount: 3,
-      badge: "Community Member",
-    };
+    setAuthLoading(true);
+    try {
+      if (authMode === "signin") {
+        const res = await apiLogin(authEmail, authPassword);
+        if (!res.success) {
+          setAuthError(res.error || "Failed to log in");
+          toast.error(res.error || "Login failed");
+        } else {
+          toast.success("Welcome back to the Faczz Paddock!");
+          setAuthEmail("");
+          setAuthPassword("");
+        }
+      } else {
+        const username = authName.trim() || authEmail.split("@")[0] || "PaddockFan";
+        const handle = authHandle.trim() || `@${username.toLowerCase().replace(/[^a-z0-9_]/g, "")}`;
 
-    loginUser(account);
-    toast.success(authMode === "signup" ? "Account created and signed in!" : "Welcome back!");
-    setAuthEmail("");
-    setAuthPassword("");
-    setAuthName("");
+        const res = await apiRegister({
+          name: username,
+          handle,
+          email: authEmail,
+          password: authPassword,
+          favTeam: authTeam,
+          favDriver: authDriver,
+        });
+
+        if (!res.success) {
+          setAuthError(res.error || "Registration failed");
+          toast.error(res.error || "Registration failed");
+        } else {
+          toast.success("Welcome to Faczz! Account created and signed in.");
+          setAuthEmail("");
+          setAuthPassword("");
+          setAuthName("");
+          setAuthHandle("");
+        }
+      }
+    } finally {
+      setAuthLoading(false);
+    }
+  };
+
+  const handleSignOut = async () => {
+    await apiLogout();
+    toast.info("Signed out of your session.");
+  };
+
+  const handleRequestRecovery = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!recoveryEmail.trim()) return;
+    setRecoveryLoading(true);
+    try {
+      const res = await apiRecoverPassword(recoveryEmail);
+      toast.success(res.message);
+      if (res.meta?.resetToken) {
+        setRecoveryToken(res.meta.resetToken);
+      }
+      setRecoveryStep("reset");
+    } finally {
+      setRecoveryLoading(false);
+    }
+  };
+
+  const handleResetPassword = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!recoveryToken.trim() || !recoveryPassword.trim()) return;
+    setRecoveryLoading(true);
+    try {
+      const res = await apiResetPassword(recoveryToken, recoveryPassword);
+      if (res.success) {
+        toast.success("Password reset successfully! Please sign in.");
+        setShowRecovery(false);
+        setRecoveryStep("request");
+        setRecoveryToken("");
+        setRecoveryPassword("");
+        setAuthMode("signin");
+      } else {
+        toast.error(res.error || "Failed to reset password.");
+      }
+    } finally {
+      setRecoveryLoading(false);
+    }
+  };
+
+  const handleChangePassword = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!currentPassword || !newPassword) return;
+    setChangePasswordLoading(true);
+    try {
+      const res = await apiChangePassword(currentPassword, newPassword);
+      if (res.success) {
+        toast.success("Password updated successfully!");
+        setCurrentPassword("");
+        setNewPassword("");
+      } else {
+        toast.error(res.error || "Failed to update password.");
+      }
+    } finally {
+      setChangePasswordLoading(false);
+    }
   };
 
   const handleExportData = () => {
@@ -832,14 +945,15 @@ function Profile() {
         <div id="panel-account" role="tabpanel" aria-labelledby="tab-account" className="space-y-4">
           <SectionCard
             title="Account & Security"
-            subtitle="Manage your authentication session or switch demo test personas"
+            subtitle="Real production authentication with Google OAuth, persistent sessions, and Argon2/bcrypt security"
             badge={s.user ? "Signed In" : "Guest Mode"}
           >
             {s.user ? (
-              <div className="space-y-4">
-                <div className="flex items-center justify-between rounded-xl bg-muted/40 p-3.5 border border-border/50">
-                  <div className="flex items-center gap-3">
-                    <div className="flex h-10 w-10 items-center justify-center overflow-hidden rounded-full border border-border bg-secondary font-bold text-xs">
+              <div className="space-y-6">
+                {/* Active Session Info */}
+                <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 rounded-2xl bg-muted/30 p-4 border border-border">
+                  <div className="flex items-center gap-3.5">
+                    <div className="flex h-12 w-12 items-center justify-center overflow-hidden rounded-2xl border-2 border-border bg-secondary font-bold text-sm shadow-sm">
                       {s.user.avatar ? (
                         <img src={s.user.avatar} alt="" className="h-full w-full object-cover" />
                       ) : (
@@ -847,27 +961,75 @@ function Profile() {
                       )}
                     </div>
                     <div>
-                      <p className="text-sm font-bold text-foreground">{s.user.name}</p>
-                      <p className="text-xs text-muted-foreground">{s.user.email}</p>
+                      <div className="flex items-center gap-2">
+                        <p className="text-sm font-extrabold text-foreground">{s.user.name}</p>
+                        <span className="rounded-full bg-emerald-500/10 px-2 py-0.5 text-[10px] font-bold text-emerald-500">
+                          Active Session
+                        </span>
+                      </div>
+                      <p className="text-xs text-muted-foreground">{s.user.email ?? s.user.handle}</p>
                     </div>
                   </div>
 
                   <Button
                     variant="unstyled"
-                    onClick={() => {
-                      logoutUser();
-                      toast.info("Signed out of your session.");
-                    }}
-                    className="inline-flex items-center gap-1.5 rounded-lg border border-destructive/20 bg-destructive/10 px-3 py-1.5 text-xs font-semibold text-destructive hover:bg-destructive/20"
+                    onClick={handleSignOut}
+                    className="inline-flex items-center justify-center gap-1.5 rounded-xl border border-destructive/30 bg-destructive/10 px-4 py-2 text-xs font-bold text-destructive hover:bg-destructive/20 transition-colors shadow-sm"
                   >
                     <LogOut className="h-3.5 w-3.5" /> Sign out
                   </Button>
                 </div>
 
+                {/* Password Change Section */}
+                <div className="rounded-2xl border border-border bg-card p-4 md:p-5 space-y-3">
+                  <div className="flex items-center gap-2">
+                    <Shield className="h-4 w-4 text-primary" />
+                    <h4 className="text-xs font-extrabold uppercase tracking-wider text-foreground">
+                      Change Account Password
+                    </h4>
+                  </div>
+                  <p className="text-xs text-muted-foreground">
+                    Update your credential password. Existing active sessions on other devices will be automatically rotated.
+                  </p>
+
+                  <form onSubmit={handleChangePassword} className="space-y-3 pt-1 max-w-md">
+                    <div>
+                      <label className="block text-[11px] font-semibold text-foreground mb-1">Current Password</label>
+                      <input
+                        type="password"
+                        required
+                        value={currentPassword}
+                        onChange={(e) => setCurrentPassword(e.target.value)}
+                        placeholder="••••••••"
+                        className="h-9 w-full rounded-xl border border-input bg-background px-3 text-xs outline-none focus:border-primary"
+                      />
+                    </div>
+                    <div>
+                      <label className="block text-[11px] font-semibold text-foreground mb-1">New Password</label>
+                      <input
+                        type="password"
+                        required
+                        value={newPassword}
+                        onChange={(e) => setNewPassword(e.target.value)}
+                        placeholder="At least 8 chars, 1 uppercase, 1 symbol"
+                        className="h-9 w-full rounded-xl border border-input bg-background px-3 text-xs outline-none focus:border-primary"
+                      />
+                    </div>
+                    <Button
+                      variant="unstyled"
+                      type="submit"
+                      disabled={changePasswordLoading}
+                      className="rounded-xl bg-primary px-4 py-2 text-xs font-bold text-primary-foreground shadow hover:bg-primary/90 disabled:opacity-50"
+                    >
+                      {changePasswordLoading ? "Updating..." : "Update Password"}
+                    </Button>
+                  </form>
+                </div>
+
                 {/* Demo Persona Switcher */}
                 <div>
                   <p className="mb-2 text-xs font-bold uppercase tracking-wider text-muted-foreground">
-                    Switch Test Persona (1-Click)
+                    Quick Switch Test Persona (Sandbox Simulation)
                   </p>
                   <div className="grid gap-2 sm:grid-cols-3">
                     {DEMO_PERSONAS.map((persona) => (
@@ -894,14 +1056,54 @@ function Profile() {
               </div>
             ) : (
               <div className="space-y-4 max-w-md mx-auto">
+                {/* Google OAuth 1-Click Button */}
+                <a
+                  href="/api/auth/google"
+                  className="flex w-full items-center justify-center gap-3 rounded-xl border border-border bg-card hover:bg-muted/60 p-2.5 text-xs font-bold text-foreground transition-all shadow-sm group"
+                >
+                  <svg className="h-4 w-4" viewBox="0 0 24 24">
+                    <path
+                      fill="#4285F4"
+                      d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"
+                    />
+                    <path
+                      fill="#34A853"
+                      d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z"
+                    />
+                    <path
+                      fill="#FBBC05"
+                      d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.06H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.94l2.85-2.22.81-.63z"
+                    />
+                    <path
+                      fill="#EA4335"
+                      d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.06l3.66 2.84c.87-2.6 3.3-4.52 6.16-4.52z"
+                    />
+                  </svg>
+                  <span>Continue with Google</span>
+                </a>
+
+                {/* Divider */}
+                <div className="relative my-4 flex items-center justify-center">
+                  <div className="absolute inset-0 flex items-center">
+                    <div className="w-full border-t border-border" />
+                  </div>
+                  <span className="relative bg-card px-3 text-[11px] font-semibold text-muted-foreground uppercase tracking-wider">
+                    Or with email credentials
+                  </span>
+                </div>
+
                 {/* Tab Switcher */}
                 <div className="flex border-b border-border">
                   <button
                     type="button"
-                    onClick={() => setAuthMode("signin")}
+                    onClick={() => {
+                      setAuthMode("signin");
+                      setShowRecovery(false);
+                      setAuthError(null);
+                    }}
                     className={cn(
                       "flex-1 pb-2 text-xs font-bold border-b-2 transition-all",
-                      authMode === "signin"
+                      authMode === "signin" && !showRecovery
                         ? "border-primary text-primary"
                         : "border-transparent text-muted-foreground hover:text-foreground"
                     )}
@@ -910,10 +1112,14 @@ function Profile() {
                   </button>
                   <button
                     type="button"
-                    onClick={() => setAuthMode("signup")}
+                    onClick={() => {
+                      setAuthMode("signup");
+                      setShowRecovery(false);
+                      setAuthError(null);
+                    }}
                     className={cn(
                       "flex-1 pb-2 text-xs font-bold border-b-2 transition-all",
-                      authMode === "signup"
+                      authMode === "signup" && !showRecovery
                         ? "border-primary text-primary"
                         : "border-transparent text-muted-foreground hover:text-foreground"
                     )}
@@ -922,68 +1128,206 @@ function Profile() {
                   </button>
                 </div>
 
-                {/* Form */}
-                <form onSubmit={handleAuthSubmit} className="space-y-3">
-                  {authMode === "signup" && (
+                {authError && (
+                  <div className="rounded-xl border border-destructive/30 bg-destructive/10 p-3 text-xs text-destructive">
+                    {authError}
+                  </div>
+                )}
+
+                {/* Recovery Form vs Main Form */}
+                {showRecovery ? (
+                  <div className="space-y-3 rounded-xl border border-border bg-muted/20 p-4">
+                    <div className="flex items-center justify-between">
+                      <h4 className="text-xs font-bold text-foreground">Password Recovery</h4>
+                      <button
+                        type="button"
+                        onClick={() => setShowRecovery(false)}
+                        className="text-[11px] text-muted-foreground hover:text-foreground"
+                      >
+                        Cancel
+                      </button>
+                    </div>
+
+                    {recoveryStep === "request" ? (
+                      <form onSubmit={handleRequestRecovery} className="space-y-3">
+                        <p className="text-[11px] text-muted-foreground">
+                          Enter your account email. If registered, we will generate a secure reset token.
+                        </p>
+                        <div>
+                          <label className="block text-xs font-semibold mb-1">Email Address</label>
+                          <input
+                            type="email"
+                            required
+                            value={recoveryEmail}
+                            onChange={(e) => setRecoveryEmail(e.target.value)}
+                            placeholder="you@paddock.f1"
+                            className="h-9 w-full rounded-lg border border-input bg-background px-3 text-xs outline-none focus:border-primary"
+                          />
+                        </div>
+                        <Button
+                          variant="unstyled"
+                          type="submit"
+                          disabled={recoveryLoading}
+                          className="w-full rounded-lg bg-primary py-2 text-xs font-bold text-primary-foreground shadow hover:bg-primary/90"
+                        >
+                          {recoveryLoading ? "Dispatching..." : "Send Reset Instructions"}
+                        </Button>
+                      </form>
+                    ) : (
+                      <form onSubmit={handleResetPassword} className="space-y-3">
+                        <p className="text-[11px] text-muted-foreground">
+                          Enter the reset token received and your new secure password.
+                        </p>
+                        <div>
+                          <label className="block text-xs font-semibold mb-1">Reset Token</label>
+                          <input
+                            type="text"
+                            required
+                            value={recoveryToken}
+                            onChange={(e) => setRecoveryToken(e.target.value)}
+                            placeholder="64-character token"
+                            className="h-9 w-full rounded-lg border border-input bg-background px-3 text-xs font-mono outline-none focus:border-primary"
+                          />
+                        </div>
+                        <div>
+                          <label className="block text-xs font-semibold mb-1">New Password</label>
+                          <input
+                            type="password"
+                            required
+                            value={recoveryPassword}
+                            onChange={(e) => setRecoveryPassword(e.target.value)}
+                            placeholder="At least 8 chars, 1 uppercase, 1 symbol"
+                            className="h-9 w-full rounded-lg border border-input bg-background px-3 text-xs outline-none focus:border-primary"
+                          />
+                        </div>
+                        <Button
+                          variant="unstyled"
+                          type="submit"
+                          disabled={recoveryLoading}
+                          className="w-full rounded-lg bg-primary py-2 text-xs font-bold text-primary-foreground shadow hover:bg-primary/90"
+                        >
+                          {recoveryLoading ? "Resetting..." : "Confirm New Password"}
+                        </Button>
+                      </form>
+                    )}
+                  </div>
+                ) : (
+                  /* Login / Register Form */
+                  <form onSubmit={handleAuthSubmit} className="space-y-3">
+                    {authMode === "signup" && (
+                      <div className="grid gap-2 sm:grid-cols-2">
+                        <div>
+                          <label className="block text-xs font-semibold mb-1">Display Name</label>
+                          <input
+                            type="text"
+                            required
+                            value={authName}
+                            onChange={(e) => setAuthName(e.target.value)}
+                            placeholder="e.g. Charles Fan"
+                            className="h-9 w-full rounded-lg border border-input bg-background px-3 text-xs outline-none focus:border-primary"
+                          />
+                        </div>
+                        <div>
+                          <label className="block text-xs font-semibold mb-1">Handle</label>
+                          <input
+                            type="text"
+                            value={authHandle}
+                            onChange={(e) => setAuthHandle(e.target.value)}
+                            placeholder="@paddock_scout"
+                            className="h-9 w-full rounded-lg border border-input bg-background px-3 text-xs outline-none focus:border-primary"
+                          />
+                        </div>
+                      </div>
+                    )}
                     <div>
-                      <label className="block text-xs font-semibold mb-1">Display Name</label>
+                      <label className="block text-xs font-semibold mb-1">Email Address</label>
                       <input
-                        type="text"
+                        type="email"
                         required
-                        value={authName}
-                        onChange={(e) => setAuthName(e.target.value)}
-                        placeholder="e.g. LewisFan44"
+                        value={authEmail}
+                        onChange={(e) => setAuthEmail(e.target.value)}
+                        placeholder="you@paddock.f1"
                         className="h-9 w-full rounded-lg border border-input bg-background px-3 text-xs outline-none focus:border-primary"
                       />
                     </div>
-                  )}
-                  <div>
-                    <label className="block text-xs font-semibold mb-1">Email Address</label>
-                    <input
-                      type="email"
-                      required
-                      value={authEmail}
-                      onChange={(e) => setAuthEmail(e.target.value)}
-                      placeholder="you@paddock.f1"
-                      className="h-9 w-full rounded-lg border border-input bg-background px-3 text-xs outline-none focus:border-primary"
-                    />
-                  </div>
-                  <div>
-                    <label className="block text-xs font-semibold mb-1">Password</label>
-                    <input
-                      type="password"
-                      required
-                      value={authPassword}
-                      onChange={(e) => setAuthPassword(e.target.value)}
-                      placeholder="••••••••"
-                      className="h-9 w-full rounded-lg border border-input bg-background px-3 text-xs outline-none focus:border-primary"
-                    />
-                  </div>
-                  {authMode === "signup" && (
                     <div>
-                      <label className="block text-xs font-semibold mb-1">Supported Team</label>
-                      <select
-                        value={authTeam}
-                        onChange={(e) => setAuthTeam(e.target.value)}
-                        className="h-9 w-full rounded-lg border border-input bg-background px-3 text-xs outline-none"
-                      >
-                        {teams.map((t) => (
-                          <option key={t.id} value={t.id}>
-                            {t.name}
-                          </option>
-                        ))}
-                      </select>
+                      <div className="flex items-center justify-between mb-1">
+                        <label className="block text-xs font-semibold">Password</label>
+                        {authMode === "signin" && (
+                          <button
+                            type="button"
+                            onClick={() => {
+                              setShowRecovery(true);
+                              setRecoveryEmail(authEmail);
+                            }}
+                            className="text-[11px] text-primary hover:underline font-semibold"
+                          >
+                            Forgot password?
+                          </button>
+                        )}
+                      </div>
+                      <input
+                        type="password"
+                        required
+                        value={authPassword}
+                        onChange={(e) => setAuthPassword(e.target.value)}
+                        placeholder={authMode === "signup" ? "At least 8 chars, 1 uppercase, 1 symbol" : "••••••••"}
+                        className="h-9 w-full rounded-lg border border-input bg-background px-3 text-xs outline-none focus:border-primary"
+                      />
+                      {authMode === "signup" && (
+                        <p className="mt-1 text-[10px] text-muted-foreground">
+                          Security requirement: 8+ characters with uppercase, lowercase, number, and symbol.
+                        </p>
+                      )}
                     </div>
-                  )}
 
-                  <Button
-                    variant="unstyled"
-                    type="submit"
-                    className="w-full rounded-lg bg-primary py-2 text-xs font-bold text-primary-foreground shadow hover:bg-primary/90"
-                  >
-                    {authMode === "signin" ? "Sign In" : "Create Account"}
-                  </Button>
-                </form>
+                    {authMode === "signup" && (
+                      <div className="grid gap-2 sm:grid-cols-2">
+                        <div>
+                          <label className="block text-xs font-semibold mb-1">Favorite Team</label>
+                          <select
+                            value={authTeam}
+                            onChange={(e) => setAuthTeam(e.target.value)}
+                            className="h-9 w-full rounded-lg border border-input bg-background px-3 text-xs outline-none"
+                          >
+                            {teams.map((t) => (
+                              <option key={t.id} value={t.id}>
+                                {t.name}
+                              </option>
+                            ))}
+                          </select>
+                        </div>
+                        <div>
+                          <label className="block text-xs font-semibold mb-1">Favorite Driver</label>
+                          <select
+                            value={authDriver}
+                            onChange={(e) => setAuthDriver(e.target.value)}
+                            className="h-9 w-full rounded-lg border border-input bg-background px-3 text-xs outline-none"
+                          >
+                            {drivers.map((d) => (
+                              <option key={d.id} value={d.id}>
+                                {d.name}
+                              </option>
+                            ))}
+                          </select>
+                        </div>
+                      </div>
+                    )}
+
+                    <Button
+                      variant="unstyled"
+                      type="submit"
+                      disabled={authLoading}
+                      className="w-full rounded-lg bg-primary py-2 text-xs font-bold text-primary-foreground shadow hover:bg-primary/90 disabled:opacity-50"
+                    >
+                      {authLoading
+                        ? "Verifying credentials..."
+                        : authMode === "signin"
+                        ? "Sign In to Paddock"
+                        : "Create Verified Paddock Account"}
+                    </Button>
+                  </form>
+                )}
 
                 {/* Quick Persona Logins */}
                 <div className="pt-2 border-t border-border/60">
