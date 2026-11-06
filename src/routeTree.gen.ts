@@ -24,6 +24,12 @@ import { Route as DriverIdRouteImport } from './routes/driver.$id'
 import { Route as SourceIdRouteImport } from './routes/source.$id'
 import { Route as StoryIdRouteImport } from './routes/story.$id'
 import { Route as TeamIdRouteImport } from './routes/team.$id'
+import { Route as ApiPostsIndexRouteImport } from './routes/api/posts/index'
+import { Route as ApiPostsIdRouteImport } from './routes/api/posts/$id'
+import { Route as ApiUsersIdRouteImport } from './routes/api/users/$id'
+import { Route as ApiPostsIdCommentsRouteImport } from './routes/api/posts/$id.comments'
+import { Route as ApiPostsIdLikeRouteImport } from './routes/api/posts/$id.like'
+import { Route as ApiPostsIdVoteRouteImport } from './routes/api/posts/$id.vote'
 
 const IndexRoute = IndexRouteImport.update({
   id: '/',
@@ -100,6 +106,36 @@ const TeamIdRoute = TeamIdRouteImport.update({
   path: '/team/$id',
   getParentRoute: () => rootRouteImport,
 } as any)
+const ApiPostsIndexRoute = ApiPostsIndexRouteImport.update({
+  id: '/api/posts/',
+  path: '/api/posts/',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ApiPostsIdRoute = ApiPostsIdRouteImport.update({
+  id: '/api/posts/$id',
+  path: '/api/posts/$id',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ApiUsersIdRoute = ApiUsersIdRouteImport.update({
+  id: '/api/users/$id',
+  path: '/api/users/$id',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ApiPostsIdCommentsRoute = ApiPostsIdCommentsRouteImport.update({
+  id: '/comments',
+  path: '/comments',
+  getParentRoute: () => ApiPostsIdRoute,
+} as any)
+const ApiPostsIdLikeRoute = ApiPostsIdLikeRouteImport.update({
+  id: '/like',
+  path: '/like',
+  getParentRoute: () => ApiPostsIdRoute,
+} as any)
+const ApiPostsIdVoteRoute = ApiPostsIdVoteRouteImport.update({
+  id: '/vote',
+  path: '/vote',
+  getParentRoute: () => ApiPostsIdRoute,
+} as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
@@ -117,6 +153,12 @@ export interface FileRoutesByFullPath {
   '/story/$id': typeof StoryIdRoute
   '/team/$id': typeof TeamIdRoute
   '/data/': typeof DataIndexRoute
+  '/api/posts/$id': typeof ApiPostsIdRouteWithChildren
+  '/api/users/$id': typeof ApiUsersIdRoute
+  '/api/posts/': typeof ApiPostsIndexRoute
+  '/api/posts/$id/comments': typeof ApiPostsIdCommentsRoute
+  '/api/posts/$id/like': typeof ApiPostsIdLikeRoute
+  '/api/posts/$id/vote': typeof ApiPostsIdVoteRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
@@ -134,6 +176,12 @@ export interface FileRoutesByTo {
   '/story/$id': typeof StoryIdRoute
   '/team/$id': typeof TeamIdRoute
   '/data': typeof DataIndexRoute
+  '/api/posts/$id': typeof ApiPostsIdRouteWithChildren
+  '/api/users/$id': typeof ApiUsersIdRoute
+  '/api/posts': typeof ApiPostsIndexRoute
+  '/api/posts/$id/comments': typeof ApiPostsIdCommentsRoute
+  '/api/posts/$id/like': typeof ApiPostsIdLikeRoute
+  '/api/posts/$id/vote': typeof ApiPostsIdVoteRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
@@ -152,6 +200,12 @@ export interface FileRoutesById {
   '/story/$id': typeof StoryIdRoute
   '/team/$id': typeof TeamIdRoute
   '/data/': typeof DataIndexRoute
+  '/api/posts/$id': typeof ApiPostsIdRouteWithChildren
+  '/api/users/$id': typeof ApiUsersIdRoute
+  '/api/posts/': typeof ApiPostsIndexRoute
+  '/api/posts/$id/comments': typeof ApiPostsIdCommentsRoute
+  '/api/posts/$id/like': typeof ApiPostsIdLikeRoute
+  '/api/posts/$id/vote': typeof ApiPostsIdVoteRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
@@ -171,6 +225,12 @@ export interface FileRouteTypes {
     | '/story/$id'
     | '/team/$id'
     | '/data/'
+    | '/api/posts/$id'
+    | '/api/users/$id'
+    | '/api/posts/'
+    | '/api/posts/$id/comments'
+    | '/api/posts/$id/like'
+    | '/api/posts/$id/vote'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
@@ -188,6 +248,12 @@ export interface FileRouteTypes {
     | '/story/$id'
     | '/team/$id'
     | '/data'
+    | '/api/posts/$id'
+    | '/api/users/$id'
+    | '/api/posts'
+    | '/api/posts/$id/comments'
+    | '/api/posts/$id/like'
+    | '/api/posts/$id/vote'
   id:
     | '__root__'
     | '/'
@@ -205,6 +271,12 @@ export interface FileRouteTypes {
     | '/story/$id'
     | '/team/$id'
     | '/data/'
+    | '/api/posts/$id'
+    | '/api/users/$id'
+    | '/api/posts/'
+    | '/api/posts/$id/comments'
+    | '/api/posts/$id/like'
+    | '/api/posts/$id/vote'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
@@ -223,6 +295,9 @@ export interface RootRouteChildren {
   StoryIdRoute: typeof StoryIdRoute
   TeamIdRoute: typeof TeamIdRoute
   DataIndexRoute: typeof DataIndexRoute
+  ApiPostsIdRoute: typeof ApiPostsIdRouteWithChildren
+  ApiUsersIdRoute: typeof ApiUsersIdRoute
+  ApiPostsIndexRoute: typeof ApiPostsIndexRoute
 }
 
 declare module '@tanstack/react-router' {
@@ -332,8 +407,66 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof TeamIdRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/api/posts/': {
+      id: '/api/posts/'
+      path: '/api/posts'
+      fullPath: '/api/posts/'
+      preLoaderRoute: typeof ApiPostsIndexRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/api/posts/$id': {
+      id: '/api/posts/$id'
+      path: '/api/posts/$id'
+      fullPath: '/api/posts/$id'
+      preLoaderRoute: typeof ApiPostsIdRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/api/users/$id': {
+      id: '/api/users/$id'
+      path: '/api/users/$id'
+      fullPath: '/api/users/$id'
+      preLoaderRoute: typeof ApiUsersIdRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/api/posts/$id/comments': {
+      id: '/api/posts/$id/comments'
+      path: '/comments'
+      fullPath: '/api/posts/$id/comments'
+      preLoaderRoute: typeof ApiPostsIdCommentsRouteImport
+      parentRoute: typeof ApiPostsIdRoute
+    }
+    '/api/posts/$id/like': {
+      id: '/api/posts/$id/like'
+      path: '/like'
+      fullPath: '/api/posts/$id/like'
+      preLoaderRoute: typeof ApiPostsIdLikeRouteImport
+      parentRoute: typeof ApiPostsIdRoute
+    }
+    '/api/posts/$id/vote': {
+      id: '/api/posts/$id/vote'
+      path: '/vote'
+      fullPath: '/api/posts/$id/vote'
+      preLoaderRoute: typeof ApiPostsIdVoteRouteImport
+      parentRoute: typeof ApiPostsIdRoute
+    }
   }
 }
+
+interface ApiPostsIdRouteChildren {
+  ApiPostsIdCommentsRoute: typeof ApiPostsIdCommentsRoute
+  ApiPostsIdLikeRoute: typeof ApiPostsIdLikeRoute
+  ApiPostsIdVoteRoute: typeof ApiPostsIdVoteRoute
+}
+
+const ApiPostsIdRouteChildren: ApiPostsIdRouteChildren = {
+  ApiPostsIdCommentsRoute: ApiPostsIdCommentsRoute,
+  ApiPostsIdLikeRoute: ApiPostsIdLikeRoute,
+  ApiPostsIdVoteRoute: ApiPostsIdVoteRoute,
+}
+
+const ApiPostsIdRouteWithChildren = ApiPostsIdRoute._addFileChildren(
+  ApiPostsIdRouteChildren,
+)
 
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
@@ -351,6 +484,9 @@ const rootRouteChildren: RootRouteChildren = {
   StoryIdRoute: StoryIdRoute,
   TeamIdRoute: TeamIdRoute,
   DataIndexRoute: DataIndexRoute,
+  ApiPostsIdRoute: ApiPostsIdRouteWithChildren,
+  ApiUsersIdRoute: ApiUsersIdRoute,
+  ApiPostsIndexRoute: ApiPostsIndexRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
