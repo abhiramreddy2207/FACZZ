@@ -1,7 +1,7 @@
 import { eq, desc, and, sql } from "drizzle-orm";
 import { getDb, schema } from "./index";
 import { INITIAL_COMMUNITY_POSTS, INITIAL_COMMENTS, DEFAULT_DEMO_USER } from "@/lib/store";
-import type { CreatePostSchema, AddCommentSchema, UpdateProfileSchema } from "../api/types";
+import { CreatePostSchema, type AddCommentSchema, type UpdateProfileSchema } from "../api/types";
 import { z } from "zod";
 
 // =========================================================
@@ -70,6 +70,7 @@ export const PaddockService = {
     offset?: number | undefined;
     category?: string | undefined;
     team?: string | undefined;
+    authorId?: string | undefined;
   } = {}) {
     const limit = Math.min(Math.max(options.limit ?? 20, 1), 50);
     const offset = Math.max(options.offset ?? 0, 0);
@@ -78,6 +79,7 @@ export const PaddockService = {
     if (db) {
       const conditions = [];
       if (options.category) conditions.push(eq(schema.posts.category, options.category));
+      if (options.authorId) conditions.push(eq(schema.posts.authorId, options.authorId));
 
       const rows = await db.query.posts.findMany({
         where: conditions.length > 0 ? and(...conditions) : undefined,
@@ -101,6 +103,7 @@ export const PaddockService = {
     let list = Array.from(inMemory.posts.values());
     if (options.category) list = list.filter((p) => p.category === options.category);
     if (options.team) list = list.filter((p) => p.teams?.includes(options.team));
+    if (options.authorId) list = list.filter((p) => p.authorId === options.authorId);
     list.sort((a, b) => b.createdAt.getTime() - a.createdAt.getTime());
 
     return {
@@ -133,7 +136,8 @@ export const PaddockService = {
     return { ...post, comments };
   },
 
-  async createPost(input: z.infer<typeof CreatePostSchema>) {
+  async createPost(rawInput: z.input<typeof CreatePostSchema>) {
+    const input = CreatePostSchema.parse(rawInput);
     const db = getDb();
     const postId = `post-${Date.now()}-${Math.random().toString(36).slice(2, 7)}`;
 
@@ -154,6 +158,10 @@ export const PaddockService = {
           })
           .returning();
 
+        if (!newPost) {
+          throw new Error("Failed to create post");
+        }
+
         if (input.poll && input.poll.options.length >= 2) {
           await Promise.all(
             input.poll.options.map((optText, i) =>
@@ -166,7 +174,20 @@ export const PaddockService = {
           );
         }
 
-        return newPost;
+        return {
+          ...newPost,
+          poll: input.poll
+            ? {
+                id: `poll-${postId}`,
+                question: input.poll.question,
+                options: input.poll.options.map((optText, i) => ({
+                  id: `opt-${postId}-${i}`,
+                  text: optText,
+                  votes: 0,
+                })),
+              }
+            : undefined,
+        };
       });
     }
 
@@ -207,6 +228,58 @@ export const PaddockService = {
 
     inMemory.posts.set(postId, newPost);
     return newPost;
+  },
+
+  async updatePost(
+    id: string,
+    requesterUserId: string,
+    input: {
+      title?: string | undefined;
+      content?: string | undefined;
+      category?: "Paddock Buzz" | "Race Debrief" | "Hot Take" | "Tech Talk" | "Meme" | undefined;
+      tags?: string[] | undefined;
+      teams?: string[] | undefined;
+      drivers?: string[] | undefined;
+      mediaUrl?: string | undefined;
+    }
+  ) {
+    const db = getDb();
+    if (db) {
+      const post = await db.query.posts.findFirst({
+        where: eq(schema.posts.id, id),
+      });
+      if (!post) return { success: false, reason: "NOT_FOUND" as const };
+      if (post.authorId !== requesterUserId) return { success: false, reason: "FORBIDDEN" as const };
+
+      const updateData: Record<string, any> = { updatedAt: new Date() };
+      if (input.title !== undefined) updateData["title"] = input.title;
+      if (input.content !== undefined) updateData["content"] = input.content;
+      if (input.category !== undefined) updateData["category"] = input.category;
+      if (input.tags !== undefined) updateData["tags"] = input.tags;
+      if (input.teams !== undefined) updateData["teams"] = input.teams;
+      if (input.drivers !== undefined) updateData["drivers"] = input.drivers;
+      if (input.mediaUrl !== undefined) updateData["mediaUrl"] = input.mediaUrl;
+
+      const [updated] = await db
+        .update(schema.posts)
+        .set(updateData)
+        .where(eq(schema.posts.id, id))
+        .returning();
+
+      return { success: true, post: updated };
+    }
+
+    const post = inMemory.posts.get(id);
+    if (!post) return { success: false, reason: "NOT_FOUND" as const };
+    if (post.authorId !== requesterUserId) return { success: false, reason: "FORBIDDEN" as const };
+
+    const updated = {
+      ...post,
+      ...input,
+      updatedAt: new Date(),
+    };
+    inMemory.posts.set(id, updated);
+    return { success: true, post: updated };
   },
 
   async deletePost(id: string, requesterUserId: string) {

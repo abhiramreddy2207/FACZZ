@@ -1,6 +1,7 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { PaddockService } from "@/server/db/service";
 import { PollVoteSchema, jsonResponse, errorResponse } from "@/server/api/types";
+import { getSessionTokenFromRequest } from "@/server/auth/session";
 
 export const Route = createFileRoute("/api/posts/$id/vote")({
   server: {
@@ -12,6 +13,15 @@ export const Route = createFileRoute("/api/posts/$id/vote")({
             body = await request.json();
           } catch {
             return errorResponse("Invalid JSON payload", "INVALID_JSON", 400);
+          }
+
+          // Authenticate session if token provided
+          const token = getSessionTokenFromRequest(request);
+          if (token) {
+            const auth = await PaddockService.findSessionByToken(token);
+            if (auth) {
+              body.userId = auth.user.id;
+            }
           }
 
           const parsed = PollVoteSchema.safeParse(body);

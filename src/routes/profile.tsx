@@ -21,7 +21,9 @@ import {
   ChevronUp,
   Settings,
   Sparkles,
+  MessageSquare,
 } from "lucide-react";
+import { SocialPostCard } from "@/components/social-post-card";
 import {
   setState,
   useStore,
@@ -693,6 +695,23 @@ function Profile() {
 
             <button
               role="tab"
+              id="tab-posts"
+              aria-selected={activeTab === "posts"}
+              aria-controls="panel-posts"
+              type="button"
+              onClick={() => setActiveTab("posts")}
+              className={cn(
+                "inline-flex items-center justify-center whitespace-nowrap rounded-xl px-3.5 py-1.5 text-xs font-bold gap-1.5 transition-all",
+                activeTab === "posts"
+                  ? "bg-card text-primary shadow-sm"
+                  : "text-muted-foreground hover:bg-background/50 hover:text-foreground"
+              )}
+            >
+              <MessageSquare className="h-4 w-4" /> My Posts ({userPostsCount})
+            </button>
+
+            <button
+              role="tab"
               id="tab-memory"
               aria-selected={activeTab === "memory"}
               aria-controls="panel-memory"
@@ -1026,33 +1045,35 @@ function Profile() {
                   </form>
                 </div>
 
-                {/* Demo Persona Switcher */}
-                <div>
-                  <p className="mb-2 text-xs font-bold uppercase tracking-wider text-muted-foreground">
-                    Quick Switch Test Persona (Sandbox Simulation)
-                  </p>
-                  <div className="grid gap-2 sm:grid-cols-3">
-                    {DEMO_PERSONAS.map((persona) => (
-                      <button
-                        key={persona.id}
-                        type="button"
-                        onClick={() => {
-                          loginUser(persona);
-                          toast.success(`Switched account to ${persona.name}!`);
-                        }}
-                        className={cn(
-                          "rounded-xl border p-3 text-left transition-all",
-                          s.user?.id === persona.id
-                            ? "border-primary bg-primary/10 text-primary font-bold shadow-sm"
-                            : "border-border bg-card text-muted-foreground hover:bg-muted hover:text-foreground"
-                        )}
-                      >
-                        <p className="text-xs font-bold text-foreground">{persona.name}</p>
-                        <p className="text-[11px] text-muted-foreground">{persona.handle} · {persona.favTeam?.toUpperCase()}</p>
-                      </button>
-                    ))}
+                {/* Demo Persona Switcher (Sandbox/Dev Only) */}
+                {process.env["NODE_ENV"] !== "production" && (
+                  <div>
+                    <p className="mb-2 text-xs font-bold uppercase tracking-wider text-muted-foreground">
+                      Switch Test Persona (Dev Testing Only)
+                    </p>
+                    <div className="grid gap-2 sm:grid-cols-3">
+                      {DEMO_PERSONAS.map((persona) => (
+                        <button
+                          key={persona.id}
+                          type="button"
+                          onClick={() => {
+                            loginUser(persona);
+                            toast.success(`Switched account to ${persona.name}!`);
+                          }}
+                          className={cn(
+                            "rounded-xl border p-3 text-left transition-all",
+                            s.user?.id === persona.id
+                              ? "border-primary bg-primary/10 text-primary font-bold shadow-sm"
+                              : "border-border bg-card text-muted-foreground hover:bg-muted hover:text-foreground"
+                          )}
+                        >
+                          <p className="text-xs font-bold text-foreground">{persona.name}</p>
+                          <p className="text-[11px] text-muted-foreground">{persona.handle} · {persona.favTeam?.toUpperCase()}</p>
+                        </button>
+                      ))}
+                    </div>
                   </div>
-                </div>
+                )}
               </div>
             ) : (
               <div className="space-y-4 max-w-md mx-auto">
@@ -1329,25 +1350,56 @@ function Profile() {
                   </form>
                 )}
 
-                {/* Quick Persona Logins */}
-                <div className="pt-2 border-t border-border/60">
-                  <p className="text-[11px] text-muted-foreground mb-2">Or instant sign-in with test persona:</p>
-                  <div className="flex flex-wrap gap-1.5">
-                    {DEMO_PERSONAS.map((p) => (
-                      <button
-                        key={p.id}
-                        type="button"
-                        onClick={() => {
-                          loginUser(p);
-                          toast.success(`Logged in as ${p.name}!`);
-                        }}
-                        className="rounded-lg bg-secondary px-2.5 py-1 text-[11px] font-semibold text-secondary-foreground hover:bg-primary hover:text-primary-foreground transition-colors"
-                      >
-                        {p.name}
-                      </button>
-                    ))}
+                {/* Quick Persona Logins (Sandbox/Dev Only) */}
+                {process.env["NODE_ENV"] !== "production" && (
+                  <div className="pt-2 border-t border-border/60">
+                    <p className="text-[11px] text-muted-foreground mb-2">Or instant sign-in with test persona:</p>
+                    <div className="flex flex-wrap gap-1.5">
+                      {DEMO_PERSONAS.map((p) => (
+                        <button
+                          key={p.id}
+                          type="button"
+                          onClick={() => {
+                            loginUser(p);
+                            toast.success(`Logged in as ${p.name}!`);
+                          }}
+                          className="rounded-lg bg-secondary px-2.5 py-1 text-[11px] font-semibold text-secondary-foreground hover:bg-primary hover:text-primary-foreground transition-colors"
+                        >
+                          {p.name}
+                        </button>
+                      ))}
+                    </div>
                   </div>
-                </div>
+                )}
+              </div>
+            )}
+          </SectionCard>
+        </div>
+        )}
+
+        {/* --------------------------------------------------------- */}
+        {/* TAB 2B: USER'S PUBLISHED POSTS (PHASE 4)                  */}
+        {/* --------------------------------------------------------- */}
+        {activeTab === "posts" && (
+        <div id="panel-posts" role="tabpanel" aria-labelledby="tab-posts" className="space-y-4">
+          <SectionCard
+            title="My Paddock Posts"
+            subtitle="Authored posts, telemetry discussions and race debriefs published under your account"
+            badge={`${userPostsCount} Published`}
+          >
+            {userPostsCount === 0 ? (
+              <div className="py-8 text-center text-xs text-muted-foreground space-y-2">
+                <MessageSquare className="h-8 w-8 mx-auto text-muted-foreground/40" />
+                <p className="font-semibold text-foreground">You haven't published any posts yet</p>
+                <p>Go to the Home feed to share telemetry analysis, hot takes, or paddock polls.</p>
+              </div>
+            ) : (
+              <div className="space-y-4">
+                {s.userPosts
+                  .filter((p) => p.author.id === s.user?.id || p.author.handle === s.user?.handle)
+                  .map((post) => (
+                    <SocialPostCard key={post.id} post={post} />
+                  ))}
               </div>
             )}
           </SectionCard>

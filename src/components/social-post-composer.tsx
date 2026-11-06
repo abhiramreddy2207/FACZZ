@@ -1,7 +1,8 @@
 import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Image, BarChart2, Hash, Sparkles, Send, X, Check } from "lucide-react";
-import { createSocialPost, useStore, type SocialPost } from "@/lib/store";
+import { useStore, type SocialPost } from "@/lib/store";
+import { createCommunityPost } from "@/lib/social-client";
 import { teams } from "@/lib/demo-data";
 import { toast } from "sonner";
 import { cn } from "@/lib/utils";
@@ -27,6 +28,7 @@ export function SocialPostComposer({ onPostCreated }: { onPostCreated?: (post: S
   const [showPoll, setShowPoll] = useState(false);
   const [pollQuestion, setPollQuestion] = useState("");
   const [pollOptions, setPollOptions] = useState(["", ""]);
+  const [isSubmitting, setIsSubmitting] = useState(false);
 
   const maxChars = 500;
   const charsRemaining = maxChars - content.length;
@@ -49,7 +51,7 @@ export function SocialPostComposer({ onPostCreated }: { onPostCreated?: (post: S
     }
   };
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!content.trim()) {
       toast.error("Please enter some thoughts for your post!");
@@ -59,36 +61,43 @@ export function SocialPostComposer({ onPostCreated }: { onPostCreated?: (post: S
     const validPollOptions = pollOptions.filter((o) => o.trim().length > 0);
     const hasValidPoll = showPoll && pollQuestion.trim().length > 0 && validPollOptions.length >= 2;
 
-    const post = createSocialPost({
-      title: title.trim() || undefined,
-      content,
-      category,
-      tags: [category.replace(/\s+/g, ""), ...(selectedTeam ? [selectedTeam] : []), "F1Paddock"],
-      teams: selectedTeam ? [selectedTeam] : [],
-      drivers: [],
-      mediaUrl: mediaUrl.trim() || undefined,
-      poll: hasValidPoll ? {
-        question: pollQuestion.trim(),
-        options: validPollOptions,
-      } : undefined,
-    });
+    setIsSubmitting(true);
+    try {
+      const post = await createCommunityPost({
+        title: title.trim() || undefined,
+        content,
+        category,
+        tags: [category.replace(/\s+/g, ""), ...(selectedTeam ? [selectedTeam] : []), "F1Paddock"],
+        teams: selectedTeam ? [selectedTeam] : [],
+        drivers: [],
+        mediaUrl: mediaUrl.trim() || undefined,
+        poll: hasValidPoll ? {
+          question: pollQuestion.trim(),
+          options: validPollOptions,
+        } : undefined,
+      });
 
-    toast.success("Post published to Paddock Community Feed!", {
-      description: "Your post is now live and saved to your device memory.",
-    });
+      toast.success("Post published to Paddock Community Feed!", {
+        description: "Your post is now synchronized across website and mobile apps.",
+      });
 
-    // Reset form
-    setContent("");
-    setTitle("");
-    setMediaUrl("");
-    setShowMediaInput(false);
-    setShowPoll(false);
-    setPollQuestion("");
-    setPollOptions(["", ""]);
-    setIsOpen(false);
+      // Reset form
+      setContent("");
+      setTitle("");
+      setMediaUrl("");
+      setShowMediaInput(false);
+      setShowPoll(false);
+      setPollQuestion("");
+      setPollOptions(["", ""]);
+      setIsOpen(false);
 
-    if (onPostCreated) {
-      onPostCreated(post);
+      if (onPostCreated) {
+        onPostCreated(post);
+      }
+    } catch {
+      toast.error("Failed to publish post. Please check your connection.");
+    } finally {
+      setIsSubmitting(false);
     }
   };
 

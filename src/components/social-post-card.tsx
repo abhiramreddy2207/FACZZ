@@ -7,23 +7,31 @@ import {
   Repeat2,
   Share2,
   Trash2,
+  Edit2,
   CheckCircle2,
   BarChart2,
   Send,
   MoreHorizontal,
   Bookmark,
+  Check,
+  X,
 } from "lucide-react";
 import {
-  toggleLikePost,
   toggleRepostPost,
-  voteSocialPoll,
-  addSocialComment,
   toggleLikeComment,
-  deleteSocialPost,
   useStore,
   type SocialPost,
   toggleBookmark,
 } from "@/lib/store";
+import {
+  togglePostLike,
+  submitPollVote,
+  addPostComment,
+  deletePostComment,
+  deleteCommunityPost,
+  editCommunityPost,
+  syncPostComments,
+} from "@/lib/social-client";
 import { getTeam, fmt } from "@/lib/demo-data";
 import { toast } from "sonner";
 import { cn } from "@/lib/utils";
@@ -39,6 +47,10 @@ export function SocialPostCard({ post }: { post: SocialPost }) {
 
   const [showComments, setShowComments] = useState(false);
   const [commentText, setCommentText] = useState("");
+  const [isEditing, setIsEditing] = useState(false);
+  const [editTitle, setEditTitle] = useState(post.title ?? "");
+  const [editContent, setEditContent] = useState(post.content);
+  const [isSavingEdit, setIsSavingEdit] = useState(false);
 
   const isLiked = likes.includes(post.id);
   const isReposted = reposts.includes(post.id);
@@ -73,13 +85,68 @@ export function SocialPostCard({ post }: { post: SocialPost }) {
     }
   };
 
-  const handleCommentSubmit = (e: React.FormEvent) => {
+  const handleCommentSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!commentText.trim()) return;
 
-    addSocialComment(post.id, commentText);
+    const text = commentText.trim();
     setCommentText("");
+    await addPostComment(post.id, text);
     toast.success("Reply added!");
+  };
+
+  const handleDeleteComment = async (commentId: string) => {
+    const res = await deletePostComment(post.id, commentId);
+    if (res.success) {
+      toast.success("Reply deleted.");
+    } else {
+      toast.error(res.error || "Failed to delete reply.");
+    }
+  };
+
+  const handleSaveEdit = async () => {
+    if (!editContent.trim()) {
+      toast.error("Content cannot be empty");
+      return;
+    }
+
+    setIsSavingEdit(true);
+    try {
+      const res = await editCommunityPost(post.id, {
+        title: editTitle.trim() || undefined,
+        content: editContent.trim(),
+      });
+      if (res.success) {
+        setIsEditing(false);
+        toast.success("Post updated successfully!");
+      } else {
+        toast.error(res.error || "Failed to update post");
+      }
+    } finally {
+      setIsSavingEdit(false);
+    }
+  };
+
+  const handleDeletePost = async () => {
+    const res = await deleteCommunityPost(post.id);
+    if (res.success) {
+      toast.success("Post deleted.");
+    } else {
+      toast.error(res.error || "Failed to delete post");
+    }
+  };
+
+  const handleToggleLike = async () => {
+    await togglePostLike(post.id);
+  };
+
+  const handleVote = async (optionId: string) => {
+    const res = await submitPollVote(post.id, optionId);
+    if (res.success) {
+      toast.success("Vote recorded!");
+    } else {
+      toast.error(res.error || "Failed to submit vote");
+    }
   };
 
   const handleBookmark = () => {
@@ -149,30 +216,76 @@ export function SocialPostCard({ post }: { post: SocialPost }) {
           >
             <Bookmark className={cn("h-4 w-4", isSaved && "fill-current")} />
           </Button>
+
           {isAuthor && (
-            <Button
-              variant="unstyled"
-              type="button"
-              onClick={() => {
-                deleteSocialPost(post.id);
-                toast.success("Post deleted.");
-              }}
-              aria-label="Delete post"
-              className="rounded-full p-2 text-muted-foreground hover:bg-destructive/10 hover:text-destructive"
-            >
-              <Trash2 className="h-4 w-4" />
-            </Button>
+            <>
+              <Button
+                variant="unstyled"
+                type="button"
+                onClick={() => setIsEditing(!isEditing)}
+                aria-label="Edit post"
+                className="rounded-full p-2 text-muted-foreground hover:bg-muted hover:text-foreground"
+              >
+                <Edit2 className="h-4 w-4" />
+              </Button>
+              <Button
+                variant="unstyled"
+                type="button"
+                onClick={handleDeletePost}
+                aria-label="Delete post"
+                className="rounded-full p-2 text-muted-foreground hover:bg-destructive/10 hover:text-destructive"
+              >
+                <Trash2 className="h-4 w-4" />
+              </Button>
+            </>
           )}
         </div>
       </div>
 
-      {/* Title & Body */}
-      <div className="mt-3 space-y-2">
-        {post.title && <h3 className="text-base font-bold text-foreground md:text-lg">{post.title}</h3>}
-        <p className="whitespace-pre-line text-sm leading-relaxed text-foreground/90 md:text-[15px]">
-          {post.content}
-        </p>
-      </div>
+      {/* Title & Body / Edit Form */}
+      {isEditing ? (
+        <div className="mt-3 space-y-2 rounded-xl border border-primary/40 bg-muted/20 p-3">
+          <input
+            type="text"
+            value={editTitle}
+            onChange={(e) => setEditTitle(e.target.value)}
+            placeholder="Post Title (optional)"
+            className="w-full rounded-lg border border-input bg-background px-3 py-1.5 text-xs font-bold outline-none focus:border-primary"
+          />
+          <textarea
+            rows={3}
+            value={editContent}
+            onChange={(e) => setEditContent(e.target.value)}
+            className="w-full rounded-lg border border-input bg-background p-2.5 text-xs outline-none focus:border-primary"
+          />
+          <div className="flex justify-end gap-2 pt-1">
+            <Button
+              variant="unstyled"
+              type="button"
+              onClick={() => setIsEditing(false)}
+              className="rounded-lg px-3 py-1 text-xs font-semibold text-muted-foreground hover:bg-muted"
+            >
+              Cancel
+            </Button>
+            <Button
+              variant="unstyled"
+              type="button"
+              disabled={isSavingEdit}
+              onClick={handleSaveEdit}
+              className="rounded-lg bg-primary px-3.5 py-1 text-xs font-bold text-primary-foreground shadow hover:bg-primary/90"
+            >
+              {isSavingEdit ? "Saving..." : "Save Changes"}
+            </Button>
+          </div>
+        </div>
+      ) : (
+        <div className="mt-3 space-y-2">
+          {post.title && <h3 className="text-base font-bold text-foreground md:text-lg">{post.title}</h3>}
+          <p className="whitespace-pre-line text-sm leading-relaxed text-foreground/90 md:text-[15px]">
+            {post.content}
+          </p>
+        </div>
+      )}
 
       {/* Attached Media */}
       {post.mediaUrl && (
@@ -201,7 +314,7 @@ export function SocialPostCard({ post }: { post: SocialPost }) {
                 <button
                   key={opt.id}
                   type="button"
-                  onClick={() => voteSocialPoll(post.id, opt.id)}
+                  onClick={() => handleVote(opt.id)}
                   disabled={Boolean(userVote)}
                   className={cn(
                     "relative flex h-10 w-full items-center justify-between overflow-hidden rounded-lg border px-3 text-left text-xs font-semibold transition-all",
@@ -255,7 +368,7 @@ export function SocialPostCard({ post }: { post: SocialPost }) {
         {/* Like */}
         <button
           type="button"
-          onClick={() => toggleLikePost(post.id)}
+          onClick={handleToggleLike}
           className={cn(
             "group/btn flex items-center gap-1.5 text-xs font-semibold transition-colors hover:text-red-500",
             isLiked && "text-red-500"
@@ -271,7 +384,12 @@ export function SocialPostCard({ post }: { post: SocialPost }) {
         {/* Comment */}
         <button
           type="button"
-          onClick={() => setShowComments(!showComments)}
+          onClick={() => {
+            if (!showComments) {
+              syncPostComments(post.id).catch(() => {});
+            }
+            setShowComments(!showComments);
+          }}
           className="group/btn flex items-center gap-1.5 text-xs font-semibold transition-colors hover:text-primary"
           aria-label="View comments"
         >
@@ -358,6 +476,9 @@ export function SocialPostCard({ post }: { post: SocialPost }) {
               {postComments.map((comm) => {
                 const isCommLiked = commentLikes.includes(comm.id);
                 const commTeam = comm.author.teamId ? getTeam(comm.author.teamId) : null;
+                const isCommAuthor =
+                  Boolean(currentUser?.id && comm.author.id === currentUser.id) ||
+                  Boolean(currentUser?.handle && comm.author.handle === currentUser.handle);
 
                 return (
                   <div key={comm.id} className="pt-2 flex items-start gap-2.5">
@@ -382,17 +503,29 @@ export function SocialPostCard({ post }: { post: SocialPost }) {
                       </div>
                       <p className="mt-0.5 text-xs leading-relaxed text-foreground/90">{comm.content}</p>
                     </div>
-                    <button
-                      type="button"
-                      onClick={() => toggleLikeComment(comm.id)}
-                      className={cn(
-                        "flex items-center gap-1 text-[11px] text-muted-foreground hover:text-red-500",
-                        isCommLiked && "text-red-500 font-semibold"
+                    <div className="flex items-center gap-1.5">
+                      <button
+                        type="button"
+                        onClick={() => toggleLikeComment(comm.id)}
+                        className={cn(
+                          "flex items-center gap-1 text-[11px] text-muted-foreground hover:text-red-500",
+                          isCommLiked && "text-red-500 font-semibold"
+                        )}
+                      >
+                        <Heart className={cn("h-3 w-3", isCommLiked && "fill-current")} />
+                        {comm.likes > 0 && <span>{comm.likes}</span>}
+                      </button>
+                      {isCommAuthor && (
+                        <button
+                          type="button"
+                          onClick={() => handleDeleteComment(comm.id)}
+                          aria-label="Delete comment"
+                          className="text-muted-foreground hover:text-destructive p-0.5 rounded"
+                        >
+                          <Trash2 className="h-3 w-3" />
+                        </button>
                       )}
-                    >
-                      <Heart className={cn("h-3 w-3", isCommLiked && "fill-current")} />
-                      {comm.likes > 0 && <span>{comm.likes}</span>}
-                    </button>
+                    </div>
                   </div>
                 );
               })}

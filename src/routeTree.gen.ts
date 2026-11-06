@@ -39,6 +39,7 @@ import { Route as ApiUsersIdRouteImport } from './routes/api/users/$id'
 import { Route as ApiPostsIdCommentsRouteImport } from './routes/api/posts/$id.comments'
 import { Route as ApiPostsIdLikeRouteImport } from './routes/api/posts/$id.like'
 import { Route as ApiPostsIdVoteRouteImport } from './routes/api/posts/$id.vote'
+import { Route as ApiUsersIdPostsRouteImport } from './routes/api/users/$id.posts'
 
 const IndexRoute = IndexRouteImport.update({
   id: '/',
@@ -190,6 +191,11 @@ const ApiPostsIdVoteRoute = ApiPostsIdVoteRouteImport.update({
   path: '/vote',
   getParentRoute: () => ApiPostsIdRoute,
 } as any)
+const ApiUsersIdPostsRoute = ApiUsersIdPostsRouteImport.update({
+  id: '/posts',
+  path: '/posts',
+  getParentRoute: () => ApiUsersIdRoute,
+} as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
@@ -217,11 +223,12 @@ export interface FileRoutesByFullPath {
   '/api/auth/password-reset': typeof ApiAuthPasswordResetRoute
   '/api/auth/register': typeof ApiAuthRegisterRoute
   '/api/posts/$id': typeof ApiPostsIdRouteWithChildren
-  '/api/users/$id': typeof ApiUsersIdRoute
+  '/api/users/$id': typeof ApiUsersIdRouteWithChildren
   '/api/posts/': typeof ApiPostsIndexRoute
   '/api/posts/$id/comments': typeof ApiPostsIdCommentsRoute
   '/api/posts/$id/like': typeof ApiPostsIdLikeRoute
   '/api/posts/$id/vote': typeof ApiPostsIdVoteRoute
+  '/api/users/$id/posts': typeof ApiUsersIdPostsRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
@@ -249,11 +256,12 @@ export interface FileRoutesByTo {
   '/api/auth/password-reset': typeof ApiAuthPasswordResetRoute
   '/api/auth/register': typeof ApiAuthRegisterRoute
   '/api/posts/$id': typeof ApiPostsIdRouteWithChildren
-  '/api/users/$id': typeof ApiUsersIdRoute
+  '/api/users/$id': typeof ApiUsersIdRouteWithChildren
   '/api/posts': typeof ApiPostsIndexRoute
   '/api/posts/$id/comments': typeof ApiPostsIdCommentsRoute
   '/api/posts/$id/like': typeof ApiPostsIdLikeRoute
   '/api/posts/$id/vote': typeof ApiPostsIdVoteRoute
+  '/api/users/$id/posts': typeof ApiUsersIdPostsRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
@@ -282,11 +290,12 @@ export interface FileRoutesById {
   '/api/auth/password-reset': typeof ApiAuthPasswordResetRoute
   '/api/auth/register': typeof ApiAuthRegisterRoute
   '/api/posts/$id': typeof ApiPostsIdRouteWithChildren
-  '/api/users/$id': typeof ApiUsersIdRoute
+  '/api/users/$id': typeof ApiUsersIdRouteWithChildren
   '/api/posts/': typeof ApiPostsIndexRoute
   '/api/posts/$id/comments': typeof ApiPostsIdCommentsRoute
   '/api/posts/$id/like': typeof ApiPostsIdLikeRoute
   '/api/posts/$id/vote': typeof ApiPostsIdVoteRoute
+  '/api/users/$id/posts': typeof ApiUsersIdPostsRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
@@ -321,6 +330,7 @@ export interface FileRouteTypes {
     | '/api/posts/$id/comments'
     | '/api/posts/$id/like'
     | '/api/posts/$id/vote'
+    | '/api/users/$id/posts'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
@@ -353,6 +363,7 @@ export interface FileRouteTypes {
     | '/api/posts/$id/comments'
     | '/api/posts/$id/like'
     | '/api/posts/$id/vote'
+    | '/api/users/$id/posts'
   id:
     | '__root__'
     | '/'
@@ -385,6 +396,7 @@ export interface FileRouteTypes {
     | '/api/posts/$id/comments'
     | '/api/posts/$id/like'
     | '/api/posts/$id/vote'
+    | '/api/users/$id/posts'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
@@ -413,7 +425,7 @@ export interface RootRouteChildren {
   ApiAuthPasswordResetRoute: typeof ApiAuthPasswordResetRoute
   ApiAuthRegisterRoute: typeof ApiAuthRegisterRoute
   ApiPostsIdRoute: typeof ApiPostsIdRouteWithChildren
-  ApiUsersIdRoute: typeof ApiUsersIdRoute
+  ApiUsersIdRoute: typeof ApiUsersIdRouteWithChildren
   ApiPostsIndexRoute: typeof ApiPostsIndexRoute
 }
 
@@ -629,6 +641,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ApiPostsIdVoteRouteImport
       parentRoute: typeof ApiPostsIdRoute
     }
+    '/api/users/$id/posts': {
+      id: '/api/users/$id/posts'
+      path: '/posts'
+      fullPath: '/api/users/$id/posts'
+      preLoaderRoute: typeof ApiUsersIdPostsRouteImport
+      parentRoute: typeof ApiUsersIdRoute
+    }
   }
 }
 
@@ -646,6 +665,18 @@ const ApiPostsIdRouteChildren: ApiPostsIdRouteChildren = {
 
 const ApiPostsIdRouteWithChildren = ApiPostsIdRoute._addFileChildren(
   ApiPostsIdRouteChildren,
+)
+
+interface ApiUsersIdRouteChildren {
+  ApiUsersIdPostsRoute: typeof ApiUsersIdPostsRoute
+}
+
+const ApiUsersIdRouteChildren: ApiUsersIdRouteChildren = {
+  ApiUsersIdPostsRoute: ApiUsersIdPostsRoute,
+}
+
+const ApiUsersIdRouteWithChildren = ApiUsersIdRoute._addFileChildren(
+  ApiUsersIdRouteChildren,
 )
 
 const rootRouteChildren: RootRouteChildren = {
@@ -674,7 +705,7 @@ const rootRouteChildren: RootRouteChildren = {
   ApiAuthPasswordResetRoute: ApiAuthPasswordResetRoute,
   ApiAuthRegisterRoute: ApiAuthRegisterRoute,
   ApiPostsIdRoute: ApiPostsIdRouteWithChildren,
-  ApiUsersIdRoute: ApiUsersIdRoute,
+  ApiUsersIdRoute: ApiUsersIdRouteWithChildren,
   ApiPostsIndexRoute: ApiPostsIndexRoute,
 }
 export const routeTree = rootRouteImport

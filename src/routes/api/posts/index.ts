@@ -1,6 +1,7 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { PaddockService } from "@/server/db/service";
 import { CreatePostSchema, jsonResponse, errorResponse } from "@/server/api/types";
+import { getSessionTokenFromRequest } from "@/server/auth/session";
 
 export const Route = createFileRoute("/api/posts/")({
   server: {
@@ -12,8 +13,9 @@ export const Route = createFileRoute("/api/posts/")({
           const offset = parseInt(url.searchParams.get("offset") || "0", 10);
           const category = url.searchParams.get("category") || undefined;
           const team = url.searchParams.get("team") || undefined;
+          const authorId = url.searchParams.get("authorId") || undefined;
 
-          const data = await PaddockService.getPosts({ limit, offset, category, team });
+          const data = await PaddockService.getPosts({ limit, offset, category, team, authorId });
           return jsonResponse(data.posts, 200, {
             limit: data.limit,
             offset: data.offset,
@@ -30,6 +32,15 @@ export const Route = createFileRoute("/api/posts/")({
             body = await request.json();
           } catch {
             return errorResponse("Invalid JSON payload", "INVALID_JSON", 400);
+          }
+
+          // Authenticate session if token provided
+          const token = getSessionTokenFromRequest(request);
+          if (token) {
+            const auth = await PaddockService.findSessionByToken(token);
+            if (auth) {
+              body.authorId = auth.user.id;
+            }
           }
 
           const parsed = CreatePostSchema.safeParse(body);

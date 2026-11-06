@@ -12,6 +12,15 @@ import { Route as ResetRoute } from "@/routes/api/auth/password-reset";
 import { Route as ChangePasswordRoute } from "@/routes/api/auth/password-change";
 import { Route as PostDetailRoute } from "@/routes/api/posts/$id";
 
+type RouteHandlers = {
+  POST: (ctx: any) => Promise<Response>;
+  GET: (ctx: any) => Promise<Response>;
+  PATCH: (ctx: any) => Promise<Response>;
+  DELETE: (ctx: any) => Promise<Response>;
+};
+
+const h = (route: any): RouteHandlers => route.options.server.handlers;
+
 describe("Production Authentication System (Phase 3)", () => {
   // 1. PASSWORD CRYPTOGRAPHY & STRENGTH
   describe("Password Cryptography & Validation", () => {
@@ -62,7 +71,7 @@ describe("Production Authentication System (Phase 3)", () => {
         }),
       });
 
-      const res = await RegisterRoute.options.server!.handlers!.POST!({ request: req } as any);
+      const res = await h(RegisterRoute).POST({ request: req } as any);
       expect(res.status).toBe(201);
 
       const data = await res.json();
@@ -89,7 +98,7 @@ describe("Production Authentication System (Phase 3)", () => {
         }),
       });
 
-      const res = await RegisterRoute.options.server!.handlers!.POST!({ request: req } as any);
+      const res = await h(RegisterRoute).POST({ request: req } as any);
       expect(res.status).toBe(409);
       const data = await res.json();
       expect(data.error.code).toBe("EMAIL_IN_USE");
@@ -107,7 +116,7 @@ describe("Production Authentication System (Phase 3)", () => {
         }),
       });
 
-      const res = await RegisterRoute.options.server!.handlers!.POST!({ request: req } as any);
+      const res = await h(RegisterRoute).POST({ request: req } as any);
       expect(res.status).toBe(409);
       const data = await res.json();
       expect(data.error.code).toBe("HANDLE_IN_USE");
@@ -125,7 +134,7 @@ describe("Production Authentication System (Phase 3)", () => {
         }),
       });
 
-      const res = await RegisterRoute.options.server!.handlers!.POST!({ request: req } as any);
+      const res = await h(RegisterRoute).POST({ request: req } as any);
       expect(res.status).toBe(422);
       const data = await res.json();
       expect(data.error.code).toBe("VALIDATION_ERROR");
@@ -144,7 +153,7 @@ describe("Production Authentication System (Phase 3)", () => {
         }),
       });
 
-      const res = await LoginRoute.options.server!.handlers!.POST!({ request: req } as any);
+      const res = await h(LoginRoute).POST({ request: req } as any);
       expect(res.status).toBe(200);
 
       const data = await res.json();
@@ -166,7 +175,7 @@ describe("Production Authentication System (Phase 3)", () => {
         }),
       });
 
-      const res = await LoginRoute.options.server!.handlers!.POST!({ request: req } as any);
+      const res = await h(LoginRoute).POST({ request: req } as any);
       expect(res.status).toBe(401);
 
       const data = await res.json();
@@ -184,7 +193,7 @@ describe("Production Authentication System (Phase 3)", () => {
         }),
       });
 
-      const res = await LoginRoute.options.server!.handlers!.POST!({ request: req } as any);
+      const res = await h(LoginRoute).POST({ request: req } as any);
       expect(res.status).toBe(401);
 
       const data = await res.json();
@@ -221,7 +230,7 @@ describe("Production Authentication System (Phase 3)", () => {
           password: "WilliamsRacing#55!",
         }),
       });
-      const loginRes = await LoginRoute.options.server!.handlers!.POST!({ request: loginReq } as any);
+      const loginRes = await h(LoginRoute).POST({ request: loginReq } as any);
       const setCookie = loginRes.headers.get("set-cookie")!;
       const token = parseCookie(setCookie, "faczz_session")!;
       expect(token).toBeDefined();
@@ -230,7 +239,7 @@ describe("Production Authentication System (Phase 3)", () => {
       const meReq = new Request("http://localhost:3000/api/auth/me", {
         headers: { Cookie: `faczz_session=${token}` },
       });
-      const meRes = await MeRoute.options.server!.handlers!.GET!({ request: meReq } as any);
+      const meRes = await h(MeRoute).GET({ request: meReq } as any);
       expect(meRes.status).toBe(200);
 
       const data = await meRes.json();
@@ -240,7 +249,7 @@ describe("Production Authentication System (Phase 3)", () => {
 
     it("rejects unauthorized access when session cookie is missing", async () => {
       const meReq = new Request("http://localhost:3000/api/auth/me");
-      const meRes = await MeRoute.options.server!.handlers!.GET!({ request: meReq } as any);
+      const meRes = await h(MeRoute).GET({ request: meReq } as any);
       expect(meRes.status).toBe(401);
     });
 
@@ -263,7 +272,7 @@ describe("Production Authentication System (Phase 3)", () => {
         }),
       });
 
-      const patchRes = await MeRoute.options.server!.handlers!.PATCH!({ request: patchReq } as any);
+      const patchRes = await h(MeRoute).PATCH({ request: patchReq } as any);
       expect(patchRes.status).toBe(200);
 
       const data = await patchRes.json();
@@ -284,7 +293,7 @@ describe("Production Authentication System (Phase 3)", () => {
         headers: { Cookie: `faczz_session=${token}` },
       });
 
-      const logoutRes = await LogoutRoute.options.server!.handlers!.POST!({ request: logoutReq } as any);
+      const logoutRes = await h(LogoutRoute).POST({ request: logoutReq } as any);
       expect(logoutRes.status).toBe(200);
 
       const setCookie = logoutRes.headers.get("set-cookie")!;
@@ -306,7 +315,7 @@ describe("Production Authentication System (Phase 3)", () => {
         body: JSON.stringify({ email: "carlos.fan@paddock.f1" }),
       });
 
-      const recRes = await RecoveryRoute.options.server!.handlers!.POST!({ request: recReq } as any);
+      const recRes = await h(RecoveryRoute).POST({ request: recReq } as any);
       expect(recRes.status).toBe(200);
       const recData = await recRes.json();
       expect(recData.success).toBe(true);
@@ -324,7 +333,7 @@ describe("Production Authentication System (Phase 3)", () => {
         }),
       });
 
-      const resetRes = await ResetRoute.options.server!.handlers!.POST!({ request: resetReq } as any);
+      const resetRes = await h(ResetRoute).POST({ request: resetReq } as any);
       expect(resetRes.status).toBe(200);
 
       // 3. Verify new password logs in
@@ -336,7 +345,7 @@ describe("Production Authentication System (Phase 3)", () => {
           password: newPassword,
         }),
       });
-      const loginRes = await LoginRoute.options.server!.handlers!.POST!({ request: loginReq } as any);
+      const loginRes = await h(LoginRoute).POST({ request: loginReq } as any);
       expect(loginRes.status).toBe(200);
 
       // 4. Verify token cannot be reused
@@ -348,7 +357,7 @@ describe("Production Authentication System (Phase 3)", () => {
           password: "AnotherPassword#2026!",
         }),
       });
-      const reuseRes = await ResetRoute.options.server!.handlers!.POST!({ request: reuseReq } as any);
+      const reuseRes = await h(ResetRoute).POST({ request: reuseReq } as any);
       expect(reuseRes.status).toBe(400);
     });
 
@@ -369,7 +378,7 @@ describe("Production Authentication System (Phase 3)", () => {
         }),
       });
 
-      const changeRes = await ChangePasswordRoute.options.server!.handlers!.POST!({ request: changeReq } as any);
+      const changeRes = await h(ChangePasswordRoute).POST({ request: changeReq } as any);
       expect(changeRes.status).toBe(200);
 
       const setCookie = changeRes.headers.get("set-cookie");
@@ -400,7 +409,7 @@ describe("Production Authentication System (Phase 3)", () => {
         method: "DELETE",
       });
 
-      const deleteRes = await PostDetailRoute.options.server!.handlers!.DELETE!({
+      const deleteRes = await h(PostDetailRoute).DELETE({
         request: deleteReq,
         params: { id: post!.id },
       } as any);
@@ -414,7 +423,7 @@ describe("Production Authentication System (Phase 3)", () => {
         method: "DELETE",
       });
 
-      const authorRes = await PostDetailRoute.options.server!.handlers!.DELETE!({
+      const authorRes = await h(PostDetailRoute).DELETE({
         request: authorDeleteReq,
         params: { id: post!.id },
       } as any);

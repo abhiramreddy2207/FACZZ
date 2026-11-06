@@ -31,6 +31,7 @@ export type SocialComment = {
   id: string;
   postId: string;
   author: {
+    id?: string | undefined;
     name: string;
     handle: string;
     avatar?: string | undefined;

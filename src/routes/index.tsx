@@ -1,9 +1,10 @@
 import { Button } from "@/components/ui/button";
 import { createFileRoute, Link } from "@tanstack/react-router";
-import { useMemo, useState } from "react";
+import { useMemo, useState, useEffect } from "react";
 import { SlidersHorizontal, MessageCircle, Newspaper, Compass, UserCheck } from "lucide-react";
 import { feed, getTeam, getDriver, getTopic, getSource, DEMO_UPDATED, fmt } from "@/lib/demo-data";
 import { setState, useStore } from "@/lib/store";
+import { syncCommunityPosts } from "@/lib/social-client";
 import { Chip, DemoBadge, EmptyState } from "@/components/bits";
 import { FeedCard } from "@/components/feed-card";
 import { RaceCard } from "@/components/race-card";
@@ -32,6 +33,11 @@ function Home() {
   const [feedTab, setFeedTab] = useState<FeedTab>("all");
   const [chip, setChip] = useState("foryou");
   const [panel, setPanel] = useState(false);
+
+  // Sync community posts from database on mount
+  useEffect(() => {
+    syncCommunityPosts().catch(() => {});
+  }, []);
 
   const chips = [
     { id: "foryou", label: "For You" },

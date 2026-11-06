@@ -51,9 +51,24 @@ export const CreatePostSchema = z.object({
     .optional(),
 });
 
+export const UpdatePostSchema = z.object({
+  title: z.string().max(200).optional(),
+  content: z.string().min(3, "Post content must be at least 3 characters").max(2000, "Post content too long").optional(),
+  category: z.enum(["Paddock Buzz", "Race Debrief", "Hot Take", "Tech Talk", "Meme"]).optional(),
+  mediaUrl: z.string().url("Must be a valid URL").optional().or(z.literal("")),
+  tags: z.array(z.string()).optional(),
+  teams: z.array(z.string()).optional(),
+  drivers: z.array(z.string()).optional(),
+});
+
 export const AddCommentSchema = z.object({
   authorId: z.string().min(1, "authorId is required"),
   content: z.string().min(1, "Comment content cannot be empty").max(1000, "Comment too long"),
+});
+
+export const DeleteCommentSchema = z.object({
+  commentId: z.string().min(1, "commentId is required"),
+  userId: z.string().min(1, "userId is required").optional(),
 });
 
 export const LikePostSchema = z.object({
