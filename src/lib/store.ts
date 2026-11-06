@@ -10,15 +10,15 @@ export type UserAccount = {
   name: string;
   handle: string;
   email: string;
-  avatar?: string;
-  bio?: string;
-  favTeam?: string;
-  favDriver?: string;
-  location?: string;
+  avatar?: string | undefined;
+  bio?: string | undefined;
+  favTeam?: string | undefined;
+  favDriver?: string | undefined;
+  location?: string | undefined;
   joinedDate: string;
   followersCount: number;
   followingCount: number;
-  badge?: string;
+  badge?: string | undefined;
 };
 
 export type SocialPoll = {
@@ -33,8 +33,8 @@ export type SocialComment = {
   author: {
     name: string;
     handle: string;
-    avatar?: string;
-    teamId?: string;
+    avatar?: string | undefined;
+    teamId?: string | undefined;
   };
   content: string;
   createdAt: string;
@@ -44,17 +44,17 @@ export type SocialComment = {
 export type SocialPost = {
   id: string;
   author: {
-    id?: string;
+    id?: string | undefined;
     name: string;
     handle: string;
-    avatar?: string;
-    badge?: string;
-    teamId?: string;
-    isVerified?: boolean;
+    avatar?: string | undefined;
+    badge?: string | undefined;
+    teamId?: string | undefined;
+    isVerified?: boolean | undefined;
   };
-  title?: string;
+  title?: string | undefined;
   content: string;
-  mediaUrl?: string;
+  mediaUrl?: string | undefined;
   category: "Paddock Buzz" | "Race Debrief" | "Hot Take" | "Tech Talk" | "Meme";
   tags: string[];
   teams: string[];
@@ -62,7 +62,7 @@ export type SocialPost = {
   createdAt: string;
   likes: number;
   reposts: number;
-  poll?: SocialPoll;
+  poll?: SocialPoll | undefined;
 };
 
 export type State = {
@@ -314,14 +314,14 @@ export function applyTheme(theme: State["theme"]) {
 // ==========================================
 
 export function createSocialPost(data: {
-  title?: string;
+  title?: string | undefined;
   content: string;
   category: SocialPost["category"];
   tags: string[];
   teams: string[];
   drivers: string[];
-  mediaUrl?: string;
-  poll?: { question: string; options: string[] };
+  mediaUrl?: string | undefined;
+  poll?: { question: string; options: string[] } | undefined;
 }) {
   const current = getState();
   const currentUser = current.user ?? DEFAULT_DEMO_USER;

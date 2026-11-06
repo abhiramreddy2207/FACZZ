@@ -14,15 +14,92 @@ export function DemoBadge({ className, children = "Demo data" }: { className?: s
   );
 }
 
-export function PageHeader({ eyebrow, title, children }: { eyebrow?: string; title: string; children?: ReactNode }) {
+export function PageHeader({
+  eyebrow,
+  title,
+  subtitle,
+  children,
+}: {
+  eyebrow?: string;
+  title: string;
+  subtitle?: string;
+  children?: ReactNode;
+}) {
   return (
-    <header className="mb-6 flex flex-wrap items-end justify-between gap-3">
-      <div>
-        {eyebrow && <p className="mb-1 text-xs font-semibold uppercase tracking-[0.18em] text-primary">{eyebrow}</p>}
-        <h1 className="text-3xl font-extrabold md:text-4xl">{title}</h1>
+    <header className="mb-6 flex flex-wrap items-end justify-between gap-4 border-b border-border/60 pb-4">
+      <div className="space-y-1">
+        {eyebrow && (
+          <div className="flex items-center gap-2">
+            <span className="h-1.5 w-1.5 rounded-full bg-primary" />
+            <p className="text-[11px] font-mono font-bold uppercase tracking-[0.2em] text-primary">
+              {eyebrow}
+            </p>
+          </div>
+        )}
+        <h1 className="text-2xl md:text-3xl font-black uppercase tracking-tight text-foreground font-display">
+          {title}
+        </h1>
+        {subtitle && (
+          <p className="text-xs md:text-sm text-muted-foreground max-w-xl">
+            {subtitle}
+          </p>
+        )}
       </div>
-      {children}
+      {children && <div className="flex items-center gap-2">{children}</div>}
     </header>
+  );
+}
+
+export function TelemetryStat({
+  label,
+  value,
+  unit,
+  delta,
+  isPositive,
+}: {
+  label: string;
+  value: string | number;
+  unit?: string;
+  delta?: string;
+  isPositive?: boolean;
+}) {
+  return (
+    <div className="rounded-xl border border-border bg-card p-3.5 space-y-1">
+      <span className="block text-[10px] font-mono uppercase tracking-widest text-muted-foreground">
+        {label}
+      </span>
+      <div className="flex items-baseline gap-1.5">
+        <span className="telemetry-stat text-xl md:text-2xl font-black text-foreground">
+          {value}
+        </span>
+        {unit && (
+          <span className="text-[11px] font-mono font-bold text-muted-foreground">
+            {unit}
+          </span>
+        )}
+      </div>
+      {delta && (
+        <span
+          className={cn(
+            "block text-[10px] font-mono font-semibold",
+            isPositive ? "text-emerald-500" : "text-rose-500"
+          )}
+        >
+          {delta}
+        </span>
+      )}
+    </div>
+  );
+}
+
+export function SkeletonLoader({ className }: { className?: string }) {
+  return (
+    <div
+      className={cn(
+        "animate-pulse rounded-xl bg-muted/60 border border-border/40",
+        className
+      )}
+    />
   );
 }
 

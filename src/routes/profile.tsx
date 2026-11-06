@@ -537,10 +537,18 @@ function Profile() {
       {/* 2. DEDICATED NEAT SECTIONS VIA TABS                       */}
       {/* ========================================================= */}
       <div className="w-full space-y-4">
-        {/* Navigation Tab Bar */}
+        {/* Navigation Tab Bar (Accessible WAI-ARIA tablist) */}
         <div className="no-scrollbar overflow-x-auto pb-1">
-          <div className="h-11 flex items-center justify-start rounded-2xl bg-muted/60 p-1 gap-1 border border-border/50 w-full">
+          <div
+            role="tablist"
+            aria-label="Profile navigation sections"
+            className="h-11 flex items-center justify-start rounded-2xl bg-muted/60 p-1 gap-1 border border-border/50 w-full"
+          >
             <button
+              role="tab"
+              id="tab-android"
+              aria-selected={activeTab === "android"}
+              aria-controls="panel-android"
               type="button"
               onClick={() => setActiveTab("android")}
               className={cn(
@@ -554,6 +562,10 @@ function Profile() {
             </button>
 
             <button
+              role="tab"
+              id="tab-account"
+              aria-selected={activeTab === "account"}
+              aria-controls="panel-account"
               type="button"
               onClick={() => setActiveTab("account")}
               className={cn(
@@ -567,6 +579,10 @@ function Profile() {
             </button>
 
             <button
+              role="tab"
+              id="tab-memory"
+              aria-selected={activeTab === "memory"}
+              aria-controls="panel-memory"
               type="button"
               onClick={() => setActiveTab("memory")}
               className={cn(
@@ -580,6 +596,10 @@ function Profile() {
             </button>
 
             <button
+              role="tab"
+              id="tab-notifications"
+              aria-selected={activeTab === "notifications"}
+              aria-controls="panel-notifications"
               type="button"
               onClick={() => setActiveTab("notifications")}
               className={cn(
@@ -593,6 +613,10 @@ function Profile() {
             </button>
 
             <button
+              role="tab"
+              id="tab-preferences"
+              aria-selected={activeTab === "preferences"}
+              aria-controls="panel-preferences"
               type="button"
               onClick={() => setActiveTab("preferences")}
               className={cn(
@@ -611,7 +635,7 @@ function Profile() {
         {/* TAB 1: ANDROID APP DOWNLOAD & DEPLOYMENT HUB              */}
         {/* --------------------------------------------------------- */}
         {activeTab === "android" && (
-          <div className="space-y-4">
+          <div id="panel-android" role="tabpanel" aria-labelledby="tab-android" className="space-y-4">
           {/* Quick Install Banner for Phone */}
           <div className="rounded-2xl border-2 border-primary bg-primary/10 p-4 md:p-5 space-y-3">
             <div className="flex items-center gap-2">
@@ -805,7 +829,7 @@ function Profile() {
         {/* TAB 2: ACCOUNT & AUTHENTICATION                           */}
         {/* --------------------------------------------------------- */}
         {activeTab === "account" && (
-        <div className="space-y-4">
+        <div id="panel-account" role="tabpanel" aria-labelledby="tab-account" className="space-y-4">
           <SectionCard
             title="Account & Security"
             subtitle="Manage your authentication session or switch demo test personas"
@@ -990,7 +1014,7 @@ function Profile() {
         {/* TAB 3: USER DATA MEMORY & PERSISTENCE                     */}
         {/* --------------------------------------------------------- */}
         {activeTab === "memory" && (
-        <div className="space-y-4">
+        <div id="panel-memory" role="tabpanel" aria-labelledby="tab-memory" className="space-y-4">
           <SectionCard
             title="User Data Memory & Sync"
             subtitle="Local-first persistence across reloads and device migrations"
@@ -1066,7 +1090,7 @@ function Profile() {
         {/* TAB 4: ALERTS & NOTIFICATIONS                             */}
         {/* --------------------------------------------------------- */}
         {activeTab === "notifications" && (
-        <div className="space-y-4">
+        <div id="panel-notifications" role="tabpanel" aria-labelledby="tab-notifications" className="space-y-4">
           <SectionCard
             title="Session Alerts & Reminders"
             subtitle="Configure countdown alerts before qualifying, sprints, and Grand Prix starts"
@@ -1107,7 +1131,7 @@ function Profile() {
         {/* TAB 5: PREFERENCES, THEME & FOLLOWING                     */}
         {/* --------------------------------------------------------- */}
         {activeTab === "preferences" && (
-        <div className="space-y-4">
+        <div id="panel-preferences" role="tabpanel" aria-labelledby="tab-preferences" className="space-y-4">
           <div className="grid gap-4 md:grid-cols-2">
             {/* Theme Card */}
             <SectionCard title="Theme & Display">
