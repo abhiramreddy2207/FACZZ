@@ -1,5 +1,6 @@
 {
   "name": "faczz",
+  "version": "2.6.0",
   "private": true,
   "sideEffects": false,
   "type": "module",

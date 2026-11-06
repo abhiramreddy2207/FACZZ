@@ -39,7 +39,7 @@ export function InlineMedia({ item }: { item: FeedItem }) {
     if (!v) return;
     if (!autoplay) { v.pause(); setPlaying(false); return; }
     const io = new IntersectionObserver(([e]) => {
-      if (e.isIntersecting && e.intersectionRatio > 0.6) v.play().then(() => setPlaying(true)).catch(() => {});
+      if (e && e.isIntersecting && e.intersectionRatio > 0.6) v.play().then(() => setPlaying(true)).catch(() => {});
       else { v.pause(); setPlaying(false); }
     }, { threshold: [0, 0.6, 1] });
     io.observe(v);

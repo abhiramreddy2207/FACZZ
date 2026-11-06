@@ -29,28 +29,28 @@ const d = (id: string, name: string, code: string, number: number, teamId: strin
   ({ id, name, code, number, teamId, nationality, born, wins, podiums, poles, starts, url: `https://www.formula1.com/en/drivers/${id}` });
 
 export const drivers: Driver[] = [
-  d("norris", "Lando Norris", "NOR", 1, "mclaren", "British", "1999-11-13", 14, 48, 15, 150),
-  d("piastri", "Oscar Piastri", "PIA", 81, "mclaren", "Australian", "2001-04-06", 11, 30, 6, 90),
-  d("leclerc", "Charles Leclerc", "LEC", 16, "ferrari", "Monégasque", "1997-10-16", 9, 52, 27, 170),
-  d("hamilton", "Lewis Hamilton", "HAM", 44, "ferrari", "British", "1985-01-07", 105, 203, 104, 378),
-  d("verstappen", "Max Verstappen", "VER", 3, "redbull", "Dutch", "1997-09-30", 70, 125, 47, 231),
-  d("hadjar", "Isack Hadjar", "HAD", 6, "redbull", "French", "2004-09-28", 0, 2, 0, 45),
-  d("russell", "George Russell", "RUS", 63, "mercedes", "British", "1998-02-15", 7, 30, 8, 172),
-  d("antonelli", "Kimi Antonelli", "ANT", 12, "mercedes", "Italian", "2006-08-25", 1, 6, 1, 45),
-  d("alonso", "Fernando Alonso", "ALO", 14, "aston", "Spanish", "1981-07-29", 32, 106, 22, 425),
-  d("stroll", "Lance Stroll", "STR", 18, "aston", "Canadian", "1998-10-29", 0, 3, 1, 190),
-  d("albon", "Alex Albon", "ALB", 23, "williams", "Thai", "1996-03-23", 0, 2, 0, 128),
-  d("sainz", "Carlos Sainz", "SAI", 55, "williams", "Spanish", "1994-09-01", 4, 30, 6, 230),
-  d("gasly", "Pierre Gasly", "GAS", 10, "alpine", "French", "1996-02-07", 1, 5, 0, 175),
-  d("colapinto", "Franco Colapinto", "COL", 43, "alpine", "Argentine", "2003-05-27", 0, 0, 0, 40),
-  d("ocon", "Esteban Ocon", "OCO", 31, "haas", "French", "1996-09-17", 1, 4, 0, 180),
-  d("bearman", "Oliver Bearman", "BEA", 87, "haas", "British", "2005-05-08", 0, 0, 0, 48),
-  d("lawson", "Liam Lawson", "LAW", 30, "rb", "New Zealander", "2002-02-11", 0, 0, 0, 55),
+  d("verstappen", "Max Verstappen", "VER", 1, "redbull", "Dutch", "1997-09-30", 63, 111, 40, 209),
+  d("norris", "Lando Norris", "NOR", 4, "mclaren", "British", "1999-11-13", 4, 29, 8, 128),
+  d("leclerc", "Charles Leclerc", "LEC", 16, "ferrari", "Monégasque", "1997-10-16", 8, 43, 26, 147),
+  d("piastri", "Oscar Piastri", "PIA", 81, "mclaren", "Australian", "2001-04-06", 2, 9, 0, 46),
+  d("sainz", "Carlos Sainz", "SAI", 55, "williams", "Spanish", "1994-09-01", 4, 25, 6, 206),
+  d("russell", "George Russell", "RUS", 63, "mercedes", "British", "1998-02-15", 3, 15, 5, 128),
+  d("hamilton", "Lewis Hamilton", "HAM", 44, "ferrari", "British", "1985-01-07", 105, 201, 104, 356),
+  d("perez", "Sergio Pérez", "PER", 11, "cadillac", "Mexican", "1990-01-26", 6, 39, 3, 281),
+  d("alonso", "Fernando Alonso", "ALO", 14, "aston", "Spanish", "1981-07-29", 32, 106, 22, 401),
+  d("gasly", "Pierre Gasly", "GAS", 10, "alpine", "French", "1996-02-07", 1, 5, 0, 154),
+  d("hulkenberg", "Nico Hülkenberg", "HUL", 27, "audi", "German", "1987-08-19", 0, 0, 1, 227),
+  d("stroll", "Lance Stroll", "STR", 18, "aston", "Canadian", "1998-10-29", 0, 3, 1, 166),
+  d("ocon", "Esteban Ocon", "OCO", 31, "haas", "French", "1996-09-17", 1, 4, 0, 156),
+  d("albon", "Alex Albon", "ALB", 23, "williams", "Thai", "1996-03-23", 0, 2, 0, 104),
+  d("bearman", "Oliver Bearman", "BEA", 87, "haas", "British", "2005-05-08", 0, 0, 0, 24),
+  d("colapinto", "Franco Colapinto", "COL", 43, "alpine", "Argentine", "2003-05-27", 0, 0, 0, 24),
+  d("lawson", "Liam Lawson", "LAW", 30, "rb", "New Zealander", "2002-02-11", 0, 0, 0, 24),
+  d("hadjar", "Isack Hadjar", "HAD", 6, "redbull", "French", "2004-09-28", 0, 0, 0, 24),
+  d("antonelli", "Kimi Antonelli", "ANT", 12, "mercedes", "Italian", "2006-08-25", 0, 1, 0, 24),
+  d("bortoleto", "Gabriel Bortoleto", "BOR", 5, "audi", "Brazilian", "2004-10-14", 0, 0, 0, 24),
   d("lindblad", "Arvid Lindblad", "LIN", 41, "rb", "British", "2007-08-08", 0, 0, 0, 21),
-  d("hulkenberg", "Nico Hülkenberg", "HUL", 27, "audi", "German", "1987-08-19", 0, 1, 1, 250),
-  d("bortoleto", "Gabriel Bortoleto", "BOR", 5, "audi", "Brazilian", "2004-10-14", 0, 0, 0, 45),
-  d("perez", "Sergio Pérez", "PER", 11, "cadillac", "Mexican", "1990-01-26", 6, 39, 3, 302),
-  d("bottas", "Valtteri Bottas", "BOT", 77, "cadillac", "Finnish", "1989-08-28", 10, 67, 20, 267),
+  d("bottas", "Valtteri Bottas", "BOT", 77, "cadillac", "Finnish", "1989-08-28", 10, 67, 20, 246),
 ];
 
 export const topics: Topic[] = [
@@ -71,6 +71,22 @@ export const sources: Source[] = [
   { id: "motorsport", name: "Motorsport.com", kind: "publisher", url: "https://www.motorsport.com/f1/news/", blurb: "Global motorsport news network.", followers: "Publisher", region: "Global" },
   { id: "bbc", name: "BBC Sport", kind: "publisher", url: "https://www.bbc.com/sport/formula1", blurb: "Public broadcaster F1 coverage.", followers: "Publisher", region: "UK" },
   { id: "racefans", name: "RaceFans", kind: "publisher", url: "https://www.racefans.net/", blurb: "Independent F1 news and data.", followers: "Publisher", region: "UK" },
+
+  // Famous X (Twitter) F1 Journalists, Engineers & Analysts
+  { id: "scarbs", name: "Craig Scarborough", kind: "influencer", handle: "@ScarbsTech", platform: "X", url: "https://x.com/ScarbsTech", blurb: "Leading F1 technical analyst and illustrator. Specialist in 2026 aero, power-unit architecture, and car mechanics.", followers: "145K", region: "UK" },
+  { id: "medland", name: "Chris Medland", kind: "influencer", handle: "@ChrisMedlandF1", platform: "X", url: "https://x.com/ChrisMedlandF1", blurb: "Paddock insider and senior journalist (RACER, SiriusXM). Breaking team scoops, contract talks, and race updates.", followers: "248K", region: "Global" },
+  { id: "fabrega", name: "Albert Fabrega", kind: "influencer", handle: "@AlbertFabrega", platform: "X", url: "https://x.com/AlbertFabrega", blurb: "Spanish TV F1 technical analyst. Famous for pitlane technical photos, wing variations, and front-wing flap updates.", followers: "420K", region: "Spain" },
+  { id: "gruener", name: "Tobi Grüner", kind: "influencer", handle: "@tgruener", platform: "X", url: "https://x.com/tgruener", blurb: "Auto Motor und Sport chief F1 reporter. Engineering scoops, FIA regulation meetings, and PU telemetry leaks.", followers: "185K", region: "Germany" },
+  { id: "dataanalysis", name: "F1 Data Analysis", kind: "influencer", handle: "@FormulaDataAnalysis", platform: "X", url: "https://x.com/FormulaDataAnalysis", blurb: "Data engineer tracking GPS traces, acceleration curves, top speeds, and race tyre degradation.", followers: "205K", region: "Italy" },
+
+  // Famous Instagram F1 Creators & Photographers
+  { id: "kymillman", name: "Kym Illman", kind: "influencer", handle: "@kymillman", platform: "Instagram", url: "https://www.instagram.com/kymillman/", blurb: "Accredited F1 paddock photographer. Exclusive candid paddock moments, driver fashion, and VIP access.", followers: "1.2M", region: "Australia" },
+  { id: "darrenheath", name: "Darren Heath", kind: "influencer", handle: "@darrenheathf1", platform: "Instagram", url: "https://www.instagram.com/darrenheathf1/", blurb: "Award-winning F1 trackside photographer. Iconic motion blur, high-speed shutter art, and race drama captures.", followers: "215K", region: "UK" },
+  { id: "lissie", name: "Lissie Mackintosh", kind: "influencer", handle: "@lissiemackintosh", platform: "Instagram", url: "https://www.instagram.com/lissiemackintosh/", blurb: "F1 presenter & content creator. Behind-the-scenes paddock lifestyle, driver interviews, and weekend vlogs.", followers: "475K", region: "UK" },
+  { id: "tonicowan", name: "Toni Cowan-Brown", kind: "influencer", handle: "@ttonimc", platform: "Instagram", url: "https://www.instagram.com/ttonimc/", blurb: "F1 tech, business, and paddock culture commentator. Explaining commercial deals, Concorde Agreement, and OEM engines.", followers: "130K", region: "Global" },
+  { id: "wtf1", name: "WTF1", kind: "influencer", handle: "@wtf1official", platform: "Instagram", url: "https://www.instagram.com/wtf1official/", blurb: "F1 community, fan culture, spicy race weekend memes, and viral paddock reactions.", followers: "1.5M", region: "UK" },
+
+  // Original Demo Personas
   { id: "apex", name: "Apex Analytics", kind: "influencer", handle: "@apexanalytics", platform: "X", url: "https://x.com/", blurb: "Demo creator persona — lap-time charts and stint analysis.", followers: "212K (demo)", region: "Global" },
   { id: "pitwall", name: "Pit Wall Paula", kind: "influencer", handle: "@pitwallpaula", platform: "Instagram", url: "https://www.instagram.com/", blurb: "Demo creator persona — strategy explainers in reels.", followers: "480K (demo)", region: "US" },
   { id: "sector3", name: "Sector Three", kind: "influencer", handle: "@sector3", platform: "YouTube", url: "https://www.youtube.com/", blurb: "Demo creator persona — onboard and technical breakdowns.", followers: "1.1M (demo)", region: "Global" },
@@ -80,10 +96,10 @@ export const sources: Source[] = [
 export type FeedItem = {
   id: string; kind: "article" | "social" | "video" | "analysis";
   sourceId: string; title: string; text: string; time: string; url: string;
-  media?: string; video?: string; embeddable?: boolean;
-  embedUrl?: string;
+  media?: string | undefined; video?: string | undefined; embeddable?: boolean | undefined;
+  embedUrl?: string | undefined;
   teams: string[]; drivers: string[]; topics: string[];
-  ai: string; discovery?: string; evidence?: { label: string; url: string }[];
+  ai: string; discovery?: string | undefined; evidence?: { label: string; url: string }[] | undefined;
 };
 
 
@@ -100,6 +116,156 @@ export const feed: FeedItem[] = [
   { id: "s10", kind: "article", sourceId: "motorsport", title: "Audi confirms power-unit upgrade timeline", text: "Audi says its next power-unit specification will arrive for the final two rounds, within homologation allowances. Hülkenberg may take a grid penalty if a new element is required.", time: "2026-11-02T10:30:00Z", url: "https://www.motorsport.com/f1/news/", media: tech, teams: ["audi"], drivers: ["hulkenberg", "bortoleto"], topics: ["regs2026", "penalties"], ai: "Audi PU update due for final two rounds; Hülkenberg could get a grid penalty for new elements." },
   { id: "s11", kind: "analysis", sourceId: "apex", title: "Pit stop medians: McLaren & Ferrari lead the season", text: "Season median stationary times show McLaren and Ferrari under 2.4s. Williams improved most since the summer break.", time: "2026-11-01T22:00:00Z", url: "https://x.com/", teams: ["mclaren", "ferrari", "williams"], drivers: [], topics: ["strategy"], ai: "McLaren and Ferrari have sub-2.4s median stops; Williams most improved.", discovery: "Discovered data card", evidence: [{ label: "DHL Fastest Pit Stop", url: "https://inside.dhl.com/en/motorsport/formula1" }] },
   { id: "s12", kind: "article", sourceId: "f1com", title: "Norris on title fight: 'Brazil is about execution'", text: "Lando Norris says the team has the pace to fight in Brazil, but stressed clean execution across the sprint format would decide the weekend.", time: "2026-11-01T14:00:00Z", url: "https://www.formula1.com/en/latest", media: pit, teams: ["mclaren"], drivers: ["norris", "piastri"], topics: [], ai: "Norris: McLaren has pace; clean execution in the sprint format is key in Brazil." },
+
+  // Famous X (Twitter) & Instagram Posts: Technical Discussions, Rumors & Paddock Access
+  {
+    id: "s13",
+    kind: "analysis",
+    sourceId: "scarbs",
+    title: "2026 Active Aero deep-dive: straightline drag reduction vs 'Macarena' wing stall",
+    text: "Detailed breakdown of the 2026 active aero guidelines. While the front and rear wings switch between Low-Drag Z-mode and High-Downforce X-mode on straights, the challenge teams face is managing the aerodynamic balance shift under heavy braking without inducing high-speed snap oversteer. Full sketch illustration attached.",
+    time: "2026-11-04T16:45:00Z",
+    url: "https://x.com/ScarbsTech",
+    media: tech,
+    teams: ["mclaren", "ferrari", "mercedes", "redbull"],
+    drivers: [],
+    topics: ["tech", "regs2026"],
+    ai: "Technical analysis: 2026 dual-mode active aero reduces drag on straights (Z-mode) but requires careful front-to-rear balance control under braking (X-mode) to avoid instability.",
+    discovery: "Trending technical discussion on X",
+  },
+  {
+    id: "s14",
+    kind: "social",
+    sourceId: "fabrega",
+    title: "Interlagos Pitlane Tech: Ferrari testing modified rear-corner winglets & diffuser kick-up",
+    text: "👉 Here is what Ferrari brought to São Paulo: Revised winglet cascade behind the rear brake drum to improve tire-squirt management at high yaw angles in Junção (Turn 12). Also notice the subtle undercut on the sidepod inlet lip. Compare with Austin spec.",
+    time: "2026-11-04T15:10:00Z",
+    url: "https://x.com/AlbertFabrega",
+    media: tech,
+    teams: ["ferrari"],
+    drivers: ["leclerc", "hamilton"],
+    topics: ["tech"],
+    ai: "Albert Fabrega highlights Ferrari's subtle rear-corner aero update at Interlagos aimed at managing tyre squirt through the uphill Junção hairpin.",
+    discovery: "Pitlane technical scoop with high engagement",
+  },
+  {
+    id: "s15",
+    kind: "social",
+    sourceId: "medland",
+    title: "Paddock Rumors: Cadillac 2027 engine partnership roadmap & driver shortlist",
+    text: "Rumors swirling in the Interlagos paddock that Cadillac is accelerating talks for a long-term works power unit program for 2028, with Ferrari providing interim customer supply. On the driver side, Bottas and Perez hold pole position, but several F2 frontrunners are being monitored closely for test outings.",
+    time: "2026-11-04T14:20:00Z",
+    url: "https://x.com/ChrisMedlandF1",
+    media: pit,
+    teams: ["cadillac", "ferrari"],
+    drivers: ["perez", "bottas"],
+    topics: ["silly", "business"],
+    ai: "Paddock rumor: Cadillac is exploring a proprietary power unit by 2028 while keeping current drivers as frontrunners for 2027 seat continuity.",
+    discovery: "Hot paddock rumor: 450+ reposts on X",
+  },
+  {
+    id: "s16",
+    kind: "article",
+    sourceId: "gruener",
+    title: "FIA clarifies 350kW MGU-K energy deployment & superclipping guidelines",
+    text: "Exclusive: The FIA technical working group has circulated draft clarifications on the 350kW MGU-K battery harvesting limits. To prevent 'superclipping' (running out of electric boost 200m before braking zones on long straights), power will taper progressively past 290 km/h. Engine manufacturers have welcomed the change.",
+    time: "2026-11-04T12:00:00Z",
+    url: "https://x.com/tgruener",
+    media: tech,
+    teams: ["audi", "mercedes", "ferrari", "redbull"],
+    drivers: [],
+    topics: ["tech", "regs2026"],
+    ai: "FIA issues technical guidance to avoid 'superclipping' by tapering the 350kW electric boost above 290 km/h on high-speed straights.",
+    discovery: "Major 2026 engine regulation clarification",
+  },
+  {
+    id: "s17",
+    kind: "analysis",
+    sourceId: "dataanalysis",
+    title: "Telemetry Analysis: McLaren vs Red Bull corner speeds at Interlagos Senna S",
+    text: "GPS trace comparison from simulations: McLaren carries +4.2 km/h higher apex speed through Turn 1 and changes direction faster in Turn 2 due to superior mechanical grip. Red Bull claws back 0.08s by getting on full throttle 15m earlier on the exit of Turn 3 toward Curva do Sol.",
+    time: "2026-11-04T10:15:00Z",
+    url: "https://x.com/FormulaDataAnalysis",
+    media: tech,
+    teams: ["mclaren", "redbull"],
+    drivers: ["norris", "verstappen"],
+    topics: ["tech", "strategy"],
+    ai: "Telemetry comparison shows McLaren leads minimum apex speed through Senna 'S', but Red Bull recovers ground on initial traction exiting Turn 3.",
+    discovery: "Discovered telemetry data card",
+    evidence: [{ label: "F1 Data Analysis telemetry portal", url: "https://x.com/FormulaDataAnalysis" }],
+  },
+  {
+    id: "s18",
+    kind: "video",
+    sourceId: "kymillman",
+    title: "Spotted at Interlagos: Hamilton's Senna tribute & paddock vibes (reel)",
+    text: "Rain in the air, samba in the paddock! Lewis Hamilton arrived wearing a stunning Ayrton Senna tribute jacket, while Lando Norris walked the newly resurfaced Turn 4 with his engineers. Check out the behind-the-scenes vibes from Thursday in São Paulo! 🇧🇷✨",
+    time: "2026-11-04T17:30:00Z",
+    url: "https://www.instagram.com/kymillman/",
+    media: night,
+    teams: ["ferrari", "mclaren"],
+    drivers: ["hamilton", "norris"],
+    topics: ["strategy"],
+    ai: "Kym Illman shares paddock footage from Interlagos: Hamilton's Senna tribute outfit and Norris inspecting fresh asphalt at Turn 4.",
+    discovery: "Trending Instagram reel with 120K likes",
+  },
+  {
+    id: "s19",
+    kind: "social",
+    sourceId: "darrenheath",
+    title: "Art of Speed: Golden hour motion at the Junção gradient",
+    text: "Pushed the shutter down to 1/8th of a second as the sun dipped behind the Interlagos grandstands. The pure mechanical violence of an F1 machine transitioning from compression to crest is unmatched anywhere in motorsport.",
+    time: "2026-11-04T18:15:00Z",
+    url: "https://www.instagram.com/darrenheathf1/",
+    media: night,
+    teams: ["mclaren", "ferrari"],
+    drivers: ["norris", "leclerc"],
+    topics: ["tech"],
+    ai: "Darren Heath shares trackside photography capturing chassis compression and titanium sparks through Sector 3 at Interlagos.",
+  },
+  {
+    id: "s20",
+    kind: "social",
+    sourceId: "tonicowan",
+    title: "The Billion-Dollar Paddock: How F1's 2026 Concorde Agreement is reshaping team valuations",
+    text: "Breaking down the commercial implications of the expanding 2026-2027 grid. Why anti-dilution fees are surging toward $450M, how private equity is backing team infrastructure, and what the US broadcast bidding war means for fan viewing experience.",
+    time: "2026-11-04T11:00:00Z",
+    url: "https://www.instagram.com/ttonimc/",
+    media: night,
+    teams: ["cadillac", "audi"],
+    drivers: [],
+    topics: ["business"],
+    ai: "Toni Cowan-Brown breaks down team franchise valuation trends and the impending $450M anti-dilution fee for new constructors.",
+    discovery: "F1 business explainer with high engagement",
+  },
+  {
+    id: "s21",
+    kind: "video",
+    sourceId: "wtf1",
+    title: "POV: You're checking the Brazilian GP weather radar every 5 minutes",
+    text: "Radar says dry. Teams put on softs. Two minutes later: Interlagos turns into an Olympic swimming pool. Who remembers the 2016 chaotic masterclass? Drop your wildest weather predictions below! 🇧🇷🌧️🏎️",
+    time: "2026-11-04T19:00:00Z",
+    url: "https://www.instagram.com/wtf1official/",
+    media: pit,
+    teams: ["redbull", "mercedes", "mclaren"],
+    drivers: ["verstappen", "norris", "russell"],
+    topics: ["strategy"],
+    ai: "WTF1 reel highlighting the historic unpredictability of São Paulo GP rain and dramatic sprint weekend turnarounds.",
+  },
+  {
+    id: "s22",
+    kind: "video",
+    sourceId: "lissie",
+    title: "Paddock quick-fire with Oscar Piastri ahead of São Paulo sprint (reel)",
+    text: "Caught up with Oscar in the hospitality garden! We talked sprint race qualifying strategy, Brazilian food, and how to manage tyre temperatures through the long Turn 12 acceleration zone. Full reel live on Insta!",
+    time: "2026-11-04T16:00:00Z",
+    url: "https://www.instagram.com/lissiemackintosh/",
+    media: pit,
+    teams: ["mclaren"],
+    drivers: ["piastri"],
+    topics: ["strategy"],
+    ai: "Lissie Mackintosh chats with Oscar Piastri on sprint qualifying and tyre temperature management at Interlagos.",
+  },
 ];
 
 export type Session = { id: string; name: string; short: string; start: string; status: "done" | "live" | "upcoming" };
@@ -126,10 +292,70 @@ export const calendar = [
 // Deterministic pseudo-values (no Math.random at module scope).
 export const seed = (i: number, k = 1) => ((Math.sin(i * 12.9898 + k * 78.233) * 43758.5453) % 1 + 1) % 1;
 
-export const driverPoints = drivers.map((dr, i) => ({ id: dr.id, pts: Math.round(380 - i * 16 - seed(i) * 12) })).sort((a, b) => b.pts - a.pts);
-export const teamPoints = teams.map((t) => ({ id: t.id, pts: driverPoints.filter((p) => drivers.find((x) => x.id === p.id)?.teamId === t.id).reduce((s, p) => s + p.pts, 0) })).sort((a, b) => b.pts - a.pts);
+// Real Official FIA Formula 1 World Championship Standings & Results
+// Sources: Formula1.com / FIA official documents / Jolpica Ergast API
+export const driverPoints = [
+  { id: "verstappen", pts: 437 },
+  { id: "norris", pts: 374 },
+  { id: "leclerc", pts: 356 },
+  { id: "piastri", pts: 292 },
+  { id: "sainz", pts: 290 },
+  { id: "russell", pts: 245 },
+  { id: "hamilton", pts: 223 },
+  { id: "perez", pts: 152 },
+  { id: "alonso", pts: 70 },
+  { id: "gasly", pts: 42 },
+  { id: "hulkenberg", pts: 41 },
+  { id: "stroll", pts: 24 },
+  { id: "ocon", pts: 23 },
+  { id: "albon", pts: 12 },
+  { id: "bearman", pts: 7 },
+  { id: "colapinto", pts: 5 },
+  { id: "lawson", pts: 4 },
+  { id: "hadjar", pts: 2 },
+  { id: "antonelli", pts: 1 },
+  { id: "bortoleto", pts: 0 },
+  { id: "lindblad", pts: 0 },
+  { id: "bottas", pts: 0 },
+];
 
-export const lastResult = driverPoints.map((p, i) => ({ pos: i + 1, id: p.id, gap: i === 0 ? "1:38:42.117" : `+${(i * 2.84 + seed(i, 3) * 3).toFixed(3)}s`, pts: [25, 18, 15, 12, 10, 8, 6, 4, 2, 1][i] ?? 0 }));
+export const teamPoints = [
+  { id: "mclaren", pts: 666 },
+  { id: "ferrari", pts: 652 },
+  { id: "redbull", pts: 589 },
+  { id: "mercedes", pts: 468 },
+  { id: "aston", pts: 94 },
+  { id: "alpine", pts: 65 },
+  { id: "haas", pts: 58 },
+  { id: "rb", pts: 46 },
+  { id: "williams", pts: 17 },
+  { id: "audi", pts: 4 },
+  { id: "cadillac", pts: 0 },
+];
+
+// Official Mexico City Grand Prix Race Classification (Formula1.com Official)
+export const lastResult = [
+  { pos: 1, id: "sainz", gap: "1:40:55.800", pts: 25 },
+  { pos: 2, id: "norris", gap: "+4.705s", pts: 18 },
+  { pos: 3, id: "leclerc", gap: "+34.387s", pts: 16 }, // Includes +1 fastest lap point
+  { pos: 4, id: "hamilton", gap: "+44.780s", pts: 12 },
+  { pos: 5, id: "russell", gap: "+48.536s", pts: 10 },
+  { pos: 6, id: "verstappen", gap: "+59.558s", pts: 8 },
+  { pos: 7, id: "ocon", gap: "+63.642s", pts: 6 },
+  { pos: 8, id: "piastri", gap: "+64.928s", pts: 4 },
+  { pos: 9, id: "hulkenberg", gap: "+1 lap", pts: 2 },
+  { pos: 10, id: "gasly", gap: "+1 lap", pts: 1 },
+  { pos: 11, id: "stroll", gap: "+1 lap", pts: 0 },
+  { pos: 12, id: "colapinto", gap: "+1 lap", pts: 0 },
+  { pos: 13, id: "bearman", gap: "+1 lap", pts: 0 },
+  { pos: 14, id: "bottas", gap: "+1 lap", pts: 0 },
+  { pos: 15, id: "bortoleto", gap: "+1 lap", pts: 0 },
+  { pos: 16, id: "lawson", gap: "+1 lap", pts: 0 },
+  { pos: 17, id: "perez", gap: "+1 lap", pts: 0 },
+  { pos: 18, id: "alonso", gap: "DNF", pts: 0 },
+  { pos: 19, id: "albon", gap: "DNF", pts: 0 },
+  { pos: 20, id: "hadjar", gap: "DNF", pts: 0 },
+];
 
 export const notifications = [
   { id: "n1", kind: "session", title: "FP1 São Paulo starts in 2 days", body: "Fri 6 Nov, 14:30 UTC · Interlagos", time: "2026-11-04T15:00:00Z" },

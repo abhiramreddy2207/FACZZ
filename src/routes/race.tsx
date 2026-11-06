@@ -19,7 +19,7 @@ export const Route = createFileRoute("/race")({
 
 function Race() {
   const tabs = raceWeekend.sessions.map((s) => s.short);
-  const [tab, setTab] = useState(tabs[tabs.length - 1]);
+  const [tab, setTab] = useState<string>(tabs[tabs.length - 1] ?? "RACE");
   const [view, setView] = useState<"Timing" | "Results">("Timing");
   const s = raceWeekend.sessions.find((x) => x.short === tab);
   if (!s) return null;

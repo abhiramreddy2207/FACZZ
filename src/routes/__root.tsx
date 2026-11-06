@@ -117,6 +117,12 @@ function RootComponent() {
     if (!getState().onboarded && path === "/") navigate({ to: "/welcome" });
   }, [path, navigate]);
 
+  useEffect(() => {
+    if (typeof window !== "undefined" && "serviceWorker" in navigator) {
+      navigator.serviceWorker.register("/sw.js").catch(() => {});
+    }
+  }, []);
+
   return (
     <QueryClientProvider client={queryClient}>
       <AppShell>

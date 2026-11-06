@@ -24,7 +24,8 @@ function decode(value: string) {
 
 function tag(xml: string, name: string) {
   const match = xml.match(new RegExp(`<${name}(?:\\s[^>]*)?>([\\s\\S]*?)<\\/${name}>`, "i"));
-  return match ? decode(match[1].replace(/<[^>]+>/g, " ").replace(/\s+/g, " ")) : "";
+  const inner = match?.[1];
+  return inner ? decode(inner.replace(/<[^>]+>/g, " ").replace(/\s+/g, " ")) : "";
 }
 
 function embedFor(url: string) {

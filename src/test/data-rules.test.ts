@@ -16,12 +16,12 @@ describe("Complete Data menu", () => {
   });
   it("keeps damage costs unavailable rather than inventing facts", () => {
     const ds = getDataset("destructors-championship");
-    expect(ds?.rows().every((r) => r.cost === "Not available")).toBe(true);
+    expect(ds?.rows().every((r) => r["cost"] === "Not available")).toBe(true);
   });
   it("filters actual rows by selected team and driver", () => {
     const ds = getDataset("driver-standings"); if (!ds) throw Error("Missing standings");
     const rows = filteredData(ds, { season: "2026", event: "Mexico City GP", session: "race", team: "mclaren", driver: "norris" });
-    expect(rows).toHaveLength(1); expect(rows[0].driver).toBe("norris");
+    expect(rows).toHaveLength(1); expect(rows[0]?.driver).toBe("norris");
   });
   it("changes classifications with session, event and season choices", () => {
     const baseline = sessionRows("race", "Mexico City GP", "2026");
@@ -39,7 +39,7 @@ describe("Prototype preference rules", () => {
   });
   it("adds and removes story bookmarks", () => {
     setState({ bookmarks: [] }); const item = { id: "s1", type: "story" as const, title: "Sample", href: "/story/s1" };
-    toggleBookmark(item); expect(getState().bookmarks[0].id).toBe("s1"); toggleBookmark(item); expect(getState().bookmarks).toHaveLength(0);
+    toggleBookmark(item); expect(getState().bookmarks[0]?.id).toBe("s1"); toggleBookmark(item); expect(getState().bookmarks).toHaveLength(0);
   });
   it("persists theme and chosen alert timing on the device", () => {
     setState({ theme: "dark", alertLead: 15 });

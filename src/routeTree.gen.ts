@@ -16,6 +16,7 @@ import { Route as ProfileRouteImport } from './routes/profile'
 import { Route as RaceRouteImport } from './routes/race'
 import { Route as SavedRouteImport } from './routes/saved'
 import { Route as WelcomeRouteImport } from './routes/welcome'
+import { Route as ApiDownloadApkRouteImport } from './routes/api/download-apk'
 import { Route as ApiLiveFeedRouteImport } from './routes/api/live-feed'
 import { Route as DataIndexRouteImport } from './routes/data.index'
 import { Route as DataSlugRouteImport } from './routes/data.$slug'
@@ -57,6 +58,11 @@ const SavedRoute = SavedRouteImport.update({
 const WelcomeRoute = WelcomeRouteImport.update({
   id: '/welcome',
   path: '/welcome',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ApiDownloadApkRoute = ApiDownloadApkRouteImport.update({
+  id: '/api/download-apk',
+  path: '/api/download-apk',
   getParentRoute: () => rootRouteImport,
 } as any)
 const ApiLiveFeedRoute = ApiLiveFeedRouteImport.update({
@@ -103,6 +109,7 @@ export interface FileRoutesByFullPath {
   '/race': typeof RaceRoute
   '/saved': typeof SavedRoute
   '/welcome': typeof WelcomeRoute
+  '/api/download-apk': typeof ApiDownloadApkRoute
   '/api/live-feed': typeof ApiLiveFeedRoute
   '/data/$slug': typeof DataSlugRoute
   '/driver/$id': typeof DriverIdRoute
@@ -119,6 +126,7 @@ export interface FileRoutesByTo {
   '/race': typeof RaceRoute
   '/saved': typeof SavedRoute
   '/welcome': typeof WelcomeRoute
+  '/api/download-apk': typeof ApiDownloadApkRoute
   '/api/live-feed': typeof ApiLiveFeedRoute
   '/data/$slug': typeof DataSlugRoute
   '/driver/$id': typeof DriverIdRoute
@@ -136,6 +144,7 @@ export interface FileRoutesById {
   '/race': typeof RaceRoute
   '/saved': typeof SavedRoute
   '/welcome': typeof WelcomeRoute
+  '/api/download-apk': typeof ApiDownloadApkRoute
   '/api/live-feed': typeof ApiLiveFeedRoute
   '/data/$slug': typeof DataSlugRoute
   '/driver/$id': typeof DriverIdRoute
@@ -154,6 +163,7 @@ export interface FileRouteTypes {
     | '/race'
     | '/saved'
     | '/welcome'
+    | '/api/download-apk'
     | '/api/live-feed'
     | '/data/$slug'
     | '/driver/$id'
@@ -170,6 +180,7 @@ export interface FileRouteTypes {
     | '/race'
     | '/saved'
     | '/welcome'
+    | '/api/download-apk'
     | '/api/live-feed'
     | '/data/$slug'
     | '/driver/$id'
@@ -186,6 +197,7 @@ export interface FileRouteTypes {
     | '/race'
     | '/saved'
     | '/welcome'
+    | '/api/download-apk'
     | '/api/live-feed'
     | '/data/$slug'
     | '/driver/$id'
@@ -203,6 +215,7 @@ export interface RootRouteChildren {
   RaceRoute: typeof RaceRoute
   SavedRoute: typeof SavedRoute
   WelcomeRoute: typeof WelcomeRoute
+  ApiDownloadApkRoute: typeof ApiDownloadApkRoute
   ApiLiveFeedRoute: typeof ApiLiveFeedRoute
   DataSlugRoute: typeof DataSlugRoute
   DriverIdRoute: typeof DriverIdRoute
@@ -261,6 +274,13 @@ declare module '@tanstack/react-router' {
       path: '/welcome'
       fullPath: '/welcome'
       preLoaderRoute: typeof WelcomeRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/api/download-apk': {
+      id: '/api/download-apk'
+      path: '/api/download-apk'
+      fullPath: '/api/download-apk'
+      preLoaderRoute: typeof ApiDownloadApkRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/api/live-feed': {
@@ -323,6 +343,7 @@ const rootRouteChildren: RootRouteChildren = {
   RaceRoute: RaceRoute,
   SavedRoute: SavedRoute,
   WelcomeRoute: WelcomeRoute,
+  ApiDownloadApkRoute: ApiDownloadApkRoute,
   ApiLiveFeedRoute: ApiLiveFeedRoute,
   DataSlugRoute: DataSlugRoute,
   DriverIdRoute: DriverIdRoute,

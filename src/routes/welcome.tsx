@@ -32,11 +32,12 @@ function Welcome() {
   }, []);
   const tog = (k: EntityKind, id: string) => setSel((s) => ({ ...s, [k]: s[k].includes(id) ? s[k].filter((x) => x !== id) : [...s[k], id] }));
   const finish = (skip = false) => {
-    setState({ onboarded: true, ...(skip ? {} : { all, ...sel }), ...(signin && email ? { user: { name: email.split("@")[0], email } } : {}) });
+    const userName = email.split("@")[0] ?? "user";
+    setState({ onboarded: true, ...(skip ? {} : { all, ...sel }), ...(signin && email ? { user: { name: userName, email } } : {}) });
     navigate({ to: "/" });
   };
   const count = Object.values(sel).flat().length;
-  const Section = ({ title, kind, items }: { title: string; kind: EntityKind; items: { id: string; name: string; color?: string }[] }) => (
+  const Section = ({ title, kind, items }: { title: string; kind: EntityKind; items: { id: string; name: string; color?: string | undefined }[] }) => (
     <section className="mt-8">
       <h2 className="mb-3 text-sm font-bold uppercase tracking-[0.16em] text-muted-foreground">{title}</h2>
       <div className="flex flex-wrap gap-2">{items.map((i) => <Chip key={i.id} color={i.color} active={sel[kind].includes(i.id)} onClick={() => tog(kind, i.id)}>{i.name}</Chip>)}</div>

@@ -13,12 +13,12 @@ export function dataCapabilities(ds: Dataset) {
 export function filteredData(ds: Dataset, f: DataFilters): Row[] {
   let rows = ds.rows().map((row) => ({ ...row }));
   if (ds.race || ds.slug === "results") rows = sessionRows(f.session, f.event, f.season).map((r) => ({ ...r, teamName: getTeam(r.team)?.name ?? r.team }));
-  if (ds.slug === "schedule") rows = rows.map((r) => ({ ...r, date: String(r.date).replace("2026", f.season), status: f.season === "2025" ? "Completed (sample)" : r.status }));
+  if (ds.slug === "schedule") rows = rows.map((r) => ({ ...r, date: String(r["date"] ?? "").replace("2026", f.season), status: f.season === "2025" ? "Completed (sample)" : (r["status"] ?? "Upcoming") }));
   if (ds.slug === "track-dna") {
     const track = calendar.find((c) => c.name === f.event)?.circuit;
-    rows = rows.filter((r) => r.name === track);
+    rows = rows.filter((r) => r["name"] === track);
   }
-  if (ds.slug === "tech-updates") rows = rows.filter((r) => r.event === f.event);
+  if (ds.slug === "tech-updates") rows = rows.filter((r) => r["event"] === f.event);
   if (seasonSlugs.has(ds.slug) && f.season === "2025" && ds.slug !== "schedule") {
     rows = rows.map((r, i) => Object.fromEntries(Object.entries(r).map(([k, value]) => [k,
       typeof value === "number" && !["pos", "round", "number"].includes(k) ? +(value * (0.75 + seed(i, 25) * 0.15)).toFixed(2) : value])) as Row);

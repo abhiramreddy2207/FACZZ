@@ -225,7 +225,7 @@ export function RacePaceExplorer({
               const highlighted = (highlight === "best" && index === 0) || (highlight === "personal" && lap.seconds === personalBests.get(lap.driverId));
               return <tr key={`${lap.driverId}-${lap.lap}`} className={`border-t border-border/80 hover:bg-muted/40 ${highlighted ? "bg-primary/5" : ""}`}>
               <td className="px-4 py-3 font-mono text-muted-foreground">{String(index + 1).padStart(2, "0")}</td>
-              <td className="px-4 py-3 font-semibold"><span className="mr-2 inline-block h-5 w-1 rounded-full align-middle" style={{ background: lap.color }} />{lap.code}<span className="ml-2 hidden text-muted-foreground sm:inline">{lap.driver}</span>{highlighted && highlight !== "none" && <span className="ml-2 rounded-full bg-primary/10 px-2 py-0.5 text-[10px] font-bold text-primary">{highlight === "best" ? "FASTEST" : "PB"}</span>}</td>
+              <td className="px-4 py-3 font-semibold"><span className="mr-2 inline-block h-5 w-1 rounded-full align-middle" style={{ background: lap.color }} />{lap.code}<span className="ml-2 hidden text-muted-foreground sm:inline">{lap.driver}</span>{highlighted && <span className="ml-2 rounded-full bg-primary/10 px-2 py-0.5 text-[10px] font-bold text-primary">{highlight === "best" ? "FASTEST" : "PB"}</span>}</td>
               <td className="px-4 py-3 text-muted-foreground">{lap.team}</td><td className="px-4 py-3 font-mono">{lap.lap}</td><td className="px-4 py-3 text-right font-mono font-semibold">{formatLap(lap.seconds)}</td>
             </tr>;
             })}</tbody>

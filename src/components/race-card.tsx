@@ -26,8 +26,10 @@ function countdown(ms: number) {
 
 export function RaceCard() {
   const { mode, now } = useRaceStatus();
-  const next = raceWeekend.sessions.find((x) => now === null || +new Date(x.start) > now) ?? raceWeekend.sessions[0];
+  const fallbackSession = raceWeekend.sessions[0] ?? { id: "fp1", name: "Practice 1", short: "FP1", start: "2026-11-06T14:30:00Z", status: "upcoming" as const };
+  const next = raceWeekend.sessions.find((x) => now === null || +new Date(x.start) > now) ?? fallbackSession;
   const prev = calendar.find((c) => c.round === raceWeekend.round - 1);
+  const winnerId = lastResult[0]?.id;
   return (
     <Link to="/race" className="group relative block overflow-hidden rounded-2xl bg-foreground p-5 text-background md:p-6">
       <div className="checker-stripe absolute inset-x-0 top-0 h-1.5" aria-hidden />
@@ -54,7 +56,7 @@ export function RaceCard() {
       </>)}
       {mode === "results" && (<>
         <p className="mt-2 inline-flex items-center gap-1.5 text-sm opacity-70"><Flag className="h-4 w-4" /> Results · {prev?.name}</p>
-        <h2 className="mt-1 text-2xl font-extrabold">{getDriver(lastResult[0].id)?.name} wins (sample)</h2>
+        <h2 className="mt-1 text-2xl font-extrabold">{winnerId ? getDriver(winnerId)?.name : "Winner"} wins (sample)</h2>
         <div className="mt-3 flex gap-4 font-mono text-sm">{lastResult.slice(0, 3).map((r) => <span key={r.id}>P{r.pos} {getDriver(r.id)?.code}</span>)}</div>
         <span className="mt-3 inline-flex items-center gap-1 text-sm font-semibold">Full classification <ChevronRight className="h-4 w-4" /></span>
       </>)}

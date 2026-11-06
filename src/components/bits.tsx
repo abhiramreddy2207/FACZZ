@@ -26,7 +26,7 @@ export function PageHeader({ eyebrow, title, children }: { eyebrow?: string; tit
   );
 }
 
-export function Chip({ active, onClick, children, color }: { active?: boolean; onClick?: () => void; children: ReactNode; color?: string }) {
+export function Chip({ active, onClick, children, color }: { active?: boolean; onClick?: () => void; children: ReactNode; color?: string | undefined }) {
   return (
     <Button variant="unstyled" type="button" onClick={onClick} aria-pressed={active}
       className={cn("inline-flex shrink-0 items-center gap-1.5 rounded-full border px-3.5 py-1.5 text-sm font-medium transition-colors",
@@ -84,7 +84,7 @@ export function SourcesFooter({ provider, url, updated }: { provider: string; ur
   );
 }
 
-export function Avatar({ label, color }: { label: string; color?: string }) {
+export function Avatar({ label, color }: { label: string; color?: string | undefined }) {
   return (
     <span className="relative inline-flex h-11 w-11 shrink-0 items-center justify-center overflow-hidden rounded-lg bg-secondary font-display text-sm font-extrabold">
       {color && <span className="absolute inset-x-0 bottom-0 h-1" style={{ background: color }} aria-hidden />}
