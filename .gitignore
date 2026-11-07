@@ -31,3 +31,11 @@ dist-ssr
 *.njsproj
 *.sln
 *.sw?
+
+# Android Signing Keys & Build Artifacts (NEVER COMMIT CREDENTIALS)
+*.keystore
+*.jks
+android/keystores/
+android/app/build/
+android/build/
+.gradle/

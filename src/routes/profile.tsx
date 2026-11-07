@@ -777,16 +777,17 @@ function Profile() {
               </h3>
             </div>
             <p className="text-xs md:text-sm text-foreground/90 leading-relaxed">
-              Open <strong>Chrome</strong> on your Android phone and go to your live local network address:
+              Open <strong>Chrome</strong> on your Android phone and navigate to the official production address:
             </p>
             <div className="flex items-center gap-2 bg-card p-3 rounded-xl border border-border">
               <code className="text-xs md:text-sm font-mono font-bold text-primary flex-1 select-all">
-                http://192.168.29.195:8080/
+                {typeof window !== "undefined" ? window.location.origin : "https://faczz.app"}
               </code>
               <Button
                 variant="unstyled"
                 onClick={() => {
-                  navigator.clipboard.writeText("http://192.168.29.195:8080/");
+                  const url = typeof window !== "undefined" ? window.location.origin : "https://faczz.app";
+                  navigator.clipboard.writeText(url);
                   toast.success("Link copied! Open this in Chrome on your Android phone.");
                 }}
                 className="rounded-lg bg-primary/10 px-3 py-1.5 text-xs font-bold text-primary hover:bg-primary/20"
