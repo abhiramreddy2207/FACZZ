@@ -53,6 +53,10 @@ export const drivers: Driver[] = [
   d("lawson", "Liam Lawson", "LAW", 30, "rb", "New Zealander", "2002-02-11", 0, 0, 0, 11),
   d("bottas", "Valtteri Bottas", "BOT", 77, "audi", "Finnish", "1989-08-28", 10, 67, 20, 246),
   d("sargeant", "Logan Sargeant", "SAR", 2, "williams", "American", "2000-12-31", 0, 0, 0, 36),
+  d("vettel", "Sebastian Vettel", "VET", 5, "aston", "German", "1987-07-03", 53, 122, 57, 299),
+  d("schumacher", "Mick Schumacher", "MSC", 47, "haas", "German", "1999-03-22", 0, 0, 0, 43),
+  d("latifi", "Nicholas Latifi", "LAT", 6, "williams", "Canadian", "1995-06-29", 0, 0, 0, 61),
+  d("devries", "Nyck de Vries", "DEV", 21, "rb", "Dutch", "1995-02-06", 0, 0, 0, 11),
   d("antonelli", "Kimi Antonelli", "ANT", 12, "mercedes", "Italian", "2006-08-25", 0, 0, 0, 0),
   d("hadjar", "Isack Hadjar", "HAD", 6, "redbull", "French", "2004-09-28", 0, 0, 0, 0),
   d("bortoleto", "Gabriel Bortoleto", "BOR", 5, "audi", "Brazilian", "2004-10-14", 0, 0, 0, 0),
@@ -327,9 +331,8 @@ export const calendar = [
 // Deterministic pseudo-values (no Math.random at module scope).
 export const seed = (i: number, k = 1) => ((Math.sin(i * 12.9898 + k * 78.233) * 43758.5453) % 1 + 1) % 1;
 
-// Real Official FIA Formula 1 World Championship Standings (2024 Final)
-// Sources: Formula1.com / FIA official documents / Jolpica Ergast API
-export const driverPoints = [
+// Real Official FIA Formula 1 World Championship Standings (Authentic Formula1.com / Jolpica Ergast Data)
+export const driverPoints2024 = [
   { id: "verstappen", pts: 437 },
   { id: "norris", pts: 374 },
   { id: "leclerc", pts: 356 },
@@ -355,7 +358,57 @@ export const driverPoints = [
   { id: "sargeant", pts: 0 },
 ];
 
-export const teamPoints = [
+export const driverPoints2023 = [
+  { id: "verstappen", pts: 575 },
+  { id: "perez", pts: 285 },
+  { id: "hamilton", pts: 234 },
+  { id: "alonso", pts: 206 },
+  { id: "leclerc", pts: 206 },
+  { id: "norris", pts: 205 },
+  { id: "sainz", pts: 200 },
+  { id: "russell", pts: 175 },
+  { id: "piastri", pts: 97 },
+  { id: "stroll", pts: 74 },
+  { id: "gasly", pts: 62 },
+  { id: "ocon", pts: 58 },
+  { id: "albon", pts: 27 },
+  { id: "tsunoda", pts: 17 },
+  { id: "bottas", pts: 10 },
+  { id: "hulkenberg", pts: 9 },
+  { id: "ricciardo", pts: 6 },
+  { id: "zhou", pts: 6 },
+  { id: "magnussen", pts: 3 },
+  { id: "lawson", pts: 2 },
+  { id: "sargeant", pts: 1 },
+  { id: "devries", pts: 0 },
+];
+
+export const driverPoints2022 = [
+  { id: "verstappen", pts: 454 },
+  { id: "leclerc", pts: 308 },
+  { id: "perez", pts: 305 },
+  { id: "russell", pts: 275 },
+  { id: "sainz", pts: 246 },
+  { id: "hamilton", pts: 240 },
+  { id: "norris", pts: 122 },
+  { id: "ocon", pts: 92 },
+  { id: "alonso", pts: 81 },
+  { id: "bottas", pts: 49 },
+  { id: "ricciardo", pts: 37 },
+  { id: "vettel", pts: 37 },
+  { id: "magnussen", pts: 25 },
+  { id: "gasly", pts: 23 },
+  { id: "stroll", pts: 18 },
+  { id: "schumacher", pts: 12 },
+  { id: "tsunoda", pts: 12 },
+  { id: "zhou", pts: 6 },
+  { id: "albon", pts: 4 },
+  { id: "latifi", pts: 2 },
+  { id: "devries", pts: 2 },
+  { id: "hulkenberg", pts: 0 },
+];
+
+export const teamPoints2024 = [
   { id: "mclaren", pts: 666 },
   { id: "ferrari", pts: 652 },
   { id: "redbull", pts: 589 },
@@ -365,9 +418,50 @@ export const teamPoints = [
   { id: "haas", pts: 58 },
   { id: "rb", pts: 46 },
   { id: "williams", pts: 17 },
-  { id: "audi", pts: 4 }, // Stake F1 Team Kick Sauber
+  { id: "audi", pts: 4 },
   { id: "cadillac", pts: 0 },
 ];
+
+export const teamPoints2023 = [
+  { id: "redbull", pts: 860 },
+  { id: "mercedes", pts: 409 },
+  { id: "ferrari", pts: 406 },
+  { id: "mclaren", pts: 302 },
+  { id: "aston", pts: 280 },
+  { id: "alpine", pts: 120 },
+  { id: "williams", pts: 28 },
+  { id: "rb", pts: 25 },
+  { id: "audi", pts: 16 },
+  { id: "haas", pts: 12 },
+];
+
+export const teamPoints2022 = [
+  { id: "redbull", pts: 759 },
+  { id: "ferrari", pts: 554 },
+  { id: "mercedes", pts: 515 },
+  { id: "alpine", pts: 173 },
+  { id: "mclaren", pts: 159 },
+  { id: "audi", pts: 55 },
+  { id: "aston", pts: 55 },
+  { id: "haas", pts: 37 },
+  { id: "rb", pts: 35 },
+  { id: "williams", pts: 8 },
+];
+
+export const driverPoints = driverPoints2024;
+export const teamPoints = teamPoints2024;
+
+export function getDriverPointsForSeason(season: string) {
+  if (season === "2023") return driverPoints2023;
+  if (season === "2022") return driverPoints2022;
+  return driverPoints2024;
+}
+
+export function getTeamPointsForSeason(season: string) {
+  if (season === "2023") return teamPoints2023;
+  if (season === "2022") return teamPoints2022;
+  return teamPoints2024;
+}
 
 // Official Formula 1 Mexico City Grand Prix Race Classification (Formula1.com Official)
 export const lastResult = [

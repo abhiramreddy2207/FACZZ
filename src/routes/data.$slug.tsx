@@ -134,9 +134,9 @@ function DataDetail() {
         />
         {capabilities.season && (
           <select aria-label="Season" className={sel} value={season} onChange={(e) => setSeason(e.target.value)}>
-            <option value="2024">2024 (Official Final)</option>
-            <option value="2025">2025 (Championship)</option>
-            <option value="2026">2026 (Regulations)</option>
+            <option value="2024">2024 Season (Official Final)</option>
+            <option value="2023">2023 Season (Official Final)</option>
+            <option value="2022">2022 Season (Official Final)</option>
           </select>
         )}
         {capabilities.event && (

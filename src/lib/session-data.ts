@@ -1,7 +1,7 @@
 import { drivers, seed } from "./demo-data";
 
 /** Deterministic, distinct sample classifications for every weekend session. */
-export function sessionRows(session: string, event = "Mexico City GP", season = "2026") {
+export function sessionRows(session: string, event = "Mexico City GP", season = "2024") {
   const key = `${season}:${event}:${session}`;
   const salt = [...key].reduce((sum, char) => sum + char.charCodeAt(0), 0);
   const race = session === "race" || session === "sprint";
