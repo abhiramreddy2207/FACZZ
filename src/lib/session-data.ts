@@ -152,15 +152,20 @@ export function sessionRows(session: string, event = "São Paulo GP", season = "
     const isAbuDhabiOfficial = isAbuDhabi;
 
     // Helper to parse "M:SS.mmm" to total seconds
-    const parseLapToSec = (timeStr: string) => {
+    const parseLapToSec = (timeStr?: string) => {
+      if (!timeStr) return 70;
       const parts = timeStr.split(":");
-      if (parts.length === 2) {
-        return parseInt(parts[0], 10) * 60 + parseFloat(parts[1]);
+      const minStr = parts[0];
+      const secStr = parts[1];
+      if (minStr !== undefined && secStr !== undefined) {
+        return parseInt(minStr, 10) * 60 + parseFloat(secStr);
       }
       return parseFloat(timeStr) || 70;
     };
 
-    const p1BaseSec = session === "fp1" ? parseLapToSec(officialFP1TimesInterlagos[0]) : parseLapToSec(officialFP2TimesInterlagos[0]);
+    const p1BaseSec = session === "fp1"
+      ? parseLapToSec(officialFP1TimesInterlagos[0])
+      : parseLapToSec(officialFP2TimesInterlagos[0]);
     const driverPracticeSec = isInterlagos && session === "fp2"
       ? parseLapToSec(officialFP2TimesInterlagos[i] ?? "1:11.646")
       : isInterlagos && session === "fp1"

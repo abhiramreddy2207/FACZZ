@@ -36,16 +36,16 @@ describe("5-Loop F1 Data & Telemetry Pipeline Verification", () => {
     // Faczz weekend timeline alignment
     expect(raceWeekend.name).toBe("São Paulo Grand Prix");
     expect(raceWeekend.round).toBe(21);
-    expect(raceWeekend.sessions[0].short).toBe("FP1");
-    expect(raceWeekend.sessions[0].status).toBe("done");
-    expect(raceWeekend.sessions[1].short).toBe("FP2");
-    expect(raceWeekend.sessions[1].status).toBe("done");
-    expect(raceWeekend.sessions[2].short).toBe("FP3");
-    expect(raceWeekend.sessions[2].status).toBe("upcoming");
-    expect(raceWeekend.sessions[3].short).toBe("Q");
-    expect(raceWeekend.sessions[3].status).toBe("upcoming");
-    expect(raceWeekend.sessions[4].short).toBe("RACE");
-    expect(raceWeekend.sessions[4].status).toBe("upcoming");
+    expect(raceWeekend.sessions[0]?.short).toBe("FP1");
+    expect(raceWeekend.sessions[0]?.status).toBe("done");
+    expect(raceWeekend.sessions[1]?.short).toBe("FP2");
+    expect(raceWeekend.sessions[1]?.status).toBe("done");
+    expect(raceWeekend.sessions[2]?.short).toBe("FP3");
+    expect(raceWeekend.sessions[2]?.status).toBe("upcoming");
+    expect(raceWeekend.sessions[3]?.short).toBe("Q");
+    expect(raceWeekend.sessions[3]?.status).toBe("upcoming");
+    expect(raceWeekend.sessions[4]?.short).toBe("RACE");
+    expect(raceWeekend.sessions[4]?.status).toBe("upcoming");
   });
 
   // =========================================================================
@@ -84,19 +84,25 @@ describe("5-Loop F1 Data & Telemetry Pipeline Verification", () => {
 
     const rows = timingResult.data;
     const p1 = rows[0];
-    expect(p1.pos).toBe(1);
-    expect(p1.gap).toBe("LEADER");
-    expect(p1.gapSeconds).toBe(0);
-    expect(p1.interval).toBe("—");
-    expect(p1.lastLapTime).toMatch(/^1:\d{2}\.\d{3}$/);
+    expect(p1).toBeDefined();
+    if (p1) {
+      expect(p1.pos).toBe(1);
+      expect(p1.gap).toBe("LEADER");
+      expect(p1.gapSeconds).toBe(0);
+      expect(p1.interval).toBe("—");
+      expect(p1.lastLapTime).toMatch(/^1:\d{2}\.\d{3}$/);
+    }
 
     // Verify positions P2..Pn have authentic ascending deltas
     for (let i = 1; i < rows.length; i++) {
       const row = rows[i];
-      expect(row.pos).toBe(i + 1);
-      expect(row.gap.startsWith("+")).toBe(true);
-      expect(row.gapSeconds).toBeGreaterThanOrEqual(0);
-      expect(row.lastLapTime).toMatch(/^1:\d{2}\.\d{3}$/);
+      expect(row).toBeDefined();
+      if (row) {
+        expect(row.pos).toBe(i + 1);
+        expect(row.gap.startsWith("+")).toBe(true);
+        expect(row.gapSeconds).toBeGreaterThanOrEqual(0);
+        expect(row.lastLapTime).toMatch(/^1:\d{2}\.\d{3}$/);
+      }
     }
   });
 
@@ -130,31 +136,31 @@ describe("5-Loop F1 Data & Telemetry Pipeline Verification", () => {
     // 1. Present Week FP2 (Completed practice)
     const fp2Rows = sessionRows("fp2", "São Paulo GP", "2026");
     expect(fp2Rows).toHaveLength(20);
-    expect(fp2Rows[0].gap).toBe("LEADER");
-    expect(fp2Rows[0].last).toBe("1:10.366");
-    expect(fp2Rows[1].gap).toBe("+0.124s");
-    expect(fp2Rows[1].last).toBe("1:10.490");
-    expect(fp2Rows[0].pts).toBe(0); // Practice does not award points
+    expect(fp2Rows[0]?.gap).toBe("LEADER");
+    expect(fp2Rows[0]?.last).toBe("1:10.366");
+    expect(fp2Rows[1]?.gap).toBe("+0.124s");
+    expect(fp2Rows[1]?.last).toBe("1:10.490");
+    expect(fp2Rows[0]?.pts).toBe(0); // Practice does not award points
 
     // 2. Present Week FP1 (Completed practice)
     const fp1Rows = sessionRows("fp1", "São Paulo GP", "2026");
     expect(fp1Rows).toHaveLength(20);
-    expect(fp1Rows[0].gap).toBe("LEADER");
-    expect(fp1Rows[0].last).toBe("1:10.610");
-    expect(fp1Rows[1].gap).toBe("+0.181s");
+    expect(fp1Rows[0]?.gap).toBe("LEADER");
+    expect(fp1Rows[0]?.last).toBe("1:10.610");
+    expect(fp1Rows[1]?.gap).toBe("+0.181s");
 
     // 3. Present Week Upcoming Sessions (FP3, Qualifying, Race)
     const fp3Rows = sessionRows("fp3", "São Paulo GP", "2026");
-    expect(fp3Rows[0].gap).toBe("LEADER"); // Benchmark pace, no fake race gaps
+    expect(fp3Rows[0]?.gap).toBe("LEADER"); // Benchmark pace, no fake race gaps
 
     // 4. Past Week Completed Race (Official Abu Dhabi GP 2024 final)
     const pastRaceRows = sessionRows("race", "Abu Dhabi GP", "2024");
     expect(pastRaceRows).toHaveLength(20);
-    expect(pastRaceRows[0].driver).toBe("norris");
-    expect(pastRaceRows[0].pts).toBe(25);
-    expect(pastRaceRows[1].driver).toBe("sainz");
-    expect(pastRaceRows[1].pts).toBe(18);
-    expect(pastRaceRows[2].driver).toBe("leclerc");
-    expect(pastRaceRows[2].pts).toBe(15);
+    expect(pastRaceRows[0]?.driver).toBe("norris");
+    expect(pastRaceRows[0]?.pts).toBe(25);
+    expect(pastRaceRows[1]?.driver).toBe("sainz");
+    expect(pastRaceRows[1]?.pts).toBe(18);
+    expect(pastRaceRows[2]?.driver).toBe("leclerc");
+    expect(pastRaceRows[2]?.pts).toBe(15);
   });
 });
