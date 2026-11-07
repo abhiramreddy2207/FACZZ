@@ -16,7 +16,40 @@ export type CircuitInfo = {
   };
 };
 
-export const DEFAULT_CIRCUIT: CircuitInfo = {
+export const INTERLAGOS_CIRCUIT: CircuitInfo = {
+  name: "São Paulo Grand Prix",
+  circuit: "Autódromo José Carlos Pace",
+  location: "Interlagos, São Paulo, Brazil",
+  lengthKm: 4.309,
+  turns: 15,
+  drsZones: 2,
+  lapRecord: { time: "1:10.540", driver: "Valtteri Bottas", year: 2018 },
+  sectors: {
+    s1: {
+      name: "Sector 1 (Turns 1 - 3: Senna 'S')",
+      length: "1.38 km",
+      record: "18.350s",
+      driver: "Norris",
+      desc: "Downhill braking from 335 km/h into downhill Senna 'S' and Curva do Sol.",
+    },
+    s2: {
+      name: "Sector 2 (Turns 4 - 11: Infield & Lake)",
+      length: "1.78 km",
+      record: "35.080s",
+      driver: "Verstappen",
+      desc: "High-speed sweeping infield including Ferradura, Pinheirinho and Bico de Pato.",
+    },
+    s3: {
+      name: "Sector 3 (Turns 12 - 15: Subida dos Boxes)",
+      length: "1.15 km",
+      record: "16.320s",
+      driver: "Russell",
+      desc: "Long uphill acceleration curve through Arquibancadas onto the main straight.",
+    },
+  },
+};
+
+export const YAS_MARINA_CIRCUIT: CircuitInfo = {
   name: "Abu Dhabi Grand Prix",
   circuit: "Yas Marina Circuit",
   location: "Yas Island, Abu Dhabi, UAE",
@@ -49,6 +82,8 @@ export const DEFAULT_CIRCUIT: CircuitInfo = {
   },
 };
 
+export const DEFAULT_CIRCUIT: CircuitInfo = INTERLAGOS_CIRCUIT;
+
 export function CircuitMap({
   circuit = DEFAULT_CIRCUIT,
   selectedSector = null,
@@ -60,6 +95,12 @@ export function CircuitMap({
 }) {
   const [activeSector, setActiveSector] = useState<"s1" | "s2" | "s3" | null>(selectedSector);
   const [hoverTurn, setHoverTurn] = useState<string | null>(null);
+
+  const isInterlagos =
+    circuit.circuit.toLowerCase().includes("interlagos") ||
+    circuit.circuit.toLowerCase().includes("carlos pace") ||
+    circuit.name.toLowerCase().includes("são paulo") ||
+    circuit.name.toLowerCase().includes("sao paulo");
 
   const handleSectorClick = (s: "s1" | "s2" | "s3") => {
     const next = activeSector === s ? null : s;
@@ -128,7 +169,7 @@ export function CircuitMap({
                 : "bg-red-500/10 text-red-400 hover:bg-red-500/20 border border-red-500/20"
             }`}
           >
-            <span className="h-2 w-2 rounded-full bg-red-500" /> S1 (Hairpin)
+            <span className="h-2 w-2 rounded-full bg-red-500" /> S1 ({isInterlagos ? "Senna S" : "Hairpin"})
           </button>
           <button
             type="button"
@@ -139,7 +180,7 @@ export function CircuitMap({
                 : "bg-cyan-500/10 text-cyan-400 hover:bg-cyan-500/20 border border-cyan-500/20"
             }`}
           >
-            <span className="h-2 w-2 rounded-full bg-cyan-400" /> S2 (DRS Straights)
+            <span className="h-2 w-2 rounded-full bg-cyan-400" /> S2 ({isInterlagos ? "Infield & Lake" : "DRS Straights"})
           </button>
           <button
             type="button"
@@ -150,7 +191,7 @@ export function CircuitMap({
                 : "bg-purple-500/10 text-purple-400 hover:bg-purple-500/20 border border-purple-500/20"
             }`}
           >
-            <span className="h-2 w-2 rounded-full bg-purple-400" /> S3 (Marina)
+            <span className="h-2 w-2 rounded-full bg-purple-400" /> S3 ({isInterlagos ? "Uphill Straight" : "Marina"})
           </button>
         </div>
 
@@ -160,7 +201,7 @@ export function CircuitMap({
             <Zap className="h-3 w-3" /> 2 DRS ZONES
           </span>
           <span className="text-muted-foreground text-[11px] hidden sm:inline">
-            Speed Trap: 338 km/h
+            Speed Trap: {isInterlagos ? "335 km/h" : "338 km/h"}
           </span>
         </div>
       </div>
@@ -192,7 +233,11 @@ export function CircuitMap({
 
           {/* Background Circuit Base Outline */}
           <path
-            d="M 180 340 L 460 340 C 490 340, 520 320, 530 290 L 580 180 C 600 130, 640 100, 690 100 C 730 100, 750 120, 750 160 L 730 260 C 720 310, 680 350, 630 360 L 520 380 C 470 390, 420 370, 390 340 L 320 280 C 300 260, 270 250, 240 250 L 160 250 C 120 250, 90 220, 90 180 C 90 140, 120 110, 160 110 L 380 110 C 420 110, 440 80, 410 60 C 380 40, 300 40, 240 40 C 160 40, 100 80, 70 140 C 40 200, 50 280, 100 320 Z"
+            d={
+              isInterlagos
+                ? "M 240 360 L 530 360 C 560 360, 580 375, 590 390 C 600 405, 620 405, 635 390 C 650 375, 660 345, 670 310 C 680 270, 680 220, 680 180 L 680 110 C 680 70, 650 50, 610 50 C 570 50, 540 70, 510 90 L 450 135 C 420 155, 385 160, 350 185 C 325 200, 315 220, 320 245 C 325 270, 305 285, 280 270 C 255 255, 235 255, 210 270 C 180 285, 160 300, 140 325 C 120 350, 180 360, 240 360 Z"
+                : "M 180 340 L 460 340 C 490 340, 520 320, 530 290 L 580 180 C 600 130, 640 100, 690 100 C 730 100, 750 120, 750 160 L 730 260 C 720 310, 680 350, 630 360 L 520 380 C 470 390, 420 370, 390 340 L 320 280 C 300 260, 270 250, 240 250 L 160 250 C 120 250, 90 220, 90 180 C 90 140, 120 110, 160 110 L 380 110 C 420 110, 440 80, 410 60 C 380 40, 300 40, 240 40 C 160 40, 100 80, 70 140 C 40 200, 50 280, 100 320 Z"
+            }
             fill="none"
             stroke="#262626"
             strokeWidth="20"
@@ -202,7 +247,11 @@ export function CircuitMap({
 
           {/* Sector 1: Red Segment */}
           <path
-            d="M 180 340 L 460 340 C 490 340, 520 320, 530 290 L 580 180"
+            d={
+              isInterlagos
+                ? "M 240 360 L 530 360 C 560 360, 580 375, 590 390 C 600 405, 620 405, 635 390 C 650 375, 660 345, 670 310 C 680 270, 680 220, 680 180"
+                : "M 180 340 L 460 340 C 490 340, 520 320, 530 290 L 580 180"
+            }
             fill="none"
             stroke="#ef4444"
             strokeWidth={activeSector === "s1" ? "10" : "6"}
@@ -213,9 +262,13 @@ export function CircuitMap({
             onClick={() => handleSectorClick("s1")}
           />
 
-          {/* Sector 2: Cyan Segment (DRS back straight) */}
+          {/* Sector 2: Cyan Segment */}
           <path
-            d="M 580 180 C 600 130, 640 100, 690 100 C 730 100, 750 120, 750 160 L 730 260 C 720 310, 680 350, 630 360 L 520 380"
+            d={
+              isInterlagos
+                ? "M 680 180 L 680 110 C 680 70, 650 50, 610 50 C 570 50, 540 70, 510 90 L 450 135 C 420 155, 385 160, 350 185 C 325 200, 315 220, 320 245 C 325 270, 305 285, 280 270"
+                : "M 580 180 C 600 130, 640 100, 690 100 C 730 100, 750 120, 750 160 L 730 260 C 720 310, 680 350, 630 360 L 520 380"
+            }
             fill="none"
             stroke="#06b6d4"
             strokeWidth={activeSector === "s2" ? "10" : "6"}
@@ -226,9 +279,13 @@ export function CircuitMap({
             onClick={() => handleSectorClick("s2")}
           />
 
-          {/* Sector 3: Purple Segment (Technical Marina Waterfront) */}
+          {/* Sector 3: Purple Segment */}
           <path
-            d="M 520 380 C 470 390, 420 370, 390 340 L 320 280 C 300 260, 270 250, 240 250 L 160 250 C 120 250, 90 220, 90 180 C 90 140, 120 110, 160 110 L 380 110 C 420 110, 440 80, 410 60 C 380 40, 300 40, 240 40 C 160 40, 100 80, 70 140 C 40 200, 50 280, 100 320 Z L 180 340"
+            d={
+              isInterlagos
+                ? "M 280 270 C 255 255, 235 255, 210 270 C 180 285, 160 300, 140 325 C 120 350, 180 360, 240 360"
+                : "M 520 380 C 470 390, 420 370, 390 340 L 320 280 C 300 260, 270 250, 240 250 L 160 250 C 120 250, 90 220, 90 180 C 90 140, 120 110, 160 110 L 380 110 C 420 110, 440 80, 410 60 C 380 40, 300 40, 240 40 C 160 40, 100 80, 70 140 C 40 200, 50 280, 100 320 Z L 180 340"
+            }
             fill="none"
             stroke="#a855f7"
             strokeWidth={activeSector === "s3" ? "10" : "6"}
@@ -241,53 +298,94 @@ export function CircuitMap({
 
           {/* DRS Zone 1 Marking */}
           <path
-            d="M 220 340 L 440 340"
+            d={isInterlagos ? "M 280 360 L 490 360" : "M 220 340 L 440 340"}
             fill="none"
             stroke="#22d3ee"
             strokeWidth="3"
             strokeDasharray="6 4"
             filter="url(#glowDrs)"
           />
-          <text x="330" y="365" fill="#22d3ee" fontSize="11" fontFamily="monospace" fontWeight="bold" textAnchor="middle">
+          <text
+            x={isInterlagos ? "385" : "330"}
+            y={isInterlagos ? "385" : "365"}
+            fill="#22d3ee"
+            fontSize="11"
+            fontFamily="monospace"
+            fontWeight="bold"
+            textAnchor="middle"
+          >
             DRS ZONE 1
           </text>
 
           {/* DRS Zone 2 Marking */}
           <path
-            d="M 740 180 L 730 250"
+            d={isInterlagos ? "M 680 180 L 680 110" : "M 740 180 L 730 250"}
             fill="none"
             stroke="#22d3ee"
             strokeWidth="3"
             strokeDasharray="6 4"
             filter="url(#glowDrs)"
           />
-          <text x="765" y="215" fill="#22d3ee" fontSize="10" fontFamily="monospace" fontWeight="bold" textAnchor="start">
+          <text
+            x={isInterlagos ? "705" : "765"}
+            y={isInterlagos ? "145" : "215"}
+            fill="#22d3ee"
+            fontSize="10"
+            fontFamily="monospace"
+            fontWeight="bold"
+            textAnchor="start"
+          >
             DRS 2
           </text>
 
           {/* Start / Finish Line */}
-          <line x1="180" y1="326" x2="180" y2="354" stroke="#ffffff" strokeWidth="4" />
-          <text x="180" y="320" fill="#ffffff" fontSize="10" fontFamily="monospace" fontWeight="900" textAnchor="middle">
+          <line
+            x1={isInterlagos ? "240" : "180"}
+            y1={isInterlagos ? "346" : "326"}
+            x2={isInterlagos ? "240" : "180"}
+            y2={isInterlagos ? "374" : "354"}
+            stroke="#ffffff"
+            strokeWidth="4"
+          />
+          <text
+            x={isInterlagos ? "240" : "180"}
+            y={isInterlagos ? "338" : "320"}
+            fill="#ffffff"
+            fontSize="10"
+            fontFamily="monospace"
+            fontWeight="900"
+            textAnchor="middle"
+          >
             START / FINISH
           </text>
 
           {/* Speed Trap Radar (ST) */}
-          <g transform="translate(480, 320)">
+          <g transform={isInterlagos ? "translate(680, 140)" : "translate(480, 320)"}>
             <circle cx="0" cy="0" r="10" fill="#eab308" fillOpacity="0.2" stroke="#eab308" strokeWidth="2" />
             <text x="0" y="3" fill="#eab308" fontSize="8" fontFamily="monospace" fontWeight="bold" textAnchor="middle">ST</text>
-            <text x="0" y="22" fill="#eab308" fontSize="9" fontFamily="monospace" textAnchor="middle">338 km/h</text>
+            <text x="0" y="22" fill="#eab308" fontSize="9" fontFamily="monospace" textAnchor="middle">{isInterlagos ? "335 km/h" : "338 km/h"}</text>
           </g>
 
           {/* Key Corner Badges */}
-          {[
-            { id: "T1", x: 470, y: 355, label: "T1 · 145 km/h" },
-            { id: "T5", x: 585, y: 165, label: "T5 Hairpin · 78 km/h" },
-            { id: "T6", x: 670, y: 85, label: "T6 Chicane · 95 km/h" },
-            { id: "T9", x: 745, y: 280, label: "T9 Sweeper · 210 km/h" },
-            { id: "T11", x: 500, y: 395, label: "T11 Hotel · 112 km/h" },
-            { id: "T14", x: 300, y: 270, label: "T14 Left · 128 km/h" },
-            { id: "T16", x: 80, y: 170, label: "T16 Final Turn · 185 km/h" },
-          ].map((corner) => (
+          {(isInterlagos
+            ? [
+                { id: "T1", x: 550, y: 395, label: "T1 Senna S · 118 km/h" },
+                { id: "T3", x: 675, y: 320, label: "T3 Curva do Sol · 225 km/h" },
+                { id: "T4", x: 645, y: 65, label: "T4 Descida do Lago · 152 km/h" },
+                { id: "T8", x: 440, y: 155, label: "T8 Ferradura · 188 km/h" },
+                { id: "T10", x: 300, y: 255, label: "T10 Bico de Pato · 76 km/h" },
+                { id: "T12", x: 175, y: 285, label: "T12 Junção · 128 km/h" },
+              ]
+            : [
+                { id: "T1", x: 470, y: 355, label: "T1 · 145 km/h" },
+                { id: "T5", x: 585, y: 165, label: "T5 Hairpin · 78 km/h" },
+                { id: "T6", x: 670, y: 85, label: "T6 Chicane · 95 km/h" },
+                { id: "T9", x: 745, y: 280, label: "T9 Sweeper · 210 km/h" },
+                { id: "T11", x: 500, y: 395, label: "T11 Hotel · 112 km/h" },
+                { id: "T14", x: 300, y: 270, label: "T14 Left · 128 km/h" },
+                { id: "T16", x: 80, y: 170, label: "T16 Final Turn · 185 km/h" },
+              ]
+          ).map((corner) => (
             <g
               key={corner.id}
               className="cursor-pointer transition-transform hover:scale-125"

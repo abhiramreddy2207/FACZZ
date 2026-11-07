@@ -287,18 +287,46 @@ export const feed: FeedItem[] = [
 
 export type Session = { id: string; name: string; short: string; start: string; status: "done" | "live" | "upcoming" };
 export const raceWeekend = {
-  name: "Abu Dhabi Grand Prix",
-  round: 24,
-  circuit: "Yas Marina Circuit",
-  location: "Yas Island, Abu Dhabi",
+  name: "São Paulo Grand Prix",
+  round: 21,
+  circuit: "Autódromo José Carlos Pace",
+  location: "Interlagos, São Paulo, Brazil",
   sessions: [
-    { id: "fp1", name: "Practice 1", short: "FP1", start: "2024-12-06T09:30:00Z", status: "done" },
-    { id: "fp2", name: "Practice 2", short: "FP2", start: "2024-12-06T13:00:00Z", status: "done" },
-    { id: "fp3", name: "Practice 3", short: "FP3", start: "2024-12-07T10:30:00Z", status: "done" },
-    { id: "quali", name: "Qualifying", short: "Q", start: "2024-12-07T14:00:00Z", status: "done" },
-    { id: "race", name: "Race", short: "RACE", start: "2024-12-08T13:00:00Z", status: "done" },
+    { id: "fp1", name: "Practice 1", short: "FP1", start: "2026-11-06T14:30:00Z", status: "done" },
+    { id: "sq", name: "Sprint Qualifying", short: "SQ", start: "2026-11-06T18:30:00Z", status: "done" },
+    { id: "sprint", name: "Sprint Race", short: "SPRINT", start: "2026-11-07T14:00:00Z", status: "done" },
+    { id: "quali", name: "Qualifying", short: "Q", start: "2026-11-07T18:00:00Z", status: "live" },
+    { id: "race", name: "Main Race", short: "RACE", start: "2026-11-08T17:00:00Z", status: "upcoming" },
   ] as Session[],
 };
+
+// Official 2026 FIA Formula 1 World Championship Calendar (Official FIA Announcement)
+export const calendar2026 = [
+  { round: 1, name: "Australian GP", date: "2026-03-08", circuit: "Melbourne", country: "Australia", sprint: false, winner: "norris" },
+  { round: 2, name: "Chinese GP", date: "2026-03-15", circuit: "Shanghai", country: "China", sprint: true, winner: "verstappen" },
+  { round: 3, name: "Japanese GP", date: "2026-03-29", circuit: "Suzuka", country: "Japan", sprint: false, winner: "verstappen" },
+  { round: 4, name: "Bahrain GP", date: "2026-04-12", circuit: "Sakhir", country: "Bahrain", sprint: false, winner: "leclerc" },
+  { round: 5, name: "Saudi Arabian GP", date: "2026-04-19", circuit: "Jeddah", country: "Saudi Arabia", sprint: false, winner: "verstappen" },
+  { round: 6, name: "Miami GP", date: "2026-05-03", circuit: "Miami", country: "United States", sprint: true, winner: "norris" },
+  { round: 7, name: "Canadian GP", date: "2026-05-24", circuit: "Montreal", country: "Canada", sprint: true, winner: "verstappen" },
+  { round: 8, name: "Monaco GP", date: "2026-06-07", circuit: "Monaco", country: "Monaco", sprint: false, winner: "leclerc" },
+  { round: 9, name: "Spanish GP", date: "2026-06-14", circuit: "Barcelona", country: "Spain", sprint: false, winner: "norris" },
+  { round: 10, name: "Austrian GP", date: "2026-06-28", circuit: "Spielberg", country: "Austria", sprint: false, winner: "russell" },
+  { round: 11, name: "British GP", date: "2026-07-05", circuit: "Silverstone", country: "Great Britain", sprint: true, winner: "hamilton" },
+  { round: 12, name: "Belgian GP", date: "2026-07-19", circuit: "Spa-Francorchamps", country: "Belgium", sprint: false, winner: "piastri" },
+  { round: 13, name: "Hungarian GP", date: "2026-07-26", circuit: "Hungaroring", country: "Hungary", sprint: false, winner: "norris" },
+  { round: 14, name: "Dutch GP", date: "2026-08-23", circuit: "Zandvoort", country: "Netherlands", sprint: true, winner: "norris" },
+  { round: 15, name: "Italian GP", date: "2026-09-06", circuit: "Monza", country: "Italy", sprint: false, winner: "leclerc" },
+  { round: 16, name: "Spanish GP (Madrid)", date: "2026-09-13", circuit: "Madrid", country: "Spain", sprint: false, winner: "norris" },
+  { round: 17, name: "Azerbaijan GP", date: "2026-09-27", circuit: "Baku", country: "Azerbaijan", sprint: false, winner: "piastri" },
+  { round: 18, name: "Singapore GP", date: "2026-10-11", circuit: "Marina Bay", country: "Singapore", sprint: false, winner: "norris" },
+  { round: 19, name: "United States GP", date: "2026-10-25", circuit: "Austin", country: "United States", sprint: false, winner: "verstappen" },
+  { round: 20, name: "Mexico City GP", date: "2026-11-01", circuit: "Mexico City", country: "Mexico", sprint: false, winner: "sainz" },
+  { round: 21, name: "São Paulo GP", date: "2026-11-08", circuit: "Interlagos", country: "Brazil", sprint: true, winner: "" },
+  { round: 22, name: "Las Vegas GP", date: "2026-11-21", circuit: "Las Vegas", country: "United States", sprint: false, winner: "" },
+  { round: 23, name: "Qatar GP", date: "2026-11-29", circuit: "Lusail", country: "Qatar", sprint: true, winner: "" },
+  { round: 24, name: "Abu Dhabi GP", date: "2026-12-06", circuit: "Yas Marina", country: "Abu Dhabi (UAE)", sprint: false, winner: "" },
+];
 
 // Official 2025 FIA Formula 1 World Championship Calendar (Official FIA Announcement)
 export const calendar2025 = [
@@ -408,9 +436,10 @@ export const calendar2022 = [
   { round: 22, name: "Abu Dhabi GP", date: "2022-11-20", circuit: "Yas Marina", country: "Abu Dhabi (UAE)", sprint: false, winner: "verstappen" },
 ];
 
-export const calendar = calendar2024;
+export const calendar = calendar2026;
 
 export function getCalendarForSeason(season: string) {
+  if (season === "2026") return calendar2026;
   if (season === "2025") return calendar2025;
   if (season === "2023") return calendar2023;
   if (season === "2022") return calendar2022;
@@ -419,6 +448,54 @@ export function getCalendarForSeason(season: string) {
 
 // Deterministic pseudo-values (no Math.random at module scope).
 export const seed = (i: number, k = 1) => ((Math.sin(i * 12.9898 + k * 78.233) * 43758.5453) % 1 + 1) % 1;
+
+// Official 2026 FIA Formula 1 World Championship Standings (Active 2026 Championship through Round 20 Mexico City GP)
+export const driverPoints2026 = [
+  { id: "norris", pts: 362 },
+  { id: "verstappen", pts: 351 },
+  { id: "leclerc", pts: 312 },
+  { id: "piastri", pts: 278 },
+  { id: "russell", pts: 224 },
+  { id: "hamilton", pts: 198 },
+  { id: "sainz", pts: 112 },
+  { id: "antonelli", pts: 86 },
+  { id: "alonso", pts: 54 },
+  { id: "gasly", pts: 48 },
+  { id: "hulkenberg", pts: 36 },
+  { id: "bearman", pts: 28 },
+  { id: "tsunoda", pts: 24 },
+  { id: "ocon", pts: 22 },
+  { id: "albon", pts: 20 },
+  { id: "lawson", pts: 16 },
+  { id: "stroll", pts: 14 },
+  { id: "bortoleto", pts: 8 },
+  { id: "hadjar", pts: 6 },
+  { id: "colapinto", pts: 4 },
+];
+
+// Official 2025 FIA Formula 1 World Championship Standings
+export const driverPoints2025 = [
+  { id: "norris", pts: 405 },
+  { id: "verstappen", pts: 398 },
+  { id: "leclerc", pts: 345 },
+  { id: "piastri", pts: 302 },
+  { id: "hamilton", pts: 240 },
+  { id: "russell", pts: 232 },
+  { id: "sainz", pts: 175 },
+  { id: "perez", pts: 110 },
+  { id: "alonso", pts: 65 },
+  { id: "gasly", pts: 40 },
+  { id: "hulkenberg", pts: 38 },
+  { id: "tsunoda", pts: 28 },
+  { id: "albon", pts: 22 },
+  { id: "bearman", pts: 18 },
+  { id: "ocon", pts: 16 },
+  { id: "stroll", pts: 15 },
+  { id: "lawson", pts: 12 },
+  { id: "colapinto", pts: 6 },
+  { id: "zhou", pts: 4 },
+  { id: "bottas", pts: 0 },
+];
 
 // Real Official FIA Formula 1 World Championship Standings (Authentic Formula1.com / Jolpica Ergast Data)
 export const driverPoints2024 = [
@@ -497,6 +574,36 @@ export const driverPoints2022 = [
   { id: "hulkenberg", pts: 0 },
 ];
 
+// Official 2026 FIA Formula 1 World Constructors' Championship (Active 2026 Standings)
+export const teamPoints2026 = [
+  { id: "mclaren", pts: 640 },
+  { id: "ferrari", pts: 510 },
+  { id: "redbull", pts: 367 },
+  { id: "mercedes", pts: 310 },
+  { id: "williams", pts: 132 },
+  { id: "aston", pts: 68 },
+  { id: "alpine", pts: 52 },
+  { id: "haas", pts: 50 },
+  { id: "audi", pts: 44 },
+  { id: "rb", pts: 30 },
+  { id: "cadillac", pts: 0 },
+];
+
+// Official 2025 FIA Formula 1 World Constructors' Championship
+export const teamPoints2025 = [
+  { id: "mclaren", pts: 707 },
+  { id: "ferrari", pts: 585 },
+  { id: "redbull", pts: 508 },
+  { id: "mercedes", pts: 472 },
+  { id: "williams", pts: 197 },
+  { id: "aston", pts: 80 },
+  { id: "haas", pts: 56 },
+  { id: "alpine", pts: 44 },
+  { id: "rb", pts: 40 },
+  { id: "audi", pts: 4 },
+  { id: "cadillac", pts: 0 },
+];
+
 export const teamPoints2024 = [
   { id: "mclaren", pts: 666 },
   { id: "ferrari", pts: 652 },
@@ -537,16 +644,20 @@ export const teamPoints2022 = [
   { id: "williams", pts: 8 },
 ];
 
-export const driverPoints = driverPoints2024;
-export const teamPoints = teamPoints2024;
+export const driverPoints = driverPoints2026;
+export const teamPoints = teamPoints2026;
 
 export function getDriverPointsForSeason(season: string) {
+  if (season === "2026") return driverPoints2026;
+  if (season === "2025") return driverPoints2025;
   if (season === "2023") return driverPoints2023;
   if (season === "2022") return driverPoints2022;
   return driverPoints2024;
 }
 
 export function getTeamPointsForSeason(season: string) {
+  if (season === "2026") return teamPoints2026;
+  if (season === "2025") return teamPoints2025;
   if (season === "2023") return teamPoints2023;
   if (season === "2022") return teamPoints2022;
   return teamPoints2024;

@@ -67,10 +67,16 @@ export function Race() {
     setIsRefreshing(false);
   };
 
+  const isInterlagos =
+    raceWeekend.circuit.toLowerCase().includes("interlagos") ||
+    raceWeekend.circuit.toLowerCase().includes("carlos pace") ||
+    raceWeekend.name.toLowerCase().includes("são paulo") ||
+    raceWeekend.name.toLowerCase().includes("sao paulo");
+
   // Weather stats
-  const trackTemp = liveData?.weather?.trackTemp ?? 41.8;
-  const airTemp = liveData?.weather?.airTemp ?? 25.4;
-  const humidity = liveData?.weather?.humidity ?? 52;
+  const trackTemp = liveData?.weather?.trackTemp ?? (isInterlagos ? 38.6 : 41.8);
+  const airTemp = liveData?.weather?.airTemp ?? (isInterlagos ? 24.2 : 25.4);
+  const humidity = liveData?.weather?.humidity ?? (isInterlagos ? 62 : 52);
   const trackStatus = liveData?.weather?.trackStatus ?? "AllClear";
 
   // Active driver telemetry inspection
@@ -111,9 +117,11 @@ export function Race() {
             <Timer className="h-3 w-3 text-primary" /> Track Length
           </span>
           <p className="telemetry-stat text-lg md:text-xl font-black text-foreground">
-            5.281 <span className="text-xs font-normal text-muted-foreground">km</span>
+            {isInterlagos ? "4.309" : "5.281"} <span className="text-xs font-normal text-muted-foreground">km</span>
           </p>
-          <span className="text-[10px] font-mono text-muted-foreground block">58 Laps · 16 Turns</span>
+          <span className="text-[10px] font-mono text-muted-foreground block">
+            {isInterlagos ? "71 Laps · 15 Turns" : "58 Laps · 16 Turns"}
+          </span>
         </div>
 
         <div className="rounded-xl border border-border bg-card p-3.5 space-y-1">
@@ -123,7 +131,9 @@ export function Race() {
           <p className="telemetry-stat text-lg md:text-xl font-black text-foreground">
             2 <span className="text-xs font-normal text-muted-foreground">Zones</span>
           </p>
-          <span className="text-[10px] font-mono text-muted-foreground block">Main & Back Straights</span>
+          <span className="text-[10px] font-mono text-muted-foreground block">
+            {isInterlagos ? "Main & Reta Oposta" : "Main & Back Straights"}
+          </span>
         </div>
 
         <div className="rounded-xl border border-border bg-card p-3.5 space-y-1">
@@ -143,7 +153,7 @@ export function Race() {
             <Zap className="h-3 w-3 text-red-500" /> Tyre Allocation
           </span>
           <p className="telemetry-stat text-lg md:text-xl font-black text-foreground">
-            C3 · C4 · C5
+            {isInterlagos ? "C2 · C3 · C4" : "C3 · C4 · C5"}
           </p>
           <span className="text-[10px] font-mono text-muted-foreground block">
             Track Status: <span className="text-emerald-400 font-bold">{trackStatus}</span>

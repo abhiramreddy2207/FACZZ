@@ -79,9 +79,9 @@ function CustomTelemetryTooltip({
 function DataDetail() {
   const { slug } = Route.useParams();
   const ds = getDataset(slug);
-  const [season, setSeason] = useState("2024");
+  const [season, setSeason] = useState("2026");
   const activeCalendar = useMemo(() => getCalendarForSeason(season), [season]);
-  const [event, setEvent] = useState("Abu Dhabi GP");
+  const [event, setEvent] = useState("São Paulo GP");
   const [team, setTeam] = useState("");
   const [driver, setDriver] = useState("");
   const [session, setSession] = useState("race");
@@ -148,7 +148,8 @@ function DataDetail() {
               }
             }}
           >
-            <option value="2025">2025 Season (Current Calendar)</option>
+            <option value="2026">2026 Season (Current Championship)</option>
+            <option value="2025">2025 Season (Championship)</option>
             <option value="2024">2024 Season (Official Final)</option>
             <option value="2023">2023 Season (Official Final)</option>
             <option value="2022">2022 Season (Official Final)</option>
