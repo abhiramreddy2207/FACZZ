@@ -8,7 +8,6 @@ import { syncCommunityPosts } from "@/lib/social-client";
 import { Chip, DemoBadge, EmptyState } from "@/components/bits";
 import { FeedCard } from "@/components/feed-card";
 import { RaceCard } from "@/components/race-card";
-import { ChampionshipStandingsWidget } from "@/components/championship-standings";
 import { SocialPostComposer } from "@/components/social-post-composer";
 import { SocialPostCard } from "@/components/social-post-card";
 import { cn } from "@/lib/utils";
@@ -175,7 +174,6 @@ function Home() {
         <div className={cn("min-w-0", !raceFirst && "order-2", s.homeEmphasis === "balanced" && "xl:order-2")}>
           <div className={cn(s.homeEmphasis === "balanced" && "xl:sticky xl:top-20 space-y-4")}>
             <RaceCard />
-            <ChampionshipStandingsWidget />
           </div>
         </div>
 

@@ -130,7 +130,7 @@ export function RaceCard() {
       {mode === "results" && (
         <div className="mt-3 space-y-2">
           <div className="flex items-center gap-1.5 text-xs text-muted-foreground font-mono">
-            <Flag className="h-3.5 w-3.5 text-primary" /> Official Classification · {prev?.name}
+            <Flag className="h-3.5 w-3.5 text-primary" /> Official Classification · {raceWeekend.name}
           </div>
           <h2 className="text-xl md:text-2xl font-black uppercase tracking-tight text-foreground font-display">
             {winnerId ? getDriver(winnerId)?.name : "Winner"} Takes Victory

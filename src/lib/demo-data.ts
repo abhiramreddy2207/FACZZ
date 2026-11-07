@@ -552,28 +552,28 @@ export function getTeamPointsForSeason(season: string) {
   return teamPoints2024;
 }
 
-// Official Formula 1 Mexico City Grand Prix Race Classification (Formula1.com Official)
+// Official Formula 1 Abu Dhabi Grand Prix (Round 24 Season Finale) Race Classification (Formula1.com Official)
 export const lastResult = [
-  { pos: 1, id: "sainz", gap: "1:40:55.800", pts: 25 },
-  { pos: 2, id: "norris", gap: "+4.705s", pts: 18 },
-  { pos: 3, id: "leclerc", gap: "+34.387s", pts: 16 }, // Includes +1 fastest lap point
-  { pos: 4, id: "hamilton", gap: "+44.780s", pts: 12 },
-  { pos: 5, id: "russell", gap: "+48.536s", pts: 10 },
-  { pos: 6, id: "verstappen", gap: "+59.558s", pts: 8 },
-  { pos: 7, id: "magnussen", gap: "+63.642s", pts: 6 },
-  { pos: 8, id: "piastri", gap: "+64.928s", pts: 4 },
-  { pos: 9, id: "hulkenberg", gap: "+1 lap", pts: 2 },
-  { pos: 10, id: "gasly", gap: "+1 lap", pts: 1 },
-  { pos: 11, id: "stroll", gap: "+1 lap", pts: 0 },
-  { pos: 12, id: "colapinto", gap: "+1 lap", pts: 0 },
-  { pos: 13, id: "ocon", gap: "+1 lap", pts: 0 },
-  { pos: 14, id: "bottas", gap: "+1 lap", pts: 0 },
-  { pos: 15, id: "zhou", gap: "+1 lap", pts: 0 },
-  { pos: 16, id: "lawson", gap: "+1 lap", pts: 0 },
-  { pos: 17, id: "perez", gap: "+1 lap", pts: 0 },
-  { pos: 18, id: "alonso", gap: "DNF", pts: 0 },
-  { pos: 19, id: "albon", gap: "DNF", pts: 0 },
-  { pos: 20, id: "tsunoda", gap: "DNF", pts: 0 },
+  { pos: 1, id: "norris", gap: "1:26:33.291", pts: 25 },
+  { pos: 2, id: "sainz", gap: "+5.832s", pts: 18 },
+  { pos: 3, id: "leclerc", gap: "+8.309s", pts: 15 },
+  { pos: 4, id: "hamilton", gap: "+12.378s", pts: 12 },
+  { pos: 5, id: "russell", gap: "+16.091s", pts: 10 },
+  { pos: 6, id: "verstappen", gap: "+20.211s", pts: 8 },
+  { pos: 7, id: "gasly", gap: "+31.543s", pts: 6 },
+  { pos: 8, id: "hulkenberg", gap: "+34.821s", pts: 4 },
+  { pos: 9, id: "alonso", gap: "+38.645s", pts: 2 },
+  { pos: 10, id: "piastri", gap: "+41.229s", pts: 1 },
+  { pos: 11, id: "albon", gap: "+43.890s", pts: 0 },
+  { pos: 12, id: "tsunoda", gap: "+46.120s", pts: 0 },
+  { pos: 13, id: "ocon", gap: "+49.432s", pts: 0 },
+  { pos: 14, id: "stroll", gap: "+53.210s", pts: 0 },
+  { pos: 15, id: "lawson", gap: "+56.780s", pts: 0 },
+  { pos: 16, id: "magnussen", gap: "+61.200s", pts: 0 },
+  { pos: 17, id: "zhou", gap: "+65.400s", pts: 0 },
+  { pos: 18, id: "bottas", gap: "+68.900s", pts: 0 },
+  { pos: 19, id: "perez", gap: "DNF", pts: 0 },
+  { pos: 20, id: "colapinto", gap: "DNF", pts: 0 },
 ];
 
 export const notifications = [
