@@ -8,6 +8,7 @@ import { syncCommunityPosts } from "@/lib/social-client";
 import { Chip, DemoBadge, EmptyState } from "@/components/bits";
 import { FeedCard } from "@/components/feed-card";
 import { RaceCard } from "@/components/race-card";
+import { ChampionshipStandingsWidget } from "@/components/championship-standings";
 import { SocialPostComposer } from "@/components/social-post-composer";
 import { SocialPostCard } from "@/components/social-post-card";
 import { cn } from "@/lib/utils";
@@ -169,16 +170,17 @@ function Home() {
       )}
 
       {/* Main Layout Grid */}
-      <div className={cn("grid gap-5", s.homeEmphasis === "balanced" && "lg:grid-cols-[1fr_320px]")}>
+      <div className={cn("grid gap-5 min-w-0", s.homeEmphasis === "balanced" && "xl:grid-cols-[1fr_340px]")}>
         {/* Race Center Column */}
-        <div className={cn(!raceFirst && "order-2", s.homeEmphasis === "balanced" && "lg:order-2")}>
-          <div className={cn(s.homeEmphasis === "balanced" && "lg:sticky lg:top-20")}>
+        <div className={cn("min-w-0", !raceFirst && "order-2", s.homeEmphasis === "balanced" && "xl:order-2")}>
+          <div className={cn(s.homeEmphasis === "balanced" && "xl:sticky xl:top-20 space-y-4")}>
             <RaceCard />
+            <ChampionshipStandingsWidget />
           </div>
         </div>
 
         {/* Social Feed Column */}
-        <div className={cn(s.homeEmphasis === "balanced" && "lg:order-1")}>
+        <div className={cn("min-w-0", s.homeEmphasis === "balanced" && "xl:order-1")}>
           {/* Post Composer */}
           <SocialPostComposer />
 

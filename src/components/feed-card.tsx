@@ -77,8 +77,8 @@ export function InlineMedia({ item }: { item: FeedItem }) {
       </div>
     );
   }
-  if (item.media && item.kind === "video") return <a href={item.url} target="_blank" rel="noopener noreferrer" className="relative block overflow-hidden rounded-lg"><img src={item.media} alt="Video preview" loading="lazy" width={1280} height={720} className="aspect-video w-full object-cover" /><span className="absolute inset-0 flex items-center justify-center bg-black/20 text-white"><span className="flex items-center gap-2 rounded-full bg-black/60 px-4 py-2 text-sm font-semibold"><Play className="h-4 w-4 fill-current" /> Play on {src?.name}</span></span></a>;
-  if (item.media) return <img src={item.media} alt="" loading="lazy" width={1280} height={720} className="aspect-video w-full rounded-lg object-cover" />;
+  if (item.media && item.kind === "video") return <a href={item.url} target="_blank" rel="noopener noreferrer" className="relative block overflow-hidden rounded-lg"><img src={item.media} alt="Video preview" loading="lazy" width={1280} height={720} className="aspect-video w-full object-cover object-center" /><span className="absolute inset-0 flex items-center justify-center bg-black/20 text-white"><span className="flex items-center gap-2 rounded-full bg-black/60 px-4 py-2 text-sm font-semibold"><Play className="h-4 w-4 fill-current" /> Play on {src?.name}</span></span></a>;
+  if (item.media) return <img src={item.media} alt="" loading="lazy" width={1280} height={720} className="aspect-video w-full rounded-lg object-cover object-center" />;
   return null;
 }
 
@@ -118,7 +118,7 @@ export function FeedCard({ item, live = false }: { item: FeedItem; live?: boolea
       {item.discovery && <p className="mb-2 inline-flex items-center gap-1 text-[11px] font-semibold uppercase tracking-wider text-primary"><Sparkles className="h-3 w-3" /> {item.discovery}</p>}
       {live ? <a href={item.url} target="_blank" rel="noopener noreferrer" className="block"><h3 className="text-lg font-bold leading-snug group-hover:text-primary md:text-xl">{item.title}</h3><p className="mt-2 text-[15px] leading-relaxed text-foreground/85">{item.text}</p></a> : <Link to="/story/$id" params={{ id: item.id }} className="block"><h3 className="text-lg font-bold leading-snug group-hover:text-primary md:text-xl">{item.title}</h3><p className="mt-2 text-[15px] leading-relaxed text-foreground/85">{item.text}</p></Link>}
       {(item.media || item.video || item.embedUrl) && <div className="mt-3"><InlineMedia item={item} /></div>}
-      {item.kind === "video" && !item.embedUrl && !item.video && <div className="mt-3"><a href={item.url} target="_blank" rel="noopener noreferrer" className="flex aspect-video items-center justify-center rounded-lg bg-muted text-sm font-semibold hover:bg-secondary"><Play className="mr-2 h-5 w-5" /> Play video on {src.name} <ExternalLink className="ml-2 h-4 w-4" /></a></div>}
+      {!item.media && item.kind === "video" && !item.embedUrl && !item.video && <div className="mt-3"><a href={item.url} target="_blank" rel="noopener noreferrer" className="flex aspect-video items-center justify-center rounded-lg bg-muted text-sm font-semibold hover:bg-secondary"><Play className="mr-2 h-5 w-5" /> Play video on {src.name} <ExternalLink className="ml-2 h-4 w-4" /></a></div>}
       {item.evidence && (
         <div className="mt-3 rounded-lg border border-border bg-muted/50 p-3">
           <p className="mb-1 flex items-center gap-1 text-xs font-bold uppercase tracking-wider"><BarChart3 className="h-3.5 w-3.5" /> Evidence</p>

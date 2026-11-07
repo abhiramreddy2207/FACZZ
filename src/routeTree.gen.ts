@@ -33,6 +33,9 @@ import { Route as ApiAuthPasswordChangeRouteImport } from './routes/api/auth/pas
 import { Route as ApiAuthPasswordRecoveryRouteImport } from './routes/api/auth/password-recovery'
 import { Route as ApiAuthPasswordResetRouteImport } from './routes/api/auth/password-reset'
 import { Route as ApiAuthRegisterRouteImport } from './routes/api/auth/register'
+import { Route as ApiF1HealthRouteImport } from './routes/api/f1/health'
+import { Route as ApiF1LiveRouteImport } from './routes/api/f1/live'
+import { Route as ApiF1StandingsRouteImport } from './routes/api/f1/standings'
 import { Route as ApiPostsIndexRouteImport } from './routes/api/posts/index'
 import { Route as ApiPostsIdRouteImport } from './routes/api/posts/$id'
 import { Route as ApiUsersIdRouteImport } from './routes/api/users/$id'
@@ -161,6 +164,21 @@ const ApiAuthRegisterRoute = ApiAuthRegisterRouteImport.update({
   path: '/api/auth/register',
   getParentRoute: () => rootRouteImport,
 } as any)
+const ApiF1HealthRoute = ApiF1HealthRouteImport.update({
+  id: '/api/f1/health',
+  path: '/api/f1/health',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ApiF1LiveRoute = ApiF1LiveRouteImport.update({
+  id: '/api/f1/live',
+  path: '/api/f1/live',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ApiF1StandingsRoute = ApiF1StandingsRouteImport.update({
+  id: '/api/f1/standings',
+  path: '/api/f1/standings',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const ApiPostsIndexRoute = ApiPostsIndexRouteImport.update({
   id: '/api/posts/',
   path: '/api/posts/',
@@ -222,6 +240,9 @@ export interface FileRoutesByFullPath {
   '/api/auth/password-recovery': typeof ApiAuthPasswordRecoveryRoute
   '/api/auth/password-reset': typeof ApiAuthPasswordResetRoute
   '/api/auth/register': typeof ApiAuthRegisterRoute
+  '/api/f1/health': typeof ApiF1HealthRoute
+  '/api/f1/live': typeof ApiF1LiveRoute
+  '/api/f1/standings': typeof ApiF1StandingsRoute
   '/api/posts/$id': typeof ApiPostsIdRouteWithChildren
   '/api/users/$id': typeof ApiUsersIdRouteWithChildren
   '/api/posts/': typeof ApiPostsIndexRoute
@@ -255,6 +276,9 @@ export interface FileRoutesByTo {
   '/api/auth/password-recovery': typeof ApiAuthPasswordRecoveryRoute
   '/api/auth/password-reset': typeof ApiAuthPasswordResetRoute
   '/api/auth/register': typeof ApiAuthRegisterRoute
+  '/api/f1/health': typeof ApiF1HealthRoute
+  '/api/f1/live': typeof ApiF1LiveRoute
+  '/api/f1/standings': typeof ApiF1StandingsRoute
   '/api/posts/$id': typeof ApiPostsIdRouteWithChildren
   '/api/users/$id': typeof ApiUsersIdRouteWithChildren
   '/api/posts': typeof ApiPostsIndexRoute
@@ -289,6 +313,9 @@ export interface FileRoutesById {
   '/api/auth/password-recovery': typeof ApiAuthPasswordRecoveryRoute
   '/api/auth/password-reset': typeof ApiAuthPasswordResetRoute
   '/api/auth/register': typeof ApiAuthRegisterRoute
+  '/api/f1/health': typeof ApiF1HealthRoute
+  '/api/f1/live': typeof ApiF1LiveRoute
+  '/api/f1/standings': typeof ApiF1StandingsRoute
   '/api/posts/$id': typeof ApiPostsIdRouteWithChildren
   '/api/users/$id': typeof ApiUsersIdRouteWithChildren
   '/api/posts/': typeof ApiPostsIndexRoute
@@ -324,6 +351,9 @@ export interface FileRouteTypes {
     | '/api/auth/password-recovery'
     | '/api/auth/password-reset'
     | '/api/auth/register'
+    | '/api/f1/health'
+    | '/api/f1/live'
+    | '/api/f1/standings'
     | '/api/posts/$id'
     | '/api/users/$id'
     | '/api/posts/'
@@ -357,6 +387,9 @@ export interface FileRouteTypes {
     | '/api/auth/password-recovery'
     | '/api/auth/password-reset'
     | '/api/auth/register'
+    | '/api/f1/health'
+    | '/api/f1/live'
+    | '/api/f1/standings'
     | '/api/posts/$id'
     | '/api/users/$id'
     | '/api/posts'
@@ -390,6 +423,9 @@ export interface FileRouteTypes {
     | '/api/auth/password-recovery'
     | '/api/auth/password-reset'
     | '/api/auth/register'
+    | '/api/f1/health'
+    | '/api/f1/live'
+    | '/api/f1/standings'
     | '/api/posts/$id'
     | '/api/users/$id'
     | '/api/posts/'
@@ -424,6 +460,9 @@ export interface RootRouteChildren {
   ApiAuthPasswordRecoveryRoute: typeof ApiAuthPasswordRecoveryRoute
   ApiAuthPasswordResetRoute: typeof ApiAuthPasswordResetRoute
   ApiAuthRegisterRoute: typeof ApiAuthRegisterRoute
+  ApiF1HealthRoute: typeof ApiF1HealthRoute
+  ApiF1LiveRoute: typeof ApiF1LiveRoute
+  ApiF1StandingsRoute: typeof ApiF1StandingsRoute
   ApiPostsIdRoute: typeof ApiPostsIdRouteWithChildren
   ApiUsersIdRoute: typeof ApiUsersIdRouteWithChildren
   ApiPostsIndexRoute: typeof ApiPostsIndexRoute
@@ -599,6 +638,27 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ApiAuthRegisterRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/api/f1/health': {
+      id: '/api/f1/health'
+      path: '/api/f1/health'
+      fullPath: '/api/f1/health'
+      preLoaderRoute: typeof ApiF1HealthRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/api/f1/live': {
+      id: '/api/f1/live'
+      path: '/api/f1/live'
+      fullPath: '/api/f1/live'
+      preLoaderRoute: typeof ApiF1LiveRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/api/f1/standings': {
+      id: '/api/f1/standings'
+      path: '/api/f1/standings'
+      fullPath: '/api/f1/standings'
+      preLoaderRoute: typeof ApiF1StandingsRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/api/posts/': {
       id: '/api/posts/'
       path: '/api/posts'
@@ -704,6 +764,9 @@ const rootRouteChildren: RootRouteChildren = {
   ApiAuthPasswordRecoveryRoute: ApiAuthPasswordRecoveryRoute,
   ApiAuthPasswordResetRoute: ApiAuthPasswordResetRoute,
   ApiAuthRegisterRoute: ApiAuthRegisterRoute,
+  ApiF1HealthRoute: ApiF1HealthRoute,
+  ApiF1LiveRoute: ApiF1LiveRoute,
+  ApiF1StandingsRoute: ApiF1StandingsRoute,
   ApiPostsIdRoute: ApiPostsIdRouteWithChildren,
   ApiUsersIdRoute: ApiUsersIdRouteWithChildren,
   ApiPostsIndexRoute: ApiPostsIndexRoute,

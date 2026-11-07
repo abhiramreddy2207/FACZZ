@@ -108,13 +108,17 @@
 
 @layer base {
   * { border-color: var(--color-border); }
-  html { -webkit-tap-highlight-color: transparent; }
+  html {
+    -webkit-tap-highlight-color: transparent;
+    overflow-x: clip;
+  }
   body {
     background-color: var(--color-background);
     color: var(--color-foreground);
     font-family: var(--font-sans);
     text-rendering: optimizeLegibility;
     -webkit-font-smoothing: antialiased;
+    overflow-x: clip;
   }
   h1, h2, h3, h4 { font-family: var(--font-display); letter-spacing: -0.015em; overflow-wrap: break-word; }
   button, a, input, select { touch-action: manipulation; }

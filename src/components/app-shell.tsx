@@ -174,7 +174,7 @@ export function AppShell({ children }: { children: ReactNode }) {
       {/* ========================================================= */}
       {/* MAIN CONTENT VIEW                                         */}
       {/* ========================================================= */}
-      <main className="mx-auto max-w-5xl px-4 pb-28 pt-5 md:pb-14">{children}</main>
+      <main className="mx-auto max-w-5xl px-4 pb-28 pt-5 md:pb-14 w-full min-w-0">{children}</main>
 
       {/* ========================================================= */}
       {/* MOBILE BOTTOM NAVIGATION BAR (>= 48px touch targets)      */}

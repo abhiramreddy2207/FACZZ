@@ -110,6 +110,19 @@ function DataDetail() {
         </Link>
       )}
 
+      {/* Live Data Freshness Bar */}
+      {["driver-standings", "constructor-standings", "live-timing"].includes(slug) && (
+        <div className="mb-4 flex flex-wrap items-center justify-between gap-2 rounded-xl border border-border/80 bg-muted/30 px-3.5 py-2 text-xs font-mono">
+          <div className="flex items-center gap-2">
+            <span className="h-2 w-2 rounded-full bg-emerald-500 animate-pulse" />
+            <span className="font-bold text-foreground">Active Telemetry Feed</span>
+            <span className="text-muted-foreground">·</span>
+            <span className="text-muted-foreground">{ds.provider}</span>
+          </div>
+          <span className="text-muted-foreground text-[11px]">SWR Server-Side Cache Active</span>
+        </div>
+      )}
+
       {/* Filters Toolbar */}
       <div className="mb-4 flex flex-wrap items-center gap-2">
         <input
@@ -182,7 +195,13 @@ function DataDetail() {
                   <XAxis dataKey={ds.chart.x} tick={{ fontSize: 10, fill: "var(--muted-foreground)" }} axisLine={false} tickLine={false} />
                   <YAxis tick={{ fontSize: 10, fill: "var(--muted-foreground)" }} axisLine={false} tickLine={false} />
                   <Tooltip content={<CustomTelemetryTooltip />} />
-                  <Bar dataKey={ds.chart.y} fill="url(#barGradient)" radius={[6, 6, 0, 0]} barSize={Math.max(12, Math.min(32, 450 / (rows.length || 1)))} />
+                  <Bar dataKey={ds.chart.y} fill="url(#barGradient)" radius={[6, 6, 0, 0]} barSize={Math.max(12, Math.min(32, 450 / (rows.length || 1)))}>
+                    {rows.map((entry, index) => {
+                      const teamId = (entry["team"] || entry["teamId"]) as string;
+                      const teamColor = teamId ? getTeam(teamId)?.color : undefined;
+                      return <Cell key={`cell-${index}`} fill={teamColor ?? "url(#barGradient)"} />;
+                    })}
+                  </Bar>
                 </BarChart>
               ) : (
                 <LineChart data={rows.filter((r) => r["team"] === (team || "mclaren"))} margin={{ top: 12, right: 12, bottom: 4, left: -10 }}>
