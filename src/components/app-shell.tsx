@@ -14,6 +14,15 @@ const nav = [
   { to: "/profile", label: "Profile", icon: User },
 ] as const;
 
+// 5 compact mobile tabs to prevent label wrapping/overlapping on narrow mobile screens (<380px)
+const mobileNav = [
+  { to: "/", label: "Paddock", icon: Home },
+  { to: "/race", label: "Races", icon: Flag },
+  { to: "/data", label: "Data", icon: BarChart3 },
+  { to: "/explore", label: "Explore", icon: Compass },
+  { to: "/profile", label: "Profile", icon: User },
+] as const;
+
 function Brand() {
   return (
     <Link to="/" className="flex items-center gap-2.5 group">
@@ -177,13 +186,13 @@ export function AppShell({ children }: { children: ReactNode }) {
       <main className="mx-auto max-w-5xl px-4 pb-28 pt-5 md:pb-14 w-full min-w-0">{children}</main>
 
       {/* ========================================================= */}
-      {/* MOBILE BOTTOM NAVIGATION BAR (>= 48px touch targets)      */}
+      {/* MOBILE BOTTOM NAVIGATION BAR (5 Balanced Columns)         */}
       {/* ========================================================= */}
       <nav
         aria-label="Mobile Navigation"
-        className="fixed inset-x-0 bottom-0 z-30 grid grid-cols-6 border-t border-border bg-card/95 backdrop-blur-lg md:hidden pb-safe"
+        className="fixed inset-x-0 bottom-0 z-30 grid grid-cols-5 border-t border-border bg-card/95 backdrop-blur-lg md:hidden pb-safe"
       >
-        {nav.map(({ to, label, icon: Icon }) => {
+        {mobileNav.map(({ to, label, icon: Icon }) => {
           const isCurrent = active(to);
           return (
             <Link
@@ -191,14 +200,14 @@ export function AppShell({ children }: { children: ReactNode }) {
               to={to}
               aria-current={isCurrent ? "page" : undefined}
               className={cn(
-                "flex flex-col items-center justify-center min-h-[52px] py-1.5 transition-all",
+                "flex flex-col items-center justify-center min-h-[52px] py-1 px-1 transition-all",
                 isCurrent ? "text-primary font-bold" : "text-muted-foreground hover:text-foreground"
               )}
             >
-              <Icon className="h-4 w-4" />
-              <span className="text-[10px] tracking-tight">{label}</span>
+              <Icon className="h-4 w-4 shrink-0" />
+              <span className="text-[10px] tracking-tight truncate max-w-full">{label}</span>
               {isCurrent && (
-                <span className="mt-0.5 h-1 w-4 rounded-full bg-primary" />
+                <span className="mt-0.5 h-1 w-4 rounded-full bg-primary shrink-0" />
               )}
             </Link>
           );

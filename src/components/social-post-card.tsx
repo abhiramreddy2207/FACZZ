@@ -165,8 +165,8 @@ export function SocialPostCard({ post }: { post: SocialPost }) {
       className="group rounded-2xl border border-border bg-card p-4 shadow-sm transition-all hover:border-border/80 hover:shadow-md md:p-5"
     >
       {/* Header */}
-      <div className="flex items-start justify-between gap-3">
-        <div className="flex items-center gap-3">
+      <div className="flex items-start justify-between gap-2">
+        <div className="flex items-center gap-3 min-w-0 flex-1">
           <div className="flex h-10 w-10 shrink-0 items-center justify-center overflow-hidden rounded-full border border-border bg-secondary font-bold text-foreground">
             {post.author.avatar ? (
               <img src={post.author.avatar} alt={post.author.name} className="h-full w-full object-cover" />
@@ -174,15 +174,15 @@ export function SocialPostCard({ post }: { post: SocialPost }) {
               <span>{post.author.name.slice(0, 2).toUpperCase()}</span>
             )}
           </div>
-          <div className="min-w-0">
+          <div className="min-w-0 flex-1">
             <div className="flex flex-wrap items-center gap-1.5">
-              <span className="truncate text-sm font-bold text-foreground">{post.author.name}</span>
+              <span className="truncate max-w-[160px] text-sm font-bold text-foreground">{post.author.name}</span>
               {post.author.isVerified && (
                 <CheckCircle2 className="h-3.5 w-3.5 text-primary fill-primary/20 shrink-0" />
               )}
               {team && (
                 <span
-                  className="inline-flex items-center gap-1 rounded-full px-2 py-0.5 text-[10px] font-semibold text-secondary-foreground"
+                  className="inline-flex items-center gap-1 rounded-full px-2 py-0.5 text-[10px] font-semibold text-secondary-foreground shrink-0"
                   style={{ backgroundColor: `${team.color}15`, border: `1px solid ${team.color}35` }}
                 >
                   <span className="h-1.5 w-1.5 rounded-full" style={{ backgroundColor: team.color }} />
@@ -190,12 +190,12 @@ export function SocialPostCard({ post }: { post: SocialPost }) {
                 </span>
               )}
             </div>
-            <div className="flex items-center gap-2 text-xs text-muted-foreground">
-              <span>{post.author.handle}</span>
+            <div className="flex flex-wrap items-center gap-x-2 gap-y-0.5 text-xs text-muted-foreground">
+              <span className="truncate max-w-[120px]">{post.author.handle}</span>
               <span>·</span>
-              <time dateTime={post.createdAt}>{fmt(post.createdAt)}</time>
+              <time dateTime={post.createdAt} className="shrink-0">{fmt(post.createdAt)}</time>
               <span>·</span>
-              <span className="rounded bg-muted px-1.5 py-0.2 text-[10px] font-semibold text-muted-foreground">
+              <span className="rounded bg-muted px-1.5 py-0.2 text-[10px] font-semibold text-muted-foreground shrink-0">
                 {post.category}
               </span>
             </div>
@@ -203,7 +203,7 @@ export function SocialPostCard({ post }: { post: SocialPost }) {
         </div>
 
         {/* Top actions */}
-        <div className="flex items-center gap-1">
+        <div className="flex items-center gap-0.5 shrink-0">
           <Button
             variant="unstyled"
             type="button"

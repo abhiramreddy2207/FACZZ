@@ -65,4 +65,24 @@ public class WebAppInterface {
     public String getAppVersion() {
         return "2.6.0";
     }
+
+    @JavascriptInterface
+    public boolean isNativeAndroid() {
+        return true;
+    }
+
+    @JavascriptInterface
+    public void setServerUrl(String url) {
+        if (mContext instanceof MainActivity) {
+            ((MainActivity) mContext).setAndLoadServerUrl(url);
+        }
+    }
+
+    @JavascriptInterface
+    public String getServerUrl() {
+        if (mContext instanceof MainActivity) {
+            return ((MainActivity) mContext).getActiveServerUrl();
+        }
+        return "";
+    }
 }

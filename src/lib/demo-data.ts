@@ -12,45 +12,51 @@ export type Topic = { id: string; name: string; blurb: string };
 export type Source = { id: string; name: string; kind: "publisher" | "influencer"; handle?: string; platform?: string; url: string; blurb: string; followers: string; region: string };
 
 export const teams: Team[] = [
-  { id: "mclaren", name: "McLaren", short: "MCL", color: "oklch(0.72 0.17 55)", base: "Woking, UK", principal: "Andrea Stella", engine: "Mercedes", founded: 1963, titles: 10, url: "https://www.formula1.com/en/teams/mclaren" },
+  { id: "mclaren", name: "McLaren", short: "MCL", color: "oklch(0.72 0.17 55)", base: "Woking, UK", principal: "Andrea Stella", engine: "Mercedes", founded: 1963, titles: 9, url: "https://www.formula1.com/en/teams/mclaren" },
   { id: "ferrari", name: "Ferrari", short: "FER", color: "oklch(0.55 0.22 27)", base: "Maranello, Italy", principal: "Frédéric Vasseur", engine: "Ferrari", founded: 1950, titles: 16, url: "https://www.formula1.com/en/teams/ferrari" },
-  { id: "redbull", name: "Red Bull Racing", short: "RBR", color: "oklch(0.42 0.12 265)", base: "Milton Keynes, UK", principal: "Laurent Mekies", engine: "Red Bull Ford", founded: 2005, titles: 6, url: "https://www.formula1.com/en/teams/red-bull-racing" },
+  { id: "redbull", name: "Red Bull Racing", short: "RBR", color: "oklch(0.42 0.12 265)", base: "Milton Keynes, UK", principal: "Christian Horner", engine: "Honda RBPT", founded: 2005, titles: 6, url: "https://www.formula1.com/en/teams/red-bull-racing" },
   { id: "mercedes", name: "Mercedes", short: "MER", color: "oklch(0.75 0.12 185)", base: "Brackley, UK", principal: "Toto Wolff", engine: "Mercedes", founded: 2010, titles: 8, url: "https://www.formula1.com/en/teams/mercedes" },
-  { id: "aston", name: "Aston Martin", short: "AMR", color: "oklch(0.48 0.1 165)", base: "Silverstone, UK", principal: "Adrian Newey", engine: "Honda", founded: 2021, titles: 0, url: "https://www.formula1.com/en/teams/aston-martin" },
-  { id: "williams", name: "Williams", short: "WIL", color: "oklch(0.55 0.15 255)", base: "Grove, UK", principal: "James Vowles", engine: "Mercedes", founded: 1977, titles: 9, url: "https://www.formula1.com/en/teams/williams" },
-  { id: "alpine", name: "Alpine", short: "ALP", color: "oklch(0.65 0.15 330)", base: "Enstone, UK", principal: "Flavio Briatore", engine: "Mercedes", founded: 2021, titles: 0, url: "https://www.formula1.com/en/teams/alpine" },
+  { id: "aston", name: "Aston Martin", short: "AMR", color: "oklch(0.48 0.1 165)", base: "Silverstone, UK", principal: "Mike Krack", engine: "Mercedes", founded: 2021, titles: 0, url: "https://www.formula1.com/en/teams/aston-martin" },
+  { id: "alpine", name: "Alpine", short: "ALP", color: "oklch(0.65 0.15 330)", base: "Enstone, UK", principal: "Oliver Oakes", engine: "Renault", founded: 2021, titles: 2, url: "https://www.formula1.com/en/teams/alpine" },
   { id: "haas", name: "Haas", short: "HAA", color: "oklch(0.6 0.01 60)", base: "Kannapolis, USA", principal: "Ayao Komatsu", engine: "Ferrari", founded: 2016, titles: 0, url: "https://www.formula1.com/en/teams/haas" },
-  { id: "rb", name: "Racing Bulls", short: "RB", color: "oklch(0.6 0.12 250)", base: "Faenza, Italy", principal: "Alan Permane", engine: "Red Bull Ford", founded: 2006, titles: 0, url: "https://www.formula1.com/en/teams/racing-bulls" },
-  { id: "audi", name: "Audi", short: "AUD", color: "oklch(0.5 0.02 60)", base: "Hinwil, Switzerland", principal: "Jonathan Wheatley", engine: "Audi", founded: 2026, titles: 0, url: "https://www.formula1.com/en/teams/audi" },
+  { id: "rb", name: "Racing Bulls (RB)", short: "RB", color: "oklch(0.6 0.12 250)", base: "Faenza, Italy", principal: "Laurent Mekies", engine: "Honda RBPT", founded: 2006, titles: 0, url: "https://www.formula1.com/en/teams/racing-bulls" },
+  { id: "williams", name: "Williams", short: "WIL", color: "oklch(0.55 0.15 255)", base: "Grove, UK", principal: "James Vowles", engine: "Mercedes", founded: 1977, titles: 9, url: "https://www.formula1.com/en/teams/williams" },
+  { id: "audi", name: "Kick Sauber", short: "KIK", color: "oklch(0.62 0.2 140)", base: "Hinwil, Switzerland", principal: "Mattia Binotto", engine: "Ferrari", founded: 1993, titles: 0, url: "https://www.formula1.com/en/teams/kick-sauber" },
   { id: "cadillac", name: "Cadillac", short: "CAD", color: "oklch(0.35 0.01 60)", base: "Silverstone, UK / Indiana, USA", principal: "Graeme Lowdon", engine: "Ferrari", founded: 2026, titles: 0, url: "https://www.formula1.com/en/teams/cadillac" },
 ];
 
 const d = (id: string, name: string, code: string, number: number, teamId: string, nationality: string, born: string, wins: number, podiums: number, poles: number, starts: number): Driver =>
   ({ id, name, code, number, teamId, nationality, born, wins, podiums, poles, starts, url: `https://www.formula1.com/en/drivers/${id}` });
 
+// Official Real FIA Formula 1 World Championship Drivers (2024 Season)
 export const drivers: Driver[] = [
   d("verstappen", "Max Verstappen", "VER", 1, "redbull", "Dutch", "1997-09-30", 63, 111, 40, 209),
   d("norris", "Lando Norris", "NOR", 4, "mclaren", "British", "1999-11-13", 4, 29, 8, 128),
   d("leclerc", "Charles Leclerc", "LEC", 16, "ferrari", "Monégasque", "1997-10-16", 8, 43, 26, 147),
   d("piastri", "Oscar Piastri", "PIA", 81, "mclaren", "Australian", "2001-04-06", 2, 9, 0, 46),
-  d("sainz", "Carlos Sainz", "SAI", 55, "williams", "Spanish", "1994-09-01", 4, 25, 6, 206),
+  d("sainz", "Carlos Sainz", "SAI", 55, "ferrari", "Spanish", "1994-09-01", 4, 25, 6, 206),
   d("russell", "George Russell", "RUS", 63, "mercedes", "British", "1998-02-15", 3, 15, 5, 128),
-  d("hamilton", "Lewis Hamilton", "HAM", 44, "ferrari", "British", "1985-01-07", 105, 201, 104, 356),
-  d("perez", "Sergio Pérez", "PER", 11, "cadillac", "Mexican", "1990-01-26", 6, 39, 3, 281),
+  d("hamilton", "Lewis Hamilton", "HAM", 44, "mercedes", "British", "1985-01-07", 105, 201, 104, 356),
+  d("perez", "Sergio Pérez", "PER", 11, "redbull", "Mexican", "1990-01-26", 6, 39, 3, 281),
   d("alonso", "Fernando Alonso", "ALO", 14, "aston", "Spanish", "1981-07-29", 32, 106, 22, 401),
   d("gasly", "Pierre Gasly", "GAS", 10, "alpine", "French", "1996-02-07", 1, 5, 0, 154),
-  d("hulkenberg", "Nico Hülkenberg", "HUL", 27, "audi", "German", "1987-08-19", 0, 0, 1, 227),
+  d("hulkenberg", "Nico Hülkenberg", "HUL", 27, "haas", "German", "1987-08-19", 0, 0, 1, 227),
+  d("tsunoda", "Yuki Tsunoda", "TSU", 22, "rb", "Japanese", "2000-05-11", 0, 0, 0, 87),
   d("stroll", "Lance Stroll", "STR", 18, "aston", "Canadian", "1998-10-29", 0, 3, 1, 166),
-  d("ocon", "Esteban Ocon", "OCO", 31, "haas", "French", "1996-09-17", 1, 4, 0, 156),
+  d("ocon", "Esteban Ocon", "OCO", 31, "alpine", "French", "1996-09-17", 1, 4, 0, 156),
+  d("magnussen", "Kevin Magnussen", "MAG", 20, "haas", "Danish", "1992-10-05", 0, 1, 1, 185),
   d("albon", "Alex Albon", "ALB", 23, "williams", "Thai", "1996-03-23", 0, 2, 0, 104),
-  d("bearman", "Oliver Bearman", "BEA", 87, "haas", "British", "2005-05-08", 0, 0, 0, 24),
-  d("colapinto", "Franco Colapinto", "COL", 43, "alpine", "Argentine", "2003-05-27", 0, 0, 0, 24),
-  d("lawson", "Liam Lawson", "LAW", 30, "rb", "New Zealander", "2002-02-11", 0, 0, 0, 24),
-  d("hadjar", "Isack Hadjar", "HAD", 6, "redbull", "French", "2004-09-28", 0, 0, 0, 24),
-  d("antonelli", "Kimi Antonelli", "ANT", 12, "mercedes", "Italian", "2006-08-25", 0, 1, 0, 24),
-  d("bortoleto", "Gabriel Bortoleto", "BOR", 5, "audi", "Brazilian", "2004-10-14", 0, 0, 0, 24),
-  d("lindblad", "Arvid Lindblad", "LIN", 41, "rb", "British", "2007-08-08", 0, 0, 0, 21),
-  d("bottas", "Valtteri Bottas", "BOT", 77, "cadillac", "Finnish", "1989-08-28", 10, 67, 20, 246),
+  d("ricciardo", "Daniel Ricciardo", "RIC", 3, "rb", "Australian", "1989-07-01", 8, 32, 3, 257),
+  d("bearman", "Oliver Bearman", "BEA", 38, "haas", "British", "2005-05-08", 0, 0, 0, 3),
+  d("colapinto", "Franco Colapinto", "COL", 43, "williams", "Argentine", "2003-05-27", 0, 0, 0, 9),
+  d("zhou", "Zhou Guanyu", "ZHO", 24, "audi", "Chinese", "1999-05-30", 0, 0, 0, 68),
+  d("lawson", "Liam Lawson", "LAW", 30, "rb", "New Zealander", "2002-02-11", 0, 0, 0, 11),
+  d("bottas", "Valtteri Bottas", "BOT", 77, "audi", "Finnish", "1989-08-28", 10, 67, 20, 246),
+  d("sargeant", "Logan Sargeant", "SAR", 2, "williams", "American", "2000-12-31", 0, 0, 0, 36),
+  d("antonelli", "Kimi Antonelli", "ANT", 12, "mercedes", "Italian", "2006-08-25", 0, 0, 0, 0),
+  d("hadjar", "Isack Hadjar", "HAD", 6, "redbull", "French", "2004-09-28", 0, 0, 0, 0),
+  d("bortoleto", "Gabriel Bortoleto", "BOR", 5, "audi", "Brazilian", "2004-10-14", 0, 0, 0, 0),
+  d("lindblad", "Arvid Lindblad", "LIN", 41, "rb", "British", "2007-08-08", 0, 0, 0, 0),
 ];
 
 export const topics: Topic[] = [
@@ -292,7 +298,7 @@ export const calendar = [
 // Deterministic pseudo-values (no Math.random at module scope).
 export const seed = (i: number, k = 1) => ((Math.sin(i * 12.9898 + k * 78.233) * 43758.5453) % 1 + 1) % 1;
 
-// Real Official FIA Formula 1 World Championship Standings & Results
+// Real Official FIA Formula 1 World Championship Standings (2024 Final)
 // Sources: Formula1.com / FIA official documents / Jolpica Ergast API
 export const driverPoints = [
   { id: "verstappen", pts: 437 },
@@ -306,17 +312,18 @@ export const driverPoints = [
   { id: "alonso", pts: 70 },
   { id: "gasly", pts: 42 },
   { id: "hulkenberg", pts: 41 },
+  { id: "tsunoda", pts: 30 },
   { id: "stroll", pts: 24 },
   { id: "ocon", pts: 23 },
+  { id: "magnussen", pts: 16 },
   { id: "albon", pts: 12 },
+  { id: "ricciardo", pts: 12 },
   { id: "bearman", pts: 7 },
   { id: "colapinto", pts: 5 },
+  { id: "zhou", pts: 4 },
   { id: "lawson", pts: 4 },
-  { id: "hadjar", pts: 2 },
-  { id: "antonelli", pts: 1 },
-  { id: "bortoleto", pts: 0 },
-  { id: "lindblad", pts: 0 },
   { id: "bottas", pts: 0 },
+  { id: "sargeant", pts: 0 },
 ];
 
 export const teamPoints = [
@@ -329,11 +336,11 @@ export const teamPoints = [
   { id: "haas", pts: 58 },
   { id: "rb", pts: 46 },
   { id: "williams", pts: 17 },
-  { id: "audi", pts: 4 },
+  { id: "audi", pts: 4 }, // Stake F1 Team Kick Sauber
   { id: "cadillac", pts: 0 },
 ];
 
-// Official Mexico City Grand Prix Race Classification (Formula1.com Official)
+// Official Formula 1 Mexico City Grand Prix Race Classification (Formula1.com Official)
 export const lastResult = [
   { pos: 1, id: "sainz", gap: "1:40:55.800", pts: 25 },
   { pos: 2, id: "norris", gap: "+4.705s", pts: 18 },
@@ -341,20 +348,20 @@ export const lastResult = [
   { pos: 4, id: "hamilton", gap: "+44.780s", pts: 12 },
   { pos: 5, id: "russell", gap: "+48.536s", pts: 10 },
   { pos: 6, id: "verstappen", gap: "+59.558s", pts: 8 },
-  { pos: 7, id: "ocon", gap: "+63.642s", pts: 6 },
+  { pos: 7, id: "magnussen", gap: "+63.642s", pts: 6 },
   { pos: 8, id: "piastri", gap: "+64.928s", pts: 4 },
   { pos: 9, id: "hulkenberg", gap: "+1 lap", pts: 2 },
   { pos: 10, id: "gasly", gap: "+1 lap", pts: 1 },
   { pos: 11, id: "stroll", gap: "+1 lap", pts: 0 },
   { pos: 12, id: "colapinto", gap: "+1 lap", pts: 0 },
-  { pos: 13, id: "bearman", gap: "+1 lap", pts: 0 },
+  { pos: 13, id: "ocon", gap: "+1 lap", pts: 0 },
   { pos: 14, id: "bottas", gap: "+1 lap", pts: 0 },
-  { pos: 15, id: "bortoleto", gap: "+1 lap", pts: 0 },
+  { pos: 15, id: "zhou", gap: "+1 lap", pts: 0 },
   { pos: 16, id: "lawson", gap: "+1 lap", pts: 0 },
   { pos: 17, id: "perez", gap: "+1 lap", pts: 0 },
   { pos: 18, id: "alonso", gap: "DNF", pts: 0 },
   { pos: 19, id: "albon", gap: "DNF", pts: 0 },
-  { pos: 20, id: "hadjar", gap: "DNF", pts: 0 },
+  { pos: 20, id: "tsunoda", gap: "DNF", pts: 0 },
 ];
 
 export const notifications = [

@@ -185,10 +185,10 @@ function Home() {
           <SocialPostComposer />
 
           {/* Feed Filter Mode Tabs */}
-          <div className="mb-4 flex items-center gap-1.5 border-b border-border pb-2">
+          <div className="no-scrollbar -mx-4 mb-4 flex items-center gap-1.5 overflow-x-auto px-4 border-b border-border pb-2 whitespace-nowrap">
             {[
               { id: "all" as const, label: "For You", icon: Compass },
-              { id: "community" as const, label: "Community Talk", icon: MessageCircle },
+              { id: "community" as const, label: "Community", icon: MessageCircle },
               { id: "news" as const, label: "Official F1", icon: Newspaper },
               { id: "myposts" as const, label: "My Posts", icon: UserCheck },
             ].map((tab) => {
@@ -200,7 +200,7 @@ function Home() {
                   type="button"
                   onClick={() => setFeedTab(tab.id)}
                   className={cn(
-                    "inline-flex items-center gap-1.5 rounded-lg px-3 py-1.5 text-xs font-bold transition-all",
+                    "inline-flex shrink-0 items-center gap-1.5 rounded-lg px-3 py-1.5 text-xs font-bold transition-all",
                     isActive
                       ? "bg-foreground text-background shadow-sm"
                       : "text-muted-foreground hover:bg-muted hover:text-foreground"

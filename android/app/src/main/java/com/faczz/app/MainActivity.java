@@ -31,6 +31,9 @@ import java.util.Set;
  * Hardened Production Android WebView Container for Faczz F1 Paddock
  */
 public class MainActivity extends Activity {
+    private static final String PREFS_NAME = "faczz_config";
+    private static final String PREF_SERVER_URL = "server_url";
+    private static final String DEFAULT_DEV_URL = "http://192.168.29.195:8081/";
     private static final String PRODUCTION_DOMAIN = "faczz.app";
     private static final String PRODUCTION_URL = "https://faczz.app/";
     private static final int FILE_CHOOSER_REQUEST_CODE = 1001;
@@ -42,7 +45,8 @@ public class MainActivity extends Activity {
             "accounts.google.com",
             "10.0.2.2",
             "localhost",
-            "127.0.0.1"
+            "127.0.0.1",
+            "192.168.29.195"
     ));
 
     private WebView mWebView;
@@ -98,19 +102,67 @@ public class MainActivity extends Activity {
         }
     }
 
+    public String getActiveServerUrl() {
+        android.content.SharedPreferences prefs = getSharedPreferences(PREFS_NAME, android.content.Context.MODE_PRIVATE);
+        return prefs.getString(PREF_SERVER_URL, DEFAULT_DEV_URL);
+    }
+
+    public void setAndLoadServerUrl(String url) {
+        if (url == null || url.trim().isEmpty()) return;
+        String sanitized = url.trim();
+        if (!sanitized.startsWith("http://") && !sanitized.startsWith("https://")) {
+            sanitized = "http://" + sanitized;
+        }
+        if (!sanitized.endsWith("/")) {
+            sanitized += "/";
+        }
+        final String finalUrl = sanitized;
+        android.content.SharedPreferences prefs = getSharedPreferences(PREFS_NAME, android.content.Context.MODE_PRIVATE);
+        prefs.edit().putString(PREF_SERVER_URL, finalUrl).apply();
+        runOnUiThread(() -> {
+            if (mWebView != null) {
+                mWebView.loadUrl(finalUrl);
+            }
+        });
+    }
+
+    public boolean isTrustedHost(String host) {
+        if (host == null || host.isEmpty()) return false;
+        String normalized = host.toLowerCase().trim();
+        for (String trusted : TRUSTED_HOSTS) {
+            if (normalized.equals(trusted) || normalized.endsWith("." + trusted)) {
+                return true;
+            }
+        }
+        // Allow local LAN private IPs and loopbacks
+        if (normalized.startsWith("192.168.") || normalized.startsWith("10.") || normalized.equals("localhost") || normalized.equals("127.0.0.1")) {
+            return true;
+        }
+        if (normalized.endsWith(".app") || normalized.endsWith(".lovable.app") || normalized.endsWith(".vercel.app")) {
+            return true;
+        }
+        try {
+            Uri currentUri = Uri.parse(getActiveServerUrl());
+            if (normalized.equalsIgnoreCase(currentUri.getHost())) {
+                return true;
+            }
+        } catch (Exception ignored) {}
+        return false;
+    }
+
     /**
      * Strict validation of incoming intents, deep links, and URLs
      */
     private String validateAndSanitizeUrl(Intent intent) {
         if (intent == null || intent.getData() == null) {
-            return PRODUCTION_URL;
+            return getActiveServerUrl();
         }
 
         Uri uri = intent.getData();
         String scheme = uri.getScheme();
 
         if (scheme == null) {
-            return PRODUCTION_URL;
+            return getActiveServerUrl();
         }
 
         // 1. Custom Deep Link: faczz://<path>
@@ -118,24 +170,19 @@ public class MainActivity extends Activity {
             String path = uri.getPath() != null ? uri.getPath() : "";
             String query = uri.getQuery() != null ? "?" + uri.getQuery() : "";
             String host = uri.getHost() != null && !uri.getHost().isEmpty() ? "/" + uri.getHost() : "";
-            return "https://" + PRODUCTION_DOMAIN + host + path + query;
+            return getActiveServerUrl().replaceAll("/+$", "") + host + path + query;
         }
 
-        // 2. HTTPS Web Links
+        // 2. HTTPS/HTTP Web Links
         if ("https".equalsIgnoreCase(scheme) || "http".equalsIgnoreCase(scheme)) {
             String host = uri.getHost();
-            if (host != null) {
-                String normalizedHost = host.toLowerCase();
-                for (String trusted : TRUSTED_HOSTS) {
-                    if (normalizedHost.equals(trusted) || normalizedHost.endsWith("." + trusted)) {
-                        return uri.toString();
-                    }
-                }
+            if (host != null && isTrustedHost(host)) {
+                return uri.toString();
             }
         }
 
         // Reject untrusted schemes (file://, javascript://, content://, etc.)
-        return PRODUCTION_URL;
+        return getActiveServerUrl();
     }
 
     /**
@@ -206,13 +253,8 @@ public class MainActivity extends Activity {
                 // Inspect HTTP/HTTPS destinations
                 if ("https".equalsIgnoreCase(scheme) || "http".equalsIgnoreCase(scheme)) {
                     String host = uri.getHost();
-                    if (host != null) {
-                        String lowerHost = host.toLowerCase();
-                        for (String trusted : TRUSTED_HOSTS) {
-                            if (lowerHost.equals(trusted) || lowerHost.endsWith("." + trusted)) {
-                                return false; // Allowed inside WebView
-                            }
-                        }
+                    if (host != null && isTrustedHost(host)) {
+                        return false; // Allowed inside WebView
                     }
 
                     // External URL: safely delegate to the external browser
@@ -285,32 +327,65 @@ public class MainActivity extends Activity {
     }
 
     /**
-     * Renders a premium motorsport dark-themed offline error page with an instant retry action
+     * Renders a premium motorsport dark-themed offline error page with server switcher and retry
      */
     private void showOfflineErrorPage(WebView view, String failingUrl) {
+        String activeUrl = getActiveServerUrl();
         String errorHtml = "<!DOCTYPE html>" +
                 "<html>" +
                 "<head>" +
+                "<meta charset='utf-8'>" +
                 "<meta name='viewport' content='width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no'>" +
+                "<title>Faczz Paddock Offline</title>" +
                 "<style>" +
-                "body { background-color: #151413; color: #f0eee8; font-family: -apple-system, sans-serif; display: flex; align-items: center; justify-content: center; height: 100vh; margin: 0; padding: 24px; box-sizing: border-box; text-align: center; }" +
-                ".card { background-color: #1e1e1e; border: 1px solid #333; border-radius: 20px; padding: 32px 24px; max-width: 360px; width: 100%; box-shadow: 0 10px 30px rgba(0,0,0,0.5); }" +
-                ".flag { font-size: 36px; margin-bottom: 12px; display: inline-block; }" +
-                "h2 { font-size: 20px; font-weight: 900; letter-spacing: -0.5px; text-transform: uppercase; margin: 0 0 8px 0; color: #ffffff; }" +
-                "p { font-size: 13px; color: #a1a1aa; line-height: 1.5; margin: 0 0 24px 0; }" +
-                ".btn { background-color: #D6262B; color: #ffffff; border: none; border-radius: 12px; font-weight: 800; font-size: 14px; text-transform: uppercase; letter-spacing: 0.5px; padding: 14px 24px; width: 100%; cursor: pointer; transition: background-color 0.2s; }" +
+                "body { background-color: #151413; color: #f0eee8; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; display: flex; align-items: center; justify-content: center; min-height: 100vh; margin: 0; padding: 20px; box-sizing: border-box; text-align: center; }" +
+                ".card { background-color: #1a1918; border: 1px solid #2e2c2a; border-radius: 20px; padding: 28px 20px; max-width: 380px; width: 100%; box-shadow: 0 16px 40px rgba(0,0,0,0.6); }" +
+                ".flag { font-size: 32px; margin-bottom: 8px; }" +
+                "h2 { font-size: 18px; font-weight: 900; letter-spacing: -0.5px; text-transform: uppercase; margin: 0 0 6px 0; color: #ffffff; }" +
+                "p { font-size: 12px; color: #a1a1aa; line-height: 1.4; margin: 0 0 16px 0; }" +
+                ".fail-url { font-family: monospace; font-size: 10px; color: #ef4444; word-break: break-all; background: rgba(239, 68, 68, 0.1); border: 1px solid rgba(239, 68, 68, 0.2); border-radius: 8px; padding: 6px 8px; margin-bottom: 16px; }" +
+                ".input-label { font-size: 10px; font-weight: 800; text-transform: uppercase; letter-spacing: 0.5px; color: #71717a; text-align: left; margin-bottom: 4px; display: block; }" +
+                ".url-input { width: 100%; box-sizing: border-box; background: #111; border: 1px solid #3f3f46; border-radius: 10px; padding: 10px 12px; font-size: 12px; color: #fff; font-family: monospace; margin-bottom: 12px; outline: none; }" +
+                ".url-input:focus { border-color: #d6262b; }" +
+                ".presets { display: flex; gap: 6px; margin-bottom: 16px; }" +
+                ".preset-btn { flex: 1; background: #262422; border: 1px solid #3f3e3b; color: #d4d4d8; font-size: 10px; font-weight: 700; border-radius: 8px; padding: 8px 4px; cursor: pointer; text-transform: uppercase; }" +
+                ".preset-btn:active { background: #3f3e3b; color: #fff; }" +
+                ".btn { background-color: #D6262B; color: #ffffff; border: none; border-radius: 12px; font-weight: 800; font-size: 13px; text-transform: uppercase; letter-spacing: 0.5px; padding: 12px 20px; width: 100%; cursor: pointer; transition: background-color 0.2s; }" +
                 ".btn:active { background-color: #b01e22; }" +
-                ".status { font-family: monospace; font-size: 10px; color: #71717a; margin-top: 16px; text-transform: uppercase; }" +
+                ".btn-sec { background: transparent; border: 1px solid #3f3e3b; color: #a1a1aa; margin-top: 8px; }" +
+                ".btn-sec:active { background: #262422; color: #fff; }" +
+                ".status { font-family: monospace; font-size: 9px; color: #71717a; margin-top: 14px; text-transform: uppercase; letter-spacing: 0.5px; }" +
                 "</style>" +
                 "</head>" +
                 "<body>" +
                 "<div class='card'>" +
                 "<div class='flag'>🏎️</div>" +
                 "<h2>Paddock Disconnected</h2>" +
-                "<p>Unable to connect to the Faczz live timing and community feed. Please check your network connection.</p>" +
-                "<button class='btn' onclick='window.location.reload()'>Retry Connection</button>" +
-                "<div class='status'>Telemetry Offline · Tap Retry</div>" +
+                "<p>Unable to connect to the Faczz live feed and telemetry backend.</p>" +
+                "<div class='fail-url'>Target: " + (failingUrl != null ? failingUrl : activeUrl) + "</div>" +
+                "<label class='input-label'>Backend Server URL</label>" +
+                "<input id='serverInput' class='url-input' type='text' value='" + activeUrl + "' placeholder='http://192.168...:8081/' />" +
+                "<div class='presets'>" +
+                "<button class='preset-btn' onclick=\"setPreset('http://192.168.29.195:8081/')\">Wi-Fi :8081</button>" +
+                "<button class='preset-btn' onclick=\"setPreset('http://192.168.29.195:8080/')\">Wi-Fi :8080</button>" +
+                "<button class='preset-btn' onclick=\"setPreset('https://faczz.app/')\">Cloud</button>" +
                 "</div>" +
+                "<button class='btn' onclick='connectServer()'>Connect & Save</button>" +
+                "<button class='btn btn-sec' onclick='window.location.reload()'>Retry Current Target</button>" +
+                "<div class='status'>Hybrid Container v2.6.0 · Enter Host IP</div>" +
+                "</div>" +
+                "<script>" +
+                "function setPreset(url) { document.getElementById('serverInput').value = url; connectServer(); }" +
+                "function connectServer() {" +
+                "  var val = document.getElementById('serverInput').value.trim();" +
+                "  if (!val) return;" +
+                "  if (window.AndroidBridge && window.AndroidBridge.setServerUrl) {" +
+                "    window.AndroidBridge.setServerUrl(val);" +
+                "  } else {" +
+                "    window.location.href = val;" +
+                "  }" +
+                "}" +
+                "</script>" +
                 "</body>" +
                 "</html>";
 

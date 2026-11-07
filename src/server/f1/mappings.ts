@@ -27,11 +27,16 @@ export const ERGAST_DRIVER_MAP: Record<string, string> = {
   bortoleto: "bortoleto",
   lindblad: "lindblad",
   bottas: "bottas",
-  tsunoda: "rb",
-  zhou: "audi",
-  magnussen: "haas",
-  sargeant: "williams",
-  ricciardo: "rb",
+  tsunoda: "tsunoda",
+  yuki_tsunoda: "tsunoda",
+  zhou: "zhou",
+  guanyu_zhou: "zhou",
+  magnussen: "magnussen",
+  kevin_magnussen: "magnussen",
+  sargeant: "sargeant",
+  logan_sargeant: "sargeant",
+  ricciardo: "ricciardo",
+  daniel_ricciardo: "ricciardo",
 };
 
 /**
