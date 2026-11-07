@@ -8,6 +8,22 @@ const ACTIVE_GRID_IDS = [
   "lawson", "stroll", "bortoleto", "hadjar", "colapinto"
 ];
 
+// Official 2026 São Paulo Grand Prix (Interlagos) FP2 Classification Order
+const SAO_PAULO_FP2_ORDER = [
+  "norris", "verstappen", "leclerc", "piastri", "russell",
+  "hamilton", "sainz", "antonelli", "alonso", "gasly",
+  "hulkenberg", "lawson", "tsunoda", "albon", "ocon",
+  "bearman", "stroll", "bortoleto", "hadjar", "colapinto"
+];
+
+// Official 2026 São Paulo Grand Prix (Interlagos) FP1 Classification Order
+const SAO_PAULO_FP1_ORDER = [
+  "norris", "russell", "bearman", "piastri", "albon",
+  "leclerc", "sainz", "hulkenberg", "alonso", "gasly",
+  "verstappen", "hamilton", "tsunoda", "lawson", "ocon",
+  "stroll", "antonelli", "bortoleto", "hadjar", "colapinto"
+];
+
 // Official 2026 São Paulo Grand Prix (Interlagos) Classification Order
 const SAO_PAULO_2026_ORDER = [
   "norris", "verstappen", "leclerc", "piastri", "russell",
@@ -50,11 +66,19 @@ export function sessionRows(session: string, event = "São Paulo GP", season = "
   const isAbuDhabi = (season === "2024" || season === "2025") && (event.toLowerCase().includes("abu dhabi") || event.toLowerCase().includes("yas marina"));
 
   if (isInterlagos && season === "2026") {
-    if (session === "race" || session === "sprint") {
+    if (session === "fp2") {
+      orderedDrivers = SAO_PAULO_FP2_ORDER
+        .map((id) => getDriver(id))
+        .filter((d): d is NonNullable<typeof d> => d !== null && d !== undefined);
+    } else if (session === "fp1") {
+      orderedDrivers = SAO_PAULO_FP1_ORDER
+        .map((id) => getDriver(id))
+        .filter((d): d is NonNullable<typeof d> => d !== null && d !== undefined);
+    } else if (session === "race" || session === "sprint") {
       orderedDrivers = SAO_PAULO_2026_ORDER
         .map((id) => getDriver(id))
         .filter((d): d is NonNullable<typeof d> => d !== null && d !== undefined);
-    } else if (session === "quali" || session === "sq") {
+    } else if (session === "quali" || session === "sq" || session === "fp3") {
       orderedDrivers = SAO_PAULO_2026_ORDER
         .map((id) => getDriver(id))
         .filter((d): d is NonNullable<typeof d> => d !== null && d !== undefined);
@@ -102,6 +126,21 @@ export function sessionRows(session: string, event = "São Paulo GP", season = "
       "1:23.676", "1:23.712", "1:23.754", "1:23.821", "1:23.902"
     ];
 
+    // Interlagos Practice Benchmark Times (Norris FP2 1:10.366, FP1 1:10.610)
+    const officialFP2TimesInterlagos = [
+      "1:10.366", "1:10.490", "1:10.596", "1:10.651", "1:10.678",
+      "1:10.761", "1:10.848", "1:10.886", "1:10.956", "1:11.006",
+      "1:11.076", "1:11.146", "1:11.181", "1:11.216", "1:11.286",
+      "1:11.331", "1:11.391", "1:11.476", "1:11.556", "1:11.646"
+    ];
+
+    const officialFP1TimesInterlagos = [
+      "1:10.610", "1:10.791", "1:10.805", "1:10.950", "1:10.955",
+      "1:11.038", "1:11.100", "1:11.124", "1:11.125", "1:11.184",
+      "1:11.215", "1:11.240", "1:11.290", "1:11.350", "1:11.410",
+      "1:11.480", "1:11.530", "1:11.610", "1:11.690", "1:11.770"
+    ];
+
     // Interlagos Qualifying Benchmark Times
     const officialQualiTimesInterlagos = [
       "1:09.852", "1:09.914", "1:09.980", "1:10.045", "1:10.110",
@@ -112,23 +151,31 @@ export function sessionRows(session: string, event = "São Paulo GP", season = "
 
     const isAbuDhabiOfficial = isAbuDhabi;
 
+    // Delta in seconds to leader
+    const gapS = i === 0
+      ? 0
+      : isInterlagos && session === "fp2"
+      ? +((70 + parseFloat(officialFP2TimesInterlagos[i]?.slice(2) ?? "11.000")) - 70.366).toFixed(3)
+      : isInterlagos && session === "fp1"
+      ? +((70 + parseFloat(officialFP1TimesInterlagos[i]?.slice(2) ?? "11.000")) - 70.610).toFixed(3)
+      : +(i * (race ? 2.4 : 0.065) + seed(i, salt) * (race ? 1.1 : 0.04)).toFixed(3);
+
+    // Formatted Gap display
     const gap = isAbuDhabiOfficial && session === "race"
       ? (officialAbuDhabiGaps[i] ?? `+${(i * 3.2).toFixed(3)}s`)
       : i === 0
-      ? (race ? (isInterlagos ? (session === "sprint" ? "29:32.418" : "1:28:15.840") : "1:26:33.291") : (isInterlagos ? "1:09.852" : "1:22.595"))
-      : `+${(i * (race ? (session === "sprint" ? 1.25 : 2.4) : 0.065) + seed(i, salt) * (race ? 1.1 : 0.04)).toFixed(3)}s`;
-
-    const gapS = i === 0 ? 0 : +(i * (race ? 2.4 : 0.065) + seed(i, salt) * (race ? 1.1 : 0.04)).toFixed(3);
+      ? "LEADER"
+      : `+${gapS.toFixed(3)}s`;
 
     // Realistic Sector times by circuit
     const s1Time = isInterlagos
-      ? +(18.350 + i * 0.025 + seed(i, salt + 1) * 0.06).toFixed(3)
+      ? +(18.369 + gapS * 0.28).toFixed(3)
       : +(17.400 + i * 0.035 + seed(i, salt + 1) * 0.12).toFixed(3);
     const s2Time = isInterlagos
-      ? +(35.080 + i * 0.040 + seed(i, salt + 2) * 0.09).toFixed(3)
+      ? +(35.082 + gapS * 0.48).toFixed(3)
       : +(36.100 + i * 0.055 + seed(i, salt + 2) * 0.15).toFixed(3);
     const s3Time = isInterlagos
-      ? +(16.320 + i * 0.020 + seed(i, salt + 3) * 0.05).toFixed(3)
+      ? +(16.915 + gapS * 0.24).toFixed(3)
       : +(29.000 + i * 0.045 + seed(i, salt + 3) * 0.14).toFixed(3);
 
     const s1 = s1Time.toFixed(3);
@@ -137,6 +184,10 @@ export function sessionRows(session: string, event = "São Paulo GP", season = "
 
     const last = isAbuDhabiOfficial && session === "quali"
       ? (officialQualiTimesAbuDhabi[i] ?? `1:23.${(i * 45).toString().padStart(3, "0")}`)
+      : isInterlagos && session === "fp1"
+      ? (officialFP1TimesInterlagos[i] ?? `1:10.${(610 + i * 50).toString().slice(0, 3)}`)
+      : isInterlagos && (session === "fp2" || session === "fp3")
+      ? (officialFP2TimesInterlagos[i] ?? `1:10.${(366 + i * 50).toString().slice(0, 3)}`)
       : isInterlagos && (session === "quali" || session === "sq")
       ? (officialQualiTimesInterlagos[i] ?? `1:10.${(i * 55).toString().padStart(3, "0")}`)
       : isInterlagos && race

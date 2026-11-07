@@ -23,15 +23,25 @@ export const Route = createFileRoute("/race")({
 });
 
 export function Race() {
-  const tabs = raceWeekend.sessions.map((s) => s.short);
-  const [tab, setTab] = useState<string>(tabs[tabs.length - 1] ?? "RACE");
+  const tabs = useMemo(() => raceWeekend.sessions.map((s) => s.short), []);
+  // Default to the currently live session, or latest completed session (FP2)
+  const defaultTab = useMemo(() => {
+    const liveSession = raceWeekend.sessions.find((s) => s.status === "live");
+    if (liveSession) return liveSession.short;
+    const completedSessions = raceWeekend.sessions.filter((s) => s.status === "done");
+    const lastDone = completedSessions[completedSessions.length - 1];
+    if (lastDone) return lastDone.short;
+    return tabs[0] ?? "FP2";
+  }, [tabs]);
+
+  const [tab, setTab] = useState<string>(defaultTab);
   const [view, setView] = useState<"Timing" | "Qualifying" | "Tyres" | "Results">("Timing");
   const [selectedDriver, setSelectedDriver] = useState<string | null>("norris");
   const [liveData, setLiveData] = useState<LiveTelemetryPayload | null>(null);
   const [isRefreshing, setIsRefreshing] = useState(false);
   const [selectedSector, setSelectedSector] = useState<"s1" | "s2" | "s3" | null>(null);
 
-  const s = raceWeekend.sessions.find((x) => x.short === tab);
+  const s = raceWeekend.sessions.find((x) => x.short === tab) ?? raceWeekend.sessions[0];
   if (!s) return null;
 
   const isQuali = s.id === "quali" || s.id === "sq";
@@ -201,11 +211,17 @@ export function Race() {
             {/* Live Delta status */}
             <div className="flex items-center gap-3 font-mono text-xs">
               <div className="text-right">
-                <span className="text-[10px] uppercase text-muted-foreground block">Interval to Leader</span>
-                <span className="font-bold text-primary">{activeDriverRow.gap}</span>
+                <span className="text-[10px] uppercase text-muted-foreground block">
+                  {s.status === "upcoming" ? "Status" : "Interval to Leader"}
+                </span>
+                <span className="font-bold text-primary">
+                  {s.status === "upcoming" ? "SCHEDULED" : activeDriverRow.gap}
+                </span>
               </div>
               <div className="text-right pl-3 border-l border-border">
-                <span className="text-[10px] uppercase text-muted-foreground block">Best Lap</span>
+                <span className="text-[10px] uppercase text-muted-foreground block">
+                  {s.status === "upcoming" ? "FP2 Benchmark" : "Best Lap"}
+                </span>
                 <span className="font-bold text-purple-400">{activeDriverRow.last}</span>
               </div>
             </div>
@@ -217,7 +233,7 @@ export function Race() {
             <div className="rounded-xl border border-border/80 bg-muted/20 p-2.5">
               <span className="text-[10px] uppercase text-muted-foreground block">Speed Trap</span>
               <span className="text-lg font-black text-foreground">
-                {activeDriverRow.speed} <span className="text-[10px] font-normal text-muted-foreground">km/h</span>
+                {s.status === "upcoming" ? "—" : activeDriverRow.speed} <span className="text-[10px] font-normal text-muted-foreground">km/h</span>
               </span>
             </div>
 
@@ -225,7 +241,7 @@ export function Race() {
             <div className="rounded-xl border border-border/80 bg-muted/20 p-2.5">
               <span className="text-[10px] uppercase text-muted-foreground block">Gear / Engine</span>
               <span className="text-lg font-black text-foreground">
-                G{activeDriverRow.gear} <span className="text-xs text-muted-foreground">· {activeDriverRow.rpm}</span>
+                {s.status === "upcoming" ? "N" : `G${activeDriverRow.gear}`} <span className="text-xs text-muted-foreground">· {s.status === "upcoming" ? "Garage" : activeDriverRow.rpm}</span>
               </span>
             </div>
 
@@ -233,12 +249,12 @@ export function Race() {
             <div className="rounded-xl border border-border/80 bg-muted/20 p-2.5">
               <div className="flex justify-between items-center text-[10px] uppercase text-muted-foreground">
                 <span>Throttle</span>
-                <span className="text-emerald-400 font-bold">{activeDriverRow.throttle}%</span>
+                <span className="text-emerald-400 font-bold">{s.status === "upcoming" ? 0 : activeDriverRow.throttle}%</span>
               </div>
               <div className="mt-2 h-2 w-full rounded-full bg-muted overflow-hidden">
                 <div
                   className="h-full bg-emerald-500 rounded-full transition-all"
-                  style={{ width: `${activeDriverRow.throttle}%` }}
+                  style={{ width: `${s.status === "upcoming" ? 0 : activeDriverRow.throttle}%` }}
                 />
               </div>
             </div>
@@ -247,12 +263,12 @@ export function Race() {
             <div className="rounded-xl border border-border/80 bg-muted/20 p-2.5">
               <div className="flex justify-between items-center text-[10px] uppercase text-muted-foreground">
                 <span>Brake</span>
-                <span className="text-red-400 font-bold">{activeDriverRow.brake}%</span>
+                <span className="text-red-400 font-bold">{s.status === "upcoming" ? 0 : activeDriverRow.brake}%</span>
               </div>
               <div className="mt-2 h-2 w-full rounded-full bg-muted overflow-hidden">
                 <div
                   className="h-full bg-red-500 rounded-full transition-all"
-                  style={{ width: `${activeDriverRow.brake}%` }}
+                  style={{ width: `${s.status === "upcoming" ? 0 : activeDriverRow.brake}%` }}
                 />
               </div>
             </div>
@@ -263,16 +279,22 @@ export function Race() {
               <span
                 className={cn(
                   "inline-flex items-center gap-1 font-black text-sm mt-0.5",
-                  activeDriverRow.drs ? "text-cyan-400" : "text-muted-foreground"
+                  s.status === "upcoming"
+                    ? "text-muted-foreground"
+                    : activeDriverRow.drs
+                    ? "text-cyan-400"
+                    : "text-muted-foreground"
                 )}
               >
-                <Zap className="h-3 w-3" /> {activeDriverRow.drs ? "OPEN / ACTIVE" : "CLOSED"}
+                <Zap className="h-3 w-3" /> {s.status === "upcoming" ? "STANDBY" : activeDriverRow.drs ? "OPEN / ACTIVE" : "CLOSED"}
               </span>
             </div>
 
             {/* Tyre Compound & Age */}
             <div className="rounded-xl border border-border/80 bg-muted/20 p-2.5">
-              <span className="text-[10px] uppercase text-muted-foreground block">Tyre Stint</span>
+              <span className="text-[10px] uppercase text-muted-foreground block">
+                {s.status === "upcoming" ? "Allocation" : "Tyre Stint"}
+              </span>
               <div className="flex items-center gap-1.5 mt-0.5">
                 <span
                   className={cn(
@@ -287,7 +309,7 @@ export function Race() {
                   {activeDriverRow.tyre[0]?.toUpperCase()}
                 </span>
                 <span className="font-bold text-foreground">
-                  {activeDriverRow.tyreAge} Laps <span className="text-[10px] text-muted-foreground">({activeDriverRow.pitStops}P)</span>
+                  {s.status === "upcoming" ? `${activeDriverRow.tyre.toUpperCase()} Allocated` : `${activeDriverRow.tyreAge} Laps`} {s.status !== "upcoming" && <span className="text-[10px] text-muted-foreground">({activeDriverRow.pitStops}P)</span>}
                 </span>
               </div>
             </div>
@@ -351,23 +373,54 @@ export function Race() {
         {/* Session tabs and view switcher toolbar */}
         <div className="border-b border-border/80 bg-muted/40 p-3 flex flex-col sm:flex-row sm:items-center justify-between gap-3">
           <div className="flex items-center gap-1.5 no-scrollbar overflow-x-auto">
-            {tabs.map((t) => (
-              <button
-                key={t}
-                type="button"
-                onClick={() => {
-                  setTab(t);
-                }}
-                className={cn(
-                  "px-3.5 py-1.5 rounded-lg text-xs font-mono font-bold uppercase transition-all whitespace-nowrap",
-                  tab === t
-                    ? "bg-primary text-primary-foreground shadow-sm"
-                    : "text-muted-foreground hover:bg-muted hover:text-foreground"
-                )}
-              >
-                {t}
-              </button>
-            ))}
+            {raceWeekend.sessions.map((sess) => {
+              const t = sess.short;
+              const isSelected = tab === t;
+              return (
+                <button
+                  key={t}
+                  type="button"
+                  onClick={() => {
+                    setTab(t);
+                  }}
+                  className={cn(
+                    "px-3 py-1.5 rounded-lg text-xs font-mono font-bold uppercase transition-all whitespace-nowrap flex items-center gap-1.5",
+                    isSelected
+                      ? "bg-primary text-primary-foreground shadow-sm"
+                      : "text-muted-foreground hover:bg-muted hover:text-foreground"
+                  )}
+                >
+                  <span>{t}</span>
+                  {sess.status === "done" && (
+                    <span
+                      className={cn(
+                        "text-[9px] px-1.5 py-0.2 rounded font-mono font-bold",
+                        isSelected
+                          ? "bg-white/20 text-white"
+                          : "bg-emerald-500/10 text-emerald-400 border border-emerald-500/20"
+                      )}
+                    >
+                      DONE
+                    </span>
+                  )}
+                  {sess.status === "live" && (
+                    <span className="flex h-2 w-2 rounded-full bg-emerald-400 animate-pulse" />
+                  )}
+                  {sess.status === "upcoming" && (
+                    <span
+                      className={cn(
+                        "text-[9px] px-1.5 py-0.2 rounded font-mono font-normal opacity-75",
+                        isSelected
+                          ? "bg-white/20 text-white"
+                          : "text-muted-foreground/60"
+                      )}
+                    >
+                      UPCOMING
+                    </span>
+                  )}
+                </button>
+              );
+            })}
           </div>
 
           {/* View mode switcher */}
@@ -397,6 +450,18 @@ export function Race() {
             <span className="font-bold text-foreground">{s.name}</span>
             <span className="text-muted-foreground">·</span>
             <span className="text-muted-foreground">{fmt(s.start)}</span>
+            <span
+              className={cn(
+                "ml-1 text-[10px] uppercase px-1.5 py-0.5 rounded font-bold",
+                s.status === "done"
+                  ? "bg-emerald-500/15 text-emerald-400 border border-emerald-500/30"
+                  : s.status === "live"
+                  ? "bg-emerald-500 text-black animate-pulse"
+                  : "bg-amber-500/15 text-amber-400 border border-amber-500/30"
+              )}
+            >
+              {s.status === "done" ? "Official Classification" : s.status === "live" ? "Live Telemetry" : "Upcoming Session"}
+            </span>
           </div>
 
           <div className="flex items-center gap-3 text-[11px] text-muted-foreground">
@@ -411,6 +476,21 @@ export function Race() {
             </span>
           </div>
         </div>
+
+        {/* Upcoming Session Banner */}
+        {s.status === "upcoming" && (
+          <div className="px-4 py-3 bg-amber-500/10 border-b border-amber-500/20 flex flex-col sm:flex-row sm:items-center justify-between gap-2 text-xs font-mono">
+            <div className="flex items-center gap-2">
+              <span className="h-2 w-2 rounded-full bg-amber-400 animate-ping" />
+              <span className="font-bold text-amber-300">
+                {s.name} is scheduled for {fmt(s.start)}
+              </span>
+            </div>
+            <div className="text-[11px] text-muted-foreground">
+              Provisional entry list & FP2 practice benchmark shown below. Switch to <button type="button" onClick={() => setTab("FP2")} className="text-primary font-bold underline">FP2</button> for completed session telemetry.
+            </div>
+          </div>
+        )}
 
         {/* Live Timing Table */}
         <div className="overflow-x-auto">
@@ -667,8 +747,17 @@ export function Race() {
                 <span className="font-mono text-xs font-bold uppercase text-primary">
                   {x.short}
                 </span>
-                <span className="text-[10px] font-mono uppercase text-muted-foreground">
-                  Official Session
+                <span
+                  className={cn(
+                    "text-[9px] font-mono uppercase px-1.5 py-0.5 rounded font-bold",
+                    x.status === "done"
+                      ? "bg-emerald-500/10 text-emerald-400 border border-emerald-500/20"
+                      : x.status === "live"
+                      ? "bg-emerald-500 text-black animate-pulse"
+                      : "bg-muted text-muted-foreground"
+                  )}
+                >
+                  {x.status === "done" ? "COMPLETED" : x.status === "live" ? "LIVE" : "SCHEDULED"}
                 </span>
               </div>
               <p className="font-bold text-sm text-foreground truncate">{x.name}</p>

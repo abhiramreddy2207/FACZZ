@@ -293,9 +293,9 @@ export const raceWeekend = {
   location: "Interlagos, São Paulo, Brazil",
   sessions: [
     { id: "fp1", name: "Practice 1", short: "FP1", start: "2026-11-06T14:30:00Z", status: "done" },
-    { id: "sq", name: "Sprint Qualifying", short: "SQ", start: "2026-11-06T18:30:00Z", status: "done" },
-    { id: "sprint", name: "Sprint Race", short: "SPRINT", start: "2026-11-07T14:00:00Z", status: "done" },
-    { id: "quali", name: "Qualifying", short: "Q", start: "2026-11-07T18:00:00Z", status: "live" },
+    { id: "fp2", name: "Practice 2", short: "FP2", start: "2026-11-06T18:00:00Z", status: "done" },
+    { id: "fp3", name: "Practice 3", short: "FP3", start: "2026-11-07T14:30:00Z", status: "upcoming" },
+    { id: "quali", name: "Qualifying", short: "Q", start: "2026-11-07T18:00:00Z", status: "upcoming" },
     { id: "race", name: "Main Race", short: "RACE", start: "2026-11-08T17:00:00Z", status: "upcoming" },
   ] as Session[],
 };

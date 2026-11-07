@@ -145,8 +145,11 @@ export class F1Service {
         async () => OpenF1Adapter.fetchLiveTiming()
       );
     } catch {
-      // Fallback to deterministic session rows if no live session is streaming
-      const rows = sessionRows("race", raceWeekend.name);
+      // Fallback to active or latest completed session rows
+      const activeSession = raceWeekend.sessions.find((s) => s.status === "live")
+        ?? raceWeekend.sessions.filter((s) => s.status === "done").pop()
+        ?? raceWeekend.sessions[0];
+      const rows = sessionRows(activeSession?.id ?? "fp2", raceWeekend.name);
       const fallbackRows: LiveTimingRow[] = rows.map((r) => ({
         pos: r.pos,
         driverId: r.driver,
