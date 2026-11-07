@@ -7,7 +7,6 @@ import { setState, useStore } from "@/lib/store";
 import { syncCommunityPosts } from "@/lib/social-client";
 import { Chip, DemoBadge, EmptyState } from "@/components/bits";
 import { FeedCard } from "@/components/feed-card";
-import { RaceCard } from "@/components/race-card";
 import { SocialPostComposer } from "@/components/social-post-composer";
 import { SocialPostCard } from "@/components/social-post-card";
 import { cn } from "@/lib/utils";
@@ -113,8 +112,6 @@ function Home() {
     return [...commItems, ...newsTimeline].sort((a, b) => b.time - a.time);
   }, [feedTab, communityPosts, newsItems]);
 
-  const raceFirst = s.homeEmphasis !== "feed";
-
   return (
     <div>
       {/* Top Header */}
@@ -137,50 +134,31 @@ function Home() {
 
       {/* Customize Panel */}
       {panel && (
-        <div className="mb-5 grid gap-4 rounded-xl border border-border bg-card p-4 md:grid-cols-2">
-          <fieldset>
-            <legend className="mb-2 text-xs font-bold uppercase tracking-wider text-muted-foreground">
-              Home emphasis
-            </legend>
-            <div className="flex flex-wrap gap-2">
-              {(["balanced", "race", "feed"] as const).map((m) => (
-                <Chip key={m} active={s.homeEmphasis === m} onClick={() => setState({ homeEmphasis: m })}>
-                  {{ balanced: "Balanced", race: "Race first", feed: "Feed first" }[m]}
-                </Chip>
-              ))}
-            </div>
-          </fieldset>
-          <fieldset>
-            <legend className="mb-2 text-xs font-bold uppercase tracking-wider text-muted-foreground">
-              Race card state (demo preview)
-            </legend>
-            <div className="flex flex-wrap gap-2">
-              {(["auto", "next", "live", "results"] as const).map((m) => (
-                <Chip key={m} active={s.raceMode === m} onClick={() => setState({ raceMode: m })}>
-                  {{ auto: "Auto", next: "Next session", live: "Live now", results: "Results" }[m]}
-                </Chip>
-              ))}
-            </div>
-          </fieldset>
-          <Link to="/welcome" className="text-sm font-semibold text-primary hover:underline">
-            Edit follows & interests →
-          </Link>
+        <div className="mb-5 flex flex-wrap items-center justify-between gap-4 rounded-xl border border-border bg-card p-4">
+          <div className="flex flex-wrap items-center gap-3">
+            <span className="text-xs font-bold uppercase tracking-wider text-muted-foreground">
+              Feed Shortcuts
+            </span>
+            <Link
+              to="/welcome"
+              className="rounded-full border border-border bg-muted/60 px-3 py-1.5 text-xs font-semibold text-foreground hover:border-primary transition-all"
+            >
+              Edit follows & interests →
+            </Link>
+            <Link
+              to="/race"
+              className="rounded-full border border-border bg-muted/60 px-3 py-1.5 text-xs font-semibold text-foreground hover:border-primary transition-all"
+            >
+              Race Center & Live Telemetry →
+            </Link>
+          </div>
         </div>
       )}
 
-      {/* Main Layout Grid */}
-      <div className={cn("grid gap-5 min-w-0", s.homeEmphasis === "balanced" && "xl:grid-cols-[1fr_340px]")}>
-        {/* Race Center Column */}
-        <div className={cn("min-w-0", !raceFirst && "order-2", s.homeEmphasis === "balanced" && "xl:order-2")}>
-          <div className={cn(s.homeEmphasis === "balanced" && "xl:sticky xl:top-20 space-y-4")}>
-            <RaceCard />
-          </div>
-        </div>
-
-        {/* Social Feed Column */}
-        <div className={cn("min-w-0", s.homeEmphasis === "balanced" && "xl:order-1")}>
-          {/* Post Composer */}
-          <SocialPostComposer />
+      {/* Social Feed Column */}
+      <div className="min-w-0 max-w-4xl mx-auto space-y-4">
+        {/* Post Composer */}
+        <SocialPostComposer />
 
           {/* Feed Filter Mode Tabs */}
           <div className="no-scrollbar -mx-4 mb-4 flex items-center gap-1.5 overflow-x-auto px-4 border-b border-border pb-2 whitespace-nowrap">
@@ -254,6 +232,5 @@ function Home() {
           </div>
         </div>
       </div>
-    </div>
   );
 }

@@ -38,7 +38,9 @@ export function sessionRows(session: string, event = "Abu Dhabi GP", season = "2
 
   let orderedDrivers = activeDrivers;
 
-  if (season === "2024" && (event === "Abu Dhabi GP" || event === "Yas Marina Circuit")) {
+  const isAbuDhabi = season === "2024" && (event.toLowerCase().includes("abu dhabi") || event.toLowerCase().includes("yas marina"));
+
+  if (isAbuDhabi) {
     if (session === "race") {
       orderedDrivers = ABU_DHABI_2024_RACE_ORDER
         .map((id) => getDriver(id))
@@ -76,7 +78,7 @@ export function sessionRows(session: string, event = "Abu Dhabi GP", season = "2
       "1:23.676", "1:23.712", "1:23.754", "1:23.821", "1:23.902"
     ];
 
-    const isAbuDhabiOfficial = season === "2024" && (event === "Abu Dhabi GP" || event === "Yas Marina Circuit");
+    const isAbuDhabiOfficial = isAbuDhabi;
 
     const gap = isAbuDhabiOfficial && session === "race"
       ? (officialAbuDhabiGaps[i] ?? `+${(i * 3.2).toFixed(3)}s`)
