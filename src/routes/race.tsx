@@ -50,7 +50,32 @@ export function Race() {
   const activeView = isQuali && view === "Timing" ? "Qualifying" : view;
 
   // Deterministic baseline rows (guarantees sessionRows rules from data-rules.test.ts)
-  const rows = useMemo(() => sessionRows(s.id, raceWeekend.name), [s.id]);
+  const baselineRows = useMemo(() => sessionRows(s.id, raceWeekend.name), [s.id]);
+
+  // When live telemetry API is available, hydrate active timing with real OpenF1 metrics
+  const rows = useMemo(() => {
+    if (liveData?.timing && liveData.timing.length > 0 && (s.id === "fp2" || s.status === "live")) {
+      return baselineRows.map((base) => {
+        const liveMatch = liveData.timing.find(
+          (lt) => lt.driverId === base.driver || lt.code?.toLowerCase() === base.code?.toLowerCase()
+        );
+        if (!liveMatch) return base;
+        return {
+          ...base,
+          pos: liveMatch.pos,
+          gap: liveMatch.gap,
+          gapS: liveMatch.gapSeconds,
+          last: liveMatch.lastLapTime || base.last,
+          tyre: (liveMatch.tyreCompound as any) || base.tyre,
+          s1: liveMatch.s1 ?? base.s1,
+          s2: liveMatch.s2 ?? base.s2,
+          s3: liveMatch.s3 ?? base.s3,
+          speed: liveMatch.speed ?? base.speed,
+        };
+      }).sort((a, b) => a.pos - b.pos);
+    }
+    return baselineRows;
+  }, [baselineRows, liveData, s.id, s.status]);
 
   // Poll live telemetry if tab is active
   const pollTelemetry = useCallback(async () => {

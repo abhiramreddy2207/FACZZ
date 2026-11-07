@@ -151,13 +151,27 @@ export function sessionRows(session: string, event = "São Paulo GP", season = "
 
     const isAbuDhabiOfficial = isAbuDhabi;
 
+    // Helper to parse "M:SS.mmm" to total seconds
+    const parseLapToSec = (timeStr: string) => {
+      const parts = timeStr.split(":");
+      if (parts.length === 2) {
+        return parseInt(parts[0], 10) * 60 + parseFloat(parts[1]);
+      }
+      return parseFloat(timeStr) || 70;
+    };
+
+    const p1BaseSec = session === "fp1" ? parseLapToSec(officialFP1TimesInterlagos[0]) : parseLapToSec(officialFP2TimesInterlagos[0]);
+    const driverPracticeSec = isInterlagos && session === "fp2"
+      ? parseLapToSec(officialFP2TimesInterlagos[i] ?? "1:11.646")
+      : isInterlagos && session === "fp1"
+      ? parseLapToSec(officialFP1TimesInterlagos[i] ?? "1:11.770")
+      : 0;
+
     // Delta in seconds to leader
     const gapS = i === 0
       ? 0
-      : isInterlagos && session === "fp2"
-      ? +((70 + parseFloat(officialFP2TimesInterlagos[i]?.slice(2) ?? "11.000")) - 70.366).toFixed(3)
-      : isInterlagos && session === "fp1"
-      ? +((70 + parseFloat(officialFP1TimesInterlagos[i]?.slice(2) ?? "11.000")) - 70.610).toFixed(3)
+      : isInterlagos && (session === "fp1" || session === "fp2")
+      ? +(driverPracticeSec - p1BaseSec).toFixed(3)
       : +(i * (race ? 2.4 : 0.065) + seed(i, salt) * (race ? 1.1 : 0.04)).toFixed(3);
 
     // Formatted Gap display

@@ -72,6 +72,10 @@ export const LiveTimingRowSchema = z.object({
   inPit: z.boolean(),
   pitStops: z.number(),
   tyreCompound: z.enum(["soft", "medium", "hard", "intermediate", "wet", "unknown"]).optional(),
+  s1: z.string().optional(),
+  s2: z.string().optional(),
+  s3: z.string().optional(),
+  speed: z.number().optional(),
 });
 
 export type LiveTimingRow = z.infer<typeof LiveTimingRowSchema>;
