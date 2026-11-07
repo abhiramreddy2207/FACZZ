@@ -78,8 +78,8 @@ function CustomTelemetryTooltip({
 function DataDetail() {
   const { slug } = Route.useParams();
   const ds = getDataset(slug);
-  const [season, setSeason] = useState("2026");
-  const [event, setEvent] = useState("Mexico City GP");
+  const [season, setSeason] = useState("2024");
+  const [event, setEvent] = useState("Abu Dhabi GP");
   const [team, setTeam] = useState("");
   const [driver, setDriver] = useState("");
   const [session, setSession] = useState("race");
@@ -134,8 +134,9 @@ function DataDetail() {
         />
         {capabilities.season && (
           <select aria-label="Season" className={sel} value={season} onChange={(e) => setSeason(e.target.value)}>
-            <option>2026</option>
-            <option>2025</option>
+            <option value="2024">2024 (Official Final)</option>
+            <option value="2025">2025 (Championship)</option>
+            <option value="2026">2026 (Regulations)</option>
           </select>
         )}
         {capabilities.event && (
