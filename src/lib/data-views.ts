@@ -1,4 +1,4 @@
-import { calendar, getDriver, getTeam, seed, getDriverPointsForSeason, getTeamPointsForSeason } from "./demo-data";
+import { calendar, getDriver, getTeam, seed, getDriverPointsForSeason, getTeamPointsForSeason, getCalendarForSeason } from "./demo-data";
 import type { Dataset, Row } from "./data-catalog";
 import { sessionRows } from "./session-data";
 
@@ -47,6 +47,26 @@ export function filteredData(ds: Dataset, f: DataFilters): Row[] {
         pts: p.pts,
       };
     });
+  } else if (ds.slug === "schedule") {
+    const cal = getCalendarForSeason(f.season);
+    rows = cal.map((c) => {
+      const winnerDriver = c.winner ? getDriver(c.winner) : null;
+      const winnerTeam = winnerDriver ? getTeam(winnerDriver.teamId) : null;
+      return {
+        ...c,
+        round: c.round,
+        name: c.name,
+        circuit: c.circuit,
+        country: c.country,
+        date: c.date,
+        sprint: c.sprint,
+        winner: winnerDriver ? winnerDriver.name : "—",
+        winnerCode: winnerDriver?.code ?? "",
+        team: winnerTeam?.id ?? "",
+        teamName: winnerTeam?.name ?? "",
+        status: c.winner ? "Completed" : "Upcoming",
+      };
+    });
   } else if (ds.race || ds.slug === "results") {
     rows = sessionRows(f.session, f.event, f.season).map((r) => ({
       ...r,
@@ -54,14 +74,6 @@ export function filteredData(ds: Dataset, f: DataFilters): Row[] {
     }));
   } else {
     rows = ds.rows().map((row) => ({ ...row }));
-  }
-
-  if (ds.slug === "schedule") {
-    rows = rows.map((r) => ({
-      ...r,
-      date: String(r["date"] ?? "").replace("2024", f.season).replace("2026", f.season),
-      status: f.season === "2024" ? "Completed" : (r["status"] ?? "Upcoming"),
-    }));
   }
 
   if (ds.slug === "track-dna") {

@@ -16,12 +16,13 @@ import {
 } from "recharts";
 import { BarChart3, TrendingUp, Sparkles, SlidersHorizontal, Activity } from "lucide-react";
 import { getDataset, type Row } from "@/lib/data-catalog";
-import { drivers, teams, calendar, fmt, getTeam, getDriver } from "@/lib/demo-data";
+import { drivers, teams, calendar, fmt, getTeam, getDriver, getCalendarForSeason } from "@/lib/demo-data";
 import { PageHeader, SaveButton, SourcesFooter, DemoBadge } from "@/components/bits";
 import { filteredData, dataCapabilities } from "@/lib/data-views";
 import { DataComparison } from "@/components/data-comparison";
 import { DataMenu } from "@/components/data-menu";
 import { RacePaceExplorer } from "@/components/race-pace-explorer";
+import { CalendarScheduleView } from "@/components/calendar-view";
 
 export const Route = createFileRoute("/data/$slug")({
   loader: ({ params }) => { const d = getDataset(params.slug); if (!d) throw notFound(); return { label: d.label, desc: d.desc }; },
@@ -79,6 +80,7 @@ function DataDetail() {
   const { slug } = Route.useParams();
   const ds = getDataset(slug);
   const [season, setSeason] = useState("2024");
+  const activeCalendar = useMemo(() => getCalendarForSeason(season), [season]);
   const [event, setEvent] = useState("Abu Dhabi GP");
   const [team, setTeam] = useState("");
   const [driver, setDriver] = useState("");
@@ -133,7 +135,20 @@ function DataDetail() {
           className="h-9 rounded-lg border border-input bg-card px-3 text-sm outline-none focus:ring-2 focus:ring-ring sm:max-w-xs"
         />
         {capabilities.season && (
-          <select aria-label="Season" className={sel} value={season} onChange={(e) => setSeason(e.target.value)}>
+          <select
+            aria-label="Season"
+            className={sel}
+            value={season}
+            onChange={(e) => {
+              const nextSeason = e.target.value;
+              setSeason(nextSeason);
+              const nextCal = getCalendarForSeason(nextSeason);
+              if (!nextCal.some((c) => c.name === event)) {
+                setEvent(nextCal[nextCal.length - 1]?.name ?? "Abu Dhabi GP");
+              }
+            }}
+          >
+            <option value="2025">2025 Season (Current Calendar)</option>
             <option value="2024">2024 Season (Official Final)</option>
             <option value="2023">2023 Season (Official Final)</option>
             <option value="2022">2022 Season (Official Final)</option>
@@ -141,7 +156,7 @@ function DataDetail() {
         )}
         {capabilities.event && (
           <select aria-label="Event" className={sel} value={event} onChange={(e) => setEvent(e.target.value)}>
-            {calendar.map((c) => <option key={c.round}>{c.name}</option>)}
+            {activeCalendar.map((c) => <option key={c.round} value={c.name}>{c.name}</option>)}
           </select>
         )}
         {capabilities.session && (
@@ -223,6 +238,11 @@ function DataDetail() {
             </ResponsiveContainer>
           </div>
         </div>
+      )}
+
+      {/* Dedicated Normal Motorsport Calendar View */}
+      {slug === "schedule" && (
+        <CalendarScheduleView rows={displayRows} season={season} />
       )}
 
       {/* Comparisons */}

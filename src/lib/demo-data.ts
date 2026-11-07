@@ -300,33 +300,122 @@ export const raceWeekend = {
   ] as Session[],
 };
 
-// Official 2024 FIA Formula 1 World Championship Calendar (All 24 Completed Rounds)
-export const calendar = [
-  { round: 1, name: "Bahrain GP", date: "2024-03-02", circuit: "Sakhir", winner: "verstappen" },
-  { round: 2, name: "Saudi Arabian GP", date: "2024-03-09", circuit: "Jeddah", winner: "verstappen" },
-  { round: 3, name: "Australian GP", date: "2024-03-24", circuit: "Melbourne", winner: "sainz" },
-  { round: 4, name: "Japanese GP", date: "2024-04-07", circuit: "Suzuka", winner: "verstappen" },
-  { round: 5, name: "Chinese GP", date: "2024-04-21", circuit: "Shanghai", winner: "verstappen" },
-  { round: 6, name: "Miami GP", date: "2024-05-05", circuit: "Miami", winner: "norris" },
-  { round: 7, name: "Emilia Romagna GP", date: "2024-05-19", circuit: "Imola", winner: "verstappen" },
-  { round: 8, name: "Monaco GP", date: "2024-05-26", circuit: "Monaco", winner: "leclerc" },
-  { round: 9, name: "Canadian GP", date: "2024-06-09", circuit: "Montreal", winner: "verstappen" },
-  { round: 10, name: "Spanish GP", date: "2024-06-23", circuit: "Barcelona", winner: "verstappen" },
-  { round: 11, name: "Austrian GP", date: "2024-06-30", circuit: "Spielberg", winner: "russell" },
-  { round: 12, name: "British GP", date: "2024-07-07", circuit: "Silverstone", winner: "hamilton" },
-  { round: 13, name: "Hungarian GP", date: "2024-07-21", circuit: "Hungaroring", winner: "piastri" },
-  { round: 14, name: "Belgian GP", date: "2024-07-28", circuit: "Spa-Francorchamps", winner: "hamilton" },
-  { round: 15, name: "Dutch GP", date: "2024-08-25", circuit: "Zandvoort", winner: "norris" },
-  { round: 16, name: "Italian GP", date: "2024-09-01", circuit: "Monza", winner: "leclerc" },
-  { round: 17, name: "Azerbaijan GP", date: "2024-09-15", circuit: "Baku", winner: "piastri" },
-  { round: 18, name: "Singapore GP", date: "2024-09-22", circuit: "Marina Bay", winner: "norris" },
-  { round: 19, name: "United States GP", date: "2024-10-20", circuit: "Austin", winner: "leclerc" },
-  { round: 20, name: "Mexico City GP", date: "2024-10-27", circuit: "Mexico City", winner: "sainz" },
-  { round: 21, name: "São Paulo GP", date: "2024-11-03", circuit: "Interlagos", winner: "verstappen" },
-  { round: 22, name: "Las Vegas GP", date: "2024-11-23", circuit: "Las Vegas", winner: "russell" },
-  { round: 23, name: "Qatar GP", date: "2024-12-01", circuit: "Lusail", winner: "verstappen" },
-  { round: 24, name: "Abu Dhabi GP", date: "2024-12-08", circuit: "Yas Marina", winner: "norris" },
+// Official 2025 FIA Formula 1 World Championship Calendar (Official FIA Announcement)
+export const calendar2025 = [
+  { round: 1, name: "Australian GP", date: "2025-03-16", circuit: "Melbourne", country: "Australia", sprint: false, winner: "" },
+  { round: 2, name: "Chinese GP", date: "2025-03-23", circuit: "Shanghai", country: "China", sprint: true, winner: "" },
+  { round: 3, name: "Japanese GP", date: "2025-04-06", circuit: "Suzuka", country: "Japan", sprint: false, winner: "" },
+  { round: 4, name: "Bahrain GP", date: "2025-04-13", circuit: "Sakhir", country: "Bahrain", sprint: false, winner: "" },
+  { round: 5, name: "Saudi Arabian GP", date: "2025-04-20", circuit: "Jeddah", country: "Saudi Arabia", sprint: false, winner: "" },
+  { round: 6, name: "Miami GP", date: "2025-05-04", circuit: "Miami", country: "United States", sprint: true, winner: "" },
+  { round: 7, name: "Emilia Romagna GP", date: "2025-05-18", circuit: "Imola", country: "Italy", sprint: false, winner: "" },
+  { round: 8, name: "Monaco GP", date: "2025-05-25", circuit: "Monaco", country: "Monaco", sprint: false, winner: "" },
+  { round: 9, name: "Spanish GP", date: "2025-06-01", circuit: "Barcelona", country: "Spain", sprint: false, winner: "" },
+  { round: 10, name: "Canadian GP", date: "2025-06-15", circuit: "Montreal", country: "Canada", sprint: false, winner: "" },
+  { round: 11, name: "Austrian GP", date: "2025-06-29", circuit: "Spielberg", country: "Austria", sprint: true, winner: "" },
+  { round: 12, name: "British GP", date: "2025-07-06", circuit: "Silverstone", country: "Great Britain", sprint: false, winner: "" },
+  { round: 13, name: "Belgian GP", date: "2025-07-27", circuit: "Spa-Francorchamps", country: "Belgium", sprint: true, winner: "" },
+  { round: 14, name: "Hungarian GP", date: "2025-08-03", circuit: "Hungaroring", country: "Hungary", sprint: false, winner: "" },
+  { round: 15, name: "Dutch GP", date: "2025-08-31", circuit: "Zandvoort", country: "Netherlands", sprint: false, winner: "" },
+  { round: 16, name: "Italian GP", date: "2025-09-07", circuit: "Monza", country: "Italy", sprint: false, winner: "" },
+  { round: 17, name: "Azerbaijan GP", date: "2025-09-21", circuit: "Baku", country: "Azerbaijan", sprint: false, winner: "" },
+  { round: 18, name: "Singapore GP", date: "2025-10-05", circuit: "Marina Bay", country: "Singapore", sprint: false, winner: "" },
+  { round: 19, name: "United States GP", date: "2025-10-19", circuit: "Austin", country: "United States", sprint: true, winner: "" },
+  { round: 20, name: "Mexico City GP", date: "2025-10-26", circuit: "Mexico City", country: "Mexico", sprint: false, winner: "" },
+  { round: 21, name: "São Paulo GP", date: "2025-11-09", circuit: "Interlagos", country: "Brazil", sprint: true, winner: "" },
+  { round: 22, name: "Las Vegas GP", date: "2025-11-22", circuit: "Las Vegas", country: "United States", sprint: false, winner: "" },
+  { round: 23, name: "Qatar GP", date: "2025-11-30", circuit: "Lusail", country: "Qatar", sprint: true, winner: "" },
+  { round: 24, name: "Abu Dhabi GP", date: "2025-12-07", circuit: "Yas Marina", country: "Abu Dhabi (UAE)", sprint: false, winner: "" },
 ];
+
+// Official 2024 FIA Formula 1 World Championship Calendar (All 24 Completed Rounds)
+export const calendar2024 = [
+  { round: 1, name: "Bahrain GP", date: "2024-03-02", circuit: "Sakhir", country: "Bahrain", sprint: false, winner: "verstappen" },
+  { round: 2, name: "Saudi Arabian GP", date: "2024-03-09", circuit: "Jeddah", country: "Saudi Arabia", sprint: false, winner: "verstappen" },
+  { round: 3, name: "Australian GP", date: "2024-03-24", circuit: "Melbourne", country: "Australia", sprint: false, winner: "sainz" },
+  { round: 4, name: "Japanese GP", date: "2024-04-07", circuit: "Suzuka", country: "Japan", sprint: false, winner: "verstappen" },
+  { round: 5, name: "Chinese GP", date: "2024-04-21", circuit: "Shanghai", country: "China", sprint: true, winner: "verstappen" },
+  { round: 6, name: "Miami GP", date: "2024-05-05", circuit: "Miami", country: "United States", sprint: true, winner: "norris" },
+  { round: 7, name: "Emilia Romagna GP", date: "2024-05-19", circuit: "Imola", country: "Italy", sprint: false, winner: "verstappen" },
+  { round: 8, name: "Monaco GP", date: "2024-05-26", circuit: "Monaco", country: "Monaco", sprint: false, winner: "leclerc" },
+  { round: 9, name: "Canadian GP", date: "2024-06-09", circuit: "Montreal", country: "Canada", sprint: false, winner: "verstappen" },
+  { round: 10, name: "Spanish GP", date: "2024-06-23", circuit: "Barcelona", country: "Spain", sprint: false, winner: "verstappen" },
+  { round: 11, name: "Austrian GP", date: "2024-06-30", circuit: "Spielberg", country: "Austria", sprint: true, winner: "russell" },
+  { round: 12, name: "British GP", date: "2024-07-07", circuit: "Silverstone", country: "Great Britain", sprint: false, winner: "hamilton" },
+  { round: 13, name: "Hungarian GP", date: "2024-07-21", circuit: "Hungaroring", country: "Hungary", sprint: false, winner: "piastri" },
+  { round: 14, name: "Belgian GP", date: "2024-07-28", circuit: "Spa-Francorchamps", country: "Belgium", sprint: false, winner: "hamilton" },
+  { round: 15, name: "Dutch GP", date: "2024-08-25", circuit: "Zandvoort", country: "Netherlands", sprint: false, winner: "norris" },
+  { round: 16, name: "Italian GP", date: "2024-09-01", circuit: "Monza", country: "Italy", sprint: false, winner: "leclerc" },
+  { round: 17, name: "Azerbaijan GP", date: "2024-09-15", circuit: "Baku", country: "Azerbaijan", sprint: false, winner: "piastri" },
+  { round: 18, name: "Singapore GP", date: "2024-09-22", circuit: "Marina Bay", country: "Singapore", sprint: false, winner: "norris" },
+  { round: 19, name: "United States GP", date: "2024-10-20", circuit: "Austin", country: "United States", sprint: true, winner: "leclerc" },
+  { round: 20, name: "Mexico City GP", date: "2024-10-27", circuit: "Mexico City", country: "Mexico", sprint: false, winner: "sainz" },
+  { round: 21, name: "São Paulo GP", date: "2024-11-03", circuit: "Interlagos", country: "Brazil", sprint: true, winner: "verstappen" },
+  { round: 22, name: "Las Vegas GP", date: "2024-11-23", circuit: "Las Vegas", country: "United States", sprint: false, winner: "russell" },
+  { round: 23, name: "Qatar GP", date: "2024-12-01", circuit: "Lusail", country: "Qatar", sprint: true, winner: "verstappen" },
+  { round: 24, name: "Abu Dhabi GP", date: "2024-12-08", circuit: "Yas Marina", country: "Abu Dhabi (UAE)", sprint: false, winner: "norris" },
+];
+
+// Official 2023 FIA Formula 1 World Championship Calendar (All 22 Completed Rounds)
+export const calendar2023 = [
+  { round: 1, name: "Bahrain GP", date: "2023-03-05", circuit: "Sakhir", country: "Bahrain", sprint: false, winner: "verstappen" },
+  { round: 2, name: "Saudi Arabian GP", date: "2023-03-19", circuit: "Jeddah", country: "Saudi Arabia", sprint: false, winner: "perez" },
+  { round: 3, name: "Australian GP", date: "2023-04-02", circuit: "Melbourne", country: "Australia", sprint: false, winner: "verstappen" },
+  { round: 4, name: "Azerbaijan GP", date: "2023-04-30", circuit: "Baku", country: "Azerbaijan", sprint: true, winner: "perez" },
+  { round: 5, name: "Miami GP", date: "2023-05-07", circuit: "Miami", country: "United States", sprint: false, winner: "verstappen" },
+  { round: 6, name: "Monaco GP", date: "2023-05-28", circuit: "Monaco", country: "Monaco", sprint: false, winner: "verstappen" },
+  { round: 7, name: "Spanish GP", date: "2023-06-04", circuit: "Barcelona", country: "Spain", sprint: false, winner: "verstappen" },
+  { round: 8, name: "Canadian GP", date: "2023-06-18", circuit: "Montreal", country: "Canada", sprint: false, winner: "verstappen" },
+  { round: 9, name: "Austrian GP", date: "2023-07-02", circuit: "Spielberg", country: "Austria", sprint: true, winner: "verstappen" },
+  { round: 10, name: "British GP", date: "2023-07-09", circuit: "Silverstone", country: "Great Britain", sprint: false, winner: "verstappen" },
+  { round: 11, name: "Hungarian GP", date: "2023-07-23", circuit: "Hungaroring", country: "Hungary", sprint: false, winner: "verstappen" },
+  { round: 12, name: "Belgian GP", date: "2023-07-30", circuit: "Spa-Francorchamps", country: "Belgium", sprint: true, winner: "verstappen" },
+  { round: 13, name: "Dutch GP", date: "2023-08-27", circuit: "Zandvoort", country: "Netherlands", sprint: false, winner: "verstappen" },
+  { round: 14, name: "Italian GP", date: "2023-09-03", circuit: "Monza", country: "Italy", sprint: false, winner: "verstappen" },
+  { round: 15, name: "Singapore GP", date: "2023-09-17", circuit: "Marina Bay", country: "Singapore", sprint: false, winner: "sainz" },
+  { round: 16, name: "Japanese GP", date: "2023-09-24", circuit: "Suzuka", country: "Japan", sprint: false, winner: "verstappen" },
+  { round: 17, name: "Qatar GP", date: "2023-10-08", circuit: "Lusail", country: "Qatar", sprint: true, winner: "verstappen" },
+  { round: 18, name: "United States GP", date: "2023-10-22", circuit: "Austin", country: "United States", sprint: true, winner: "verstappen" },
+  { round: 19, name: "Mexico City GP", date: "2023-10-29", circuit: "Mexico City", country: "Mexico", sprint: false, winner: "verstappen" },
+  { round: 20, name: "São Paulo GP", date: "2023-11-05", circuit: "Interlagos", country: "Brazil", sprint: true, winner: "verstappen" },
+  { round: 21, name: "Las Vegas GP", date: "2023-11-18", circuit: "Las Vegas", country: "United States", sprint: false, winner: "verstappen" },
+  { round: 22, name: "Abu Dhabi GP", date: "2023-11-26", circuit: "Yas Marina", country: "Abu Dhabi (UAE)", sprint: false, winner: "verstappen" },
+];
+
+// Official 2022 FIA Formula 1 World Championship Calendar (All 22 Completed Rounds)
+export const calendar2022 = [
+  { round: 1, name: "Bahrain GP", date: "2022-03-20", circuit: "Sakhir", country: "Bahrain", sprint: false, winner: "leclerc" },
+  { round: 2, name: "Saudi Arabian GP", date: "2022-03-27", circuit: "Jeddah", country: "Saudi Arabia", sprint: false, winner: "verstappen" },
+  { round: 3, name: "Australian GP", date: "2022-04-10", circuit: "Melbourne", country: "Australia", sprint: false, winner: "leclerc" },
+  { round: 4, name: "Emilia Romagna GP", date: "2022-04-24", circuit: "Imola", country: "Italy", sprint: true, winner: "verstappen" },
+  { round: 5, name: "Miami GP", date: "2022-05-08", circuit: "Miami", country: "United States", sprint: false, winner: "verstappen" },
+  { round: 6, name: "Spanish GP", date: "2022-05-22", circuit: "Barcelona", country: "Spain", sprint: false, winner: "verstappen" },
+  { round: 7, name: "Monaco GP", date: "2022-05-29", circuit: "Monaco", country: "Monaco", sprint: false, winner: "perez" },
+  { round: 8, name: "Azerbaijan GP", date: "2022-06-12", circuit: "Baku", country: "Azerbaijan", sprint: false, winner: "verstappen" },
+  { round: 9, name: "Canadian GP", date: "2022-06-19", circuit: "Montreal", country: "Canada", sprint: false, winner: "verstappen" },
+  { round: 10, name: "British GP", date: "2022-07-03", circuit: "Silverstone", country: "Great Britain", sprint: false, winner: "sainz" },
+  { round: 11, name: "Austrian GP", date: "2022-07-10", circuit: "Spielberg", country: "Austria", sprint: true, winner: "leclerc" },
+  { round: 12, name: "French GP", date: "2022-07-24", circuit: "Paul Ricard", country: "France", sprint: false, winner: "verstappen" },
+  { round: 13, name: "Hungarian GP", date: "2022-07-31", circuit: "Hungaroring", country: "Hungary", sprint: false, winner: "verstappen" },
+  { round: 14, name: "Belgian GP", date: "2022-08-28", circuit: "Spa-Francorchamps", country: "Belgium", sprint: false, winner: "verstappen" },
+  { round: 15, name: "Dutch GP", date: "2022-09-04", circuit: "Zandvoort", country: "Netherlands", sprint: false, winner: "verstappen" },
+  { round: 16, name: "Italian GP", date: "2022-09-11", circuit: "Monza", country: "Italy", sprint: false, winner: "verstappen" },
+  { round: 17, name: "Singapore GP", date: "2022-10-02", circuit: "Marina Bay", country: "Singapore", sprint: false, winner: "perez" },
+  { round: 18, name: "Japanese GP", date: "2022-10-09", circuit: "Suzuka", country: "Japan", sprint: false, winner: "verstappen" },
+  { round: 19, name: "United States GP", date: "2022-10-23", circuit: "Austin", country: "United States", sprint: false, winner: "verstappen" },
+  { round: 20, name: "Mexico City GP", date: "2022-10-30", circuit: "Mexico City", country: "Mexico", sprint: false, winner: "verstappen" },
+  { round: 21, name: "São Paulo GP", date: "2022-11-13", circuit: "Interlagos", country: "Brazil", sprint: true, winner: "russell" },
+  { round: 22, name: "Abu Dhabi GP", date: "2022-11-20", circuit: "Yas Marina", country: "Abu Dhabi (UAE)", sprint: false, winner: "verstappen" },
+];
+
+export const calendar = calendar2024;
+
+export function getCalendarForSeason(season: string) {
+  if (season === "2025") return calendar2025;
+  if (season === "2023") return calendar2023;
+  if (season === "2022") return calendar2022;
+  return calendar2024;
+}
 
 // Deterministic pseudo-values (no Math.random at module scope).
 export const seed = (i: number, k = 1) => ((Math.sin(i * 12.9898 + k * 78.233) * 43758.5453) % 1 + 1) % 1;

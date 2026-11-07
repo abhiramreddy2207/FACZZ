@@ -12,7 +12,7 @@ import {
   DEMO_UPDATED,
 } from "./demo-data";
 
-export type Row = Record<string, string | number> & { team?: string; driver?: string };
+export type Row = Record<string, string | number | boolean | undefined> & { team?: string; driver?: string };
 export type Dataset = {
   slug: string;
   label: string;
@@ -88,21 +88,25 @@ export const datasets: Dataset[] = [
     slug: "schedule",
     label: "Schedule",
     group: "Live & Calendar",
-    desc: "Official Grands Prix calendar and session weekend schedules.",
+    desc: "Official Grands Prix calendar, circuits and session weekend schedules.",
     provider: "Formula1.com Official Calendar",
-    providerUrl: "https://www.formula1.com/en/racing/2026",
+    providerUrl: "https://www.formula1.com/en/racing/2024",
     updated: DEMO_UPDATED,
-    chart: { type: "bar", x: "circuit", y: "round", label: "Calendar rounds" },
+    chart: null,
     columns: [
       { key: "round", label: "Rd" },
-      { key: "name", label: "Event" },
+      { key: "name", label: "Grand Prix" },
       { key: "circuit", label: "Circuit" },
       { key: "date", label: "Date" },
+      { key: "winner", label: "Winner" },
       { key: "status", label: "Status" },
     ],
     rows: () =>
       calendar.map((c) => ({
         ...c,
+        name: c.name,
+        circuit: c.circuit,
+        date: c.date,
         winner: c.winner ? dn(c.winner) : "—",
         status: c.winner ? "Completed" : "Upcoming",
       })),
